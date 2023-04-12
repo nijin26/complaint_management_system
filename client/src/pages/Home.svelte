@@ -1,5 +1,4 @@
 <script>
-  import { metamask } from "../lib/Store.js";
 </script>
 
-<h1>HOme {$metamask.address}</h1>
+<h1 style="text-align: center;">Complaint Portal Using Blockchain</h1>

@@ -7,6 +7,7 @@
   import Home from "./pages/Home.svelte";
   import Complaint from "./pages/Complaint.svelte";
   import Profile from "./pages/Profile.svelte";
+  import PoliceDashboard from "./pages/Police/PoliceDashboard.svelte";
 
   $: {
     window.ethereum.on("accountsChanged", function (accounts) {
@@ -25,6 +26,7 @@
       {#if $metamask.connected}
         <Route path="/filecomplaint" component={Complaint} />
         <Route path="/profile" component={Profile} />
+        <Route path="/police/dashboard" component={PoliceDashboard} />
       {/if}
     </Router>
   </main>

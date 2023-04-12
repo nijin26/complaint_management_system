@@ -1,26 +1,38 @@
-<script>
+<script lang="ts">
+  import { ethers } from "ethers";
   import { Input, NativeSelect, Button } from "@svelteuidev/core";
+  import { setProfile, viewProfile } from "../lib/MetaMask";
 
-  const userDetails = {
-    name: "",
-    email: "",
-    mobile: "",
-    age: "",
-    gender: "",
-    dob: "",
-    address: "",
-    city: "",
-    district: "",
-    state: "",
-    pincode: "",
-    relativeName: "",
-    relativeMobile: "",
-    relation: "",
-    selectedID: "",
-    IDNumber: "",
+  const profileInfo = {
+    profile: {
+      name: "",
+      email: "",
+      mobile: "",
+      age: "",
+      gender: "",
+      dob: "",
+      addr: "",
+      city: "",
+      district: "",
+      state: "",
+      pincode: "",
+    },
+    idDetails: {
+      selectedID: "",
+      IDNumber: "",
+    },
+    relativeDetails: {
+      relativeName: "",
+      relativeMobile: "",
+      relation: "",
+    },
   };
+
+  const { profile, idDetails, relativeDetails } = profileInfo;
+
   function submitHandler() {
     console.log("submit handler called");
+    setProfile(profileInfo);
   }
 </script>
 
@@ -32,34 +44,34 @@
       required
       variant="default"
       placeholder="Enter your full name*"
-      bind:value={userDetails.name}
+      bind:value={profile.name}
     />
     <Input
       type="email"
       required
       variant="default"
       placeholder="Enter valid Email ID*"
-      bind:value={userDetails.email}
+      bind:value={profile.email}
     />
     <Input
       type="number"
       required
       variant="default"
       placeholder="Mobile Number*"
-      bind:value={userDetails.mobile}
+      bind:value={profile.mobile}
     />
     <Input
       type="number"
       required
       variant="default"
       placeholder="Age*"
-      bind:value={userDetails.age}
+      bind:value={profile.age}
     />
     <NativeSelect
       required
       data={["Male", "Female", "Transgender", "Other"]}
       placeholder="Gender*"
-      bind:value={userDetails.gender}
+      bind:value={profile.gender}
     />
     <input
       required
@@ -67,56 +79,56 @@
       class="dob"
       type="text"
       id="date"
-      bind:value={userDetails.dob}
+      bind:value={profile.dob}
     />
     <Input
       type="text"
       required
       variant="default"
       placeholder="Address*"
-      bind:value={userDetails.address}
+      bind:value={profile.addr}
     />
     <Input
       type="text"
       required
       variant="default"
       placeholder="City*"
-      bind:value={userDetails.city}
+      bind:value={profile.city}
     />
     <Input
       type="text"
       required
       variant="default"
       placeholder="District*"
-      bind:value={userDetails.district}
+      bind:value={profile.district}
     />
     <Input
       type="text"
       required
       variant="default"
       placeholder="State*"
-      bind:value={userDetails.state}
+      bind:value={profile.state}
     />
     <Input
       type="number"
       required
       variant="default"
       placeholder="Pincode*"
-      bind:value={userDetails.pincode}
+      bind:value={profile.pincode}
     />
     <Input
       type="text"
       required
       variant="default"
       placeholder="Relative Name*"
-      bind:value={userDetails.relativeName}
+      bind:value={relativeDetails.relativeName}
     />
     <Input
       type="number"
       required
       variant="default"
       placeholder="Relative Mobile Number*"
-      bind:value={userDetails.relativeMobile}
+      bind:value={relativeDetails.relativeMobile}
     />
     <NativeSelect
       required
@@ -132,24 +144,25 @@
         "Other",
       ]}
       placeholder="Relation*"
-      bind:value={userDetails.relation}
+      bind:value={relativeDetails.relation}
     />
     <NativeSelect
       required
       data={["Aadhar", "PAN", "Driving License", "Passport", "Voter ID"]}
       placeholder="ID Type*"
-      bind:value={userDetails.selectedID}
+      bind:value={idDetails.selectedID}
     />
     <Input
       type="number"
       required
       variant="default"
       placeholder="ID Card Number*"
-      bind:value={userDetails.IDNumber}
+      bind:value={idDetails.IDNumber}
     />
     <Button type="submit" color="teal" radius="md" size="lg" ripple
       >Update Profile</Button
     >
+    <button on:click={viewProfile}>View Profile</button>
   </form>
 </main>
 
@@ -174,7 +187,7 @@
   .dob {
     height: 36px;
     padding: 0 12px;
-    border: 1px solid grey;
+    border: 1px solid #ced4da;
     border-radius: 3px;
   }
 </style>

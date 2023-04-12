@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postinstall": "patch-package"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^2.0.2",
@@ -17,7 +18,7 @@
     "@ethersproject/providers": "^5.7.2",
     "@svelteuidev/composables": "^0.10.0",
     "@svelteuidev/core": "^0.10.0",
-    "ethers": "^6.0.5",
+    "ethers": "^5.5.4",
     "svelte-routing": "^1.6.0"
   }
 }

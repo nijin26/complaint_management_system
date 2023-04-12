@@ -1,162 +1,74 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.19;
 
 contract Complaint {
-    address public officer;
-    address public owner;
-    uint256 public nextId;
-    uint256[] public pendingApprovals;
-    uint256[] public pendingResolutions;
-    uint256[] public resolvedCases;
+    
+    struct ComplaintDetails {
+        string complaintNature;
+        string casteCategory;
+        string placeOfIncident;
+        string dateAndTime;
+        string policeStation;
+        string officeToFileComplaint;
+        string district;
+        string complaintDescription;
+        string status;
+        string remarks;
+    }
+    
+    ComplaintDetails[] complaints;
+    address owner;
+    mapping(address => bool) isUser;
+    mapping(address => bool) isPoliceStation;
+    mapping(address => bool) isPoliceSuperior;
+    mapping(address => bool) isJudiciary;
 
-    constructor(address _officer) {
+    constructor() {
         owner = msg.sender;
-        officer = _officer;
-        nextId = 1;
     }
-
+    
     modifier onlyOwner() {
-        require(
-            msg.sender == owner,
-            "You are not the owner of this smart contract"
-        );
+        require(msg.sender == owner, "Only owner can call this function");
         _;
     }
-
-    modifier onlyOfficer() {
-        require(
-            msg.sender == officer,
-            "You are not registered officer of this smart contract"
-        );
+    
+    modifier onlyUser() {
+        require(isUser[msg.sender], "Only user can call this function");
         _;
     }
-
-    struct complaint {
-        uint256 id;
-        address complaintRegisteredBy;
-        string title;
-        string description;
-        string approvalRemark;
-        string resolutionRemark;
-        bool isApproved;
-        bool isResolved;
-        bool exists;
+    
+    modifier onlyPoliceStation() {
+        require(isPoliceStation[msg.sender], "Only police station can call this function");
+        _;
     }
-    mapping(uint256 => complaint) public Complaints;
-
-    event complaintFiled(
-        uint256 id,
-        address complaintRegisteredBy,
-        string title
-    );
-
-    function fileComplaint(string memory _title, string memory _description)
-        public
-    {
-        complaint storage newComplaint = Complaints[nextId];
-        newComplaint.id = nextId;
-        newComplaint.complaintRegisteredBy = msg.sender;
-        newComplaint.title = _title;
-        newComplaint.description = _description;
-        newComplaint.approvalRemark = "Pending Approval";
-        newComplaint.resolutionRemark = "Pending Resolution";
-        newComplaint.isApproved = false;
-        newComplaint.isResolved = false;
-        newComplaint.exists = true;
-        emit complaintFiled(nextId, msg.sender, _title);
-        nextId++;
+    
+    modifier onlyPoliceSuperior() {
+        require(isPoliceSuperior[msg.sender], "Only police superior can call this function");
+        _;
     }
-
-    function approveComplaint(uint256 _id, string memory _approvalRemark)
-        public
-        onlyOfficer
-    {
-        require(
-            Complaints[_id].exists == true,
-            "This complaint id does not exist"
-        );
-        require(
-            Complaints[_id].isApproved == false,
-            "Complaint is already approved"
-        );
-        Complaints[_id].isApproved = true;
-        Complaints[_id].approvalRemark = _approvalRemark;
+    
+    modifier onlyJudiciary() {
+        require(isJudiciary[msg.sender], "Only judiciary can call this function");
+        _;
     }
-
-    function discardComplaint(uint256 _id, string memory _approvalRemark)
-        public
-        onlyOfficer
-    {
-        require(
-            Complaints[_id].exists == true,
-            "This complaint id does not exist"
-        );
-        require(
-            Complaints[_id].isApproved == false,
-            "Complaint is already approved"
-        );
-        Complaints[_id].exists = false;
-        Complaints[_id].approvalRemark = string.concat(
-            "This complaint is rejected. Reason: ",
-            _approvalRemark
-        );
+    
+    function addComplaint(ComplaintDetails memory complaint) public {
+        complaints.push(complaint);
+        emit ComplaintAdded(complaint);
     }
-
-    function resolveComplaint(uint256 _id, string memory _resolutionRemark)
-        public
-        onlyOfficer
-    {
-        require(
-            Complaints[_id].exists == true,
-            "This complaint id does not exist"
-        );
-        require(
-            Complaints[_id].isApproved == true,
-            "Complaint is not yet approved"
-        );
-        require(
-            Complaints[_id].isResolved == false,
-            "Complaint is already resolved"
-        );
-        Complaints[_id].isResolved = true;
-        Complaints[_id].resolutionRemark = _resolutionRemark;
+    
+    function getComplaintDetails(uint index) public view returns (ComplaintDetails memory) {
+        require(index < complaints.length, "Invalid index");
+        return complaints[index];
     }
-
-    function calcPendingApprovalIds() public {
-        delete pendingApprovals;
-        for (uint256 i = 1; i < nextId; i++) {
-            if (
-                Complaints[i].isApproved == false &&
-                Complaints[i].exists == true
-            ) {
-                pendingApprovals.push(Complaints[i].id);
-            }
-        }
+    
+    function updateComplaint(uint index, ComplaintDetails memory updatedComplaint) public onlyPoliceStation {
+        require(index < complaints.length, "Invalid index");
+        complaints[index] = updatedComplaint;
+        emit ComplaintUpdated(updatedComplaint);
     }
-
-    function calcPendingResolutionIds() public {
-        delete pendingResolutions;
-        for (uint256 i = 1; i < nextId; i++) {
-            if (
-                Complaints[i].isResolved == false &&
-                Complaints[i].isApproved == true &&
-                Complaints[i].exists == true
-            ) {
-                pendingResolutions.push(Complaints[i].id);
-            }
-        }
-    }
-
-    function calcResolvedIds() public {
-        delete resolvedCases;
-        for (uint256 i = 1; i < nextId; i++) {
-            if (Complaints[i].isResolved == true) {
-                resolvedCases.push(Complaints[i].id);
-            }
-        }
-    }
-
-    function setOfficerAddress(address _officer) public onlyOwner {
-        officer = _officer;
-    }
+    
+    event ComplaintAdded(ComplaintDetails complaint);
+    event ComplaintUpdated(ComplaintDetails updatedComplaint);
+    
 }
