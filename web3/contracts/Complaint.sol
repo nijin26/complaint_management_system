@@ -2,7 +2,6 @@
 pragma solidity ^0.8.19;
 
 contract Complaint {
-    
     struct ComplaintDetails {
         string complaintNature;
         string casteCategory;
@@ -15,7 +14,7 @@ contract Complaint {
         string status;
         string remarks;
     }
-    
+
     ComplaintDetails[] complaints;
     address owner;
     mapping(address => bool) isUser;
@@ -26,49 +25,62 @@ contract Complaint {
     constructor() {
         owner = msg.sender;
     }
-    
+
+    event ComplaintAdded(ComplaintDetails complaint);
+    event ComplaintUpdated(ComplaintDetails updatedComplaint);
+
     modifier onlyOwner() {
         require(msg.sender == owner, "Only owner can call this function");
         _;
     }
-    
+
     modifier onlyUser() {
         require(isUser[msg.sender], "Only user can call this function");
         _;
     }
-    
+
     modifier onlyPoliceStation() {
-        require(isPoliceStation[msg.sender], "Only police station can call this function");
+        require(
+            isPoliceStation[msg.sender],
+            "Only police station can call this function"
+        );
         _;
     }
-    
+
     modifier onlyPoliceSuperior() {
-        require(isPoliceSuperior[msg.sender], "Only police superior can call this function");
+        require(
+            isPoliceSuperior[msg.sender],
+            "Only police superior can call this function"
+        );
         _;
     }
-    
+
     modifier onlyJudiciary() {
-        require(isJudiciary[msg.sender], "Only judiciary can call this function");
+        require(
+            isJudiciary[msg.sender],
+            "Only judiciary can call this function"
+        );
         _;
     }
-    
+
     function addComplaint(ComplaintDetails memory complaint) public {
         complaints.push(complaint);
         emit ComplaintAdded(complaint);
     }
-    
-    function getComplaintDetails(uint index) public view returns (ComplaintDetails memory) {
+
+    function getComplaintDetails(
+        uint index
+    ) public view returns (ComplaintDetails memory) {
         require(index < complaints.length, "Invalid index");
         return complaints[index];
     }
-    
-    function updateComplaint(uint index, ComplaintDetails memory updatedComplaint) public onlyPoliceStation {
+
+    function updateComplaint(
+        uint index,
+        ComplaintDetails memory updatedComplaint
+    ) public onlyPoliceStation {
         require(index < complaints.length, "Invalid index");
         complaints[index] = updatedComplaint;
         emit ComplaintUpdated(updatedComplaint);
     }
-    
-    event ComplaintAdded(ComplaintDetails complaint);
-    event ComplaintUpdated(ComplaintDetails updatedComplaint);
-    
 }

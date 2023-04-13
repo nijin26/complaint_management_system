@@ -1,40 +1,122 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.19;
 
-import './Complaint.sol';
+import "./Complaint.sol";
+import "./PoliceSuperior.sol";
 
-contract Police is ComplaintContract {
-
-    struct PoliceStation {
+contract Police is Complaint, PoliceSuperior {
+    struct Station {
         string name;
         string location;
-        string stationAddress;
-        string phoneNumber;
-        string nameOfCI;
+        string district;
+        string stationType;
+        uint mobile;
+        string addr;
+        bool approved;
+        address approvedBy;
     }
 
-    mapping(address => PoliceStation) public policeStations;
+    mapping(address => Station) public policeStations;
 
-    modifier onlyRegisteredPoliceStation() {
-        require(isPoliceStation[msg.sender], "Only a registered police station can perform this action");
+    event ProfileCreated(address indexed policeStation);
+    event ProfileUpdated(address indexed policeStation);
+    event ApprovalUpdated(address indexed policeStation, bool approved);
+
+    modifier onlyOwnerOrApprovedPoliceStation() {
+        require(
+            msg.sender == owner || policeStations[msg.sender].approved),
+            "Unauthorized"
+        );
         _;
     }
 
-    function registerPoliceStation(string memory _name, string memory _location, string memory _stationAddress, string memory _phoneNumber, string memory _nameOfCI) public {
-        require(!isPoliceStation[msg.sender], "Police station already registered.");
-        isPoliceStation[msg.sender] = true;
-        policeStations[msg.sender] = PoliceStation(_name, _location, _stationAddress, _phoneNumber, _nameOfCI);
+    function createProfile(
+        string memory _name,
+        string memory _location,
+        string memory _district,
+        string memory _stationType,
+        string memory  _addr
+        uint _mobile,
+    ) public {
+        policeStations[msg.sender] = Station({
+            name: _name,
+            location: _location,
+            district: _district,
+            stationType: _stationType,
+            mobile: _mobile,
+            addr: _addr,
+            approved: false,
+            approvedBy: address(0)
+        });
+        emit ProfileCreated(msg.sender);
     }
 
-    function addFir(uint256 _index, string memory _remarks) public onlyRegisteredPoliceStation {
-        require(_index < complaints.length, "Complaint does not exist");
-        complaints[_index].status = "FIR";
-        complaints[_index].remarks = _remarks;
+    function updateProfile(
+        string memory _name,
+        string memory _location,
+        string memory _district,
+        string memory _stationType,
+        string memory _addr
+        uint _mobile,
+    ) public onlyOwnerOrApprovedPoliceStation {
+        Station storage profile = policeStations[msg.sender];
+        profile.name = _name;
+        profile.location = _location;
+        profile.district = _district;
+        profile.stationType = _stationType;
+        profile.mobile = _mobile;
+        profile.addr = _addr;
+        emit ProfileUpdated(msg.sender);
     }
 
-    function addNcr(uint256 _index, string memory _remarks) public onlyRegisteredPoliceStation {
-        require(_index < complaints.length, "Complaint does not exist");
-        complaints[_index].status = "NCR";
-        complaints[_index].remarks = _remarks;
+    function approvePoliceStation(
+        address _policeStation,
+        bool _approved
+    ) public onlyOwnerOrApprovedPoliceSuperior {
+        isPoliceStation[_policeStation] = true;
+        policeStations[_policeStation].approved = _approved;
+        policeStations[_policeStation].approvedBy = msg.sender;
+        emit ApprovalUpdated(_policeStation, _approved);
+    }
+
+    function getProfileDetails(
+        address _policeStation
+    )
+        public
+        view
+        returns (
+            string memory,
+            string memory,
+            string memory,
+            string memory,
+            string memory,
+            uint,
+            bool,
+            address
+        )
+    {
+        Station memory profile = policeStations[_policeStation];
+        return (
+            profile.name,
+            profile.location,
+            profile.district,
+            profile.stationType,
+            profile.mobile,
+            profile.addr,
+            profile.approved,
+            profile.approvedBy
+        );
+    }
+
+    function getApprovingSuperiorDetails(
+        address _policeStation
+    ) public view returns (string memory, string memory) {
+        Station memory profile = policeStations[_policeStation];
+        require(
+            profile.approvedBy != address(0),
+            "No approving superior found"
+        );
+        Superior memory approvingSuperior = policeSuperiors[profile.approvedBy];
+        return (approvingSuperior.name, approvingSuperior.designation);
     }
 }
