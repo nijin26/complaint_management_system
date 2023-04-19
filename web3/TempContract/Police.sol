@@ -24,7 +24,7 @@ contract Police is Complaint, PoliceSuperior {
 
     modifier onlyOwnerOrApprovedPoliceStation() {
         require(
-            msg.sender == owner || policeStations[msg.sender].approved),
+            msg.sender == owner || policeStations[msg.sender].approved,
             "Unauthorized"
         );
         _;
@@ -35,8 +35,8 @@ contract Police is Complaint, PoliceSuperior {
         string memory _location,
         string memory _district,
         string memory _stationType,
-        string memory  _addr
-        uint _mobile,
+        string memory _addr,
+        uint _mobile
     ) public {
         policeStations[msg.sender] = Station({
             name: _name,
@@ -56,8 +56,8 @@ contract Police is Complaint, PoliceSuperior {
         string memory _location,
         string memory _district,
         string memory _stationType,
-        string memory _addr
-        uint _mobile,
+        string memory _addr,
+        uint _mobile
     ) public onlyOwnerOrApprovedPoliceStation {
         Station storage profile = policeStations[msg.sender];
         profile.name = _name;

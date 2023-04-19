@@ -2,6 +2,7 @@
 pragma solidity ^0.8.19;
 
 import "./Complaint.sol";
+
 import "./Police.sol";
 
 contract PoliceSuperior is Complaint, Police {

@@ -1,8 +1,12 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity >=0.7.0 <0.9.0;
+
+import "hardhat/console.sol";
 
 contract Complaint {
     struct ComplaintDetails {
+        uint complaintId;
         string complaintNature;
         string casteCategory;
         string placeOfIncident;
@@ -15,8 +19,9 @@ contract Complaint {
         string remarks;
     }
 
-    ComplaintDetails[] complaints;
+    ComplaintDetails[] public complaints;
     address owner;
+    mapping(address => uint) ComplaintByID;
     mapping(address => bool) isUser;
     mapping(address => bool) isPoliceStation;
     mapping(address => bool) isPoliceSuperior;
@@ -64,23 +69,24 @@ contract Complaint {
     }
 
     function addComplaint(ComplaintDetails memory complaint) public {
+        complaint.complaintId = complaints.length; // complaintId is auto-incremented by array index
         complaints.push(complaint);
         emit ComplaintAdded(complaint);
     }
 
     function getComplaintDetails(
-        uint index
+        uint complaintId
     ) public view returns (ComplaintDetails memory) {
-        require(index < complaints.length, "Invalid index");
-        return complaints[index];
+        require(complaintId < complaints.length, "Complaint not found"); // added check for valid complaint ID
+        return complaints[complaintId];
     }
 
     function updateComplaint(
-        uint index,
+        uint complaintId,
         ComplaintDetails memory updatedComplaint
-    ) public onlyPoliceStation {
-        require(index < complaints.length, "Invalid index");
-        complaints[index] = updatedComplaint;
+    ) public {
+        require(complaintId <= complaints.length, "Complaint not found"); // added check for valid complaint ID
+        complaints[complaintId] = updatedComplaint;
         emit ComplaintUpdated(updatedComplaint);
     }
 }

@@ -2,7 +2,7 @@ const { ethers } = require("hardhat");
 
 async function main() {
   // deploy the contract
-  const Contract = await ethers.getContractFactory("UserProfile");
+  const Contract = await ethers.getContractFactory("Complaint");
   const contract = await Contract.deploy();
 
   // wait for the contract to be mined
