@@ -2,7 +2,6 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
-import "hardhat/console.sol";
 
 contract Complaint {
     struct ComplaintDetails {
@@ -56,6 +55,14 @@ contract Complaint {
         require(
             isPoliceSuperior[msg.sender],
             "Only police superior can call this function"
+        );
+        _;
+    }
+
+    modifier onlyOwnerOrIsSuperior() {
+        require(
+            isPoliceSuperior[msg.sender] || msg.sender == owner,
+            "Only police superior or owner can call this function"
         );
         _;
     }

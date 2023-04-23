@@ -5,9 +5,9 @@ describe("PoliceSuperior", function () {
 
   beforeEach(async function () {
     [owner, user1, user2] = await ethers.getSigners();
-    const Complaint = await ethers.getContractFactory("Complaint");
-    complaintContract = await Complaint.connect(owner).deploy();
-    await complaintContract.deployed();
+    // const Complaint = await ethers.getContractFactory("Complaint");
+    // complaintContract = await Complaint.connect(owner).deploy();
+    // await complaintContract.deployed();
 
     const PoliceSuperior = await ethers.getContractFactory("PoliceSuperior");
     currentContract = await PoliceSuperior.connect(owner).deploy();
@@ -94,7 +94,7 @@ describe("PoliceSuperior", function () {
         unit,
         approved,
         approvedBy,
-      ] = await currentContract.policeSuperiors(user1.address);
+      ] = await currentContract.connect(user1).getProfileDetails();
       expect(approved).to.be.true;
       expect(approvedBy).to.equal(owner.address);
     });
