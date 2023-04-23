@@ -3,9 +3,7 @@ pragma solidity ^0.8.19;
 
 import "./Complaint.sol";
 
-import "./Police.sol";
-
-contract PoliceSuperior is Complaint, Police {
+contract PoliceSuperior is Complaint {
     struct Superior {
         string name;
         string email;
@@ -56,7 +54,8 @@ contract PoliceSuperior is Complaint, Police {
             rank: _rank,
             designation: _designation,
             unit: _unit,
-            approved: false
+            approved: false,
+            approvedBy: address(0)
         });
         emit ProfileCreated(msg.sender);
     }
