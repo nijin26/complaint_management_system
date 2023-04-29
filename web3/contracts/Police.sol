@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "./Complaint.sol";
+import "hardhat/console.sol";
+import "./PoliceSuperior.sol";
 
-contract Police is Complaint {
+contract Police is PoliceSuperior {
     struct Station {
         string name;
         string location;
@@ -17,9 +18,9 @@ contract Police is Complaint {
 
     mapping(address => Station) public policeStations;
 
-    event ProfileCreated(address indexed policeStation);
-    event ProfileUpdated(address indexed policeStation);
-    event ApprovalUpdated(address indexed policeStation, bool approved);
+    event StationProfileCreated(address indexed policeStation);
+    event StationProfileUpdated(address indexed policeStation);
+    event StationApprovalUpdated(address indexed policeStation, bool approved);
 
     modifier onlyApprovedPoliceStation() {
         require(
@@ -29,7 +30,7 @@ contract Police is Complaint {
         _;
     }
 
-    function createProfile(
+    function createStationProfile(
         string memory _name,
         string memory _location,
         string memory _district,
@@ -38,7 +39,7 @@ contract Police is Complaint {
         uint _mobile
     ) public {
         policeStations[msg.sender] = Station({
-            name: _name,
+            name: _name,i
             location: _location,
             district: _district,
             stationType: _stationType,
@@ -47,10 +48,10 @@ contract Police is Complaint {
             approved: false,
             approvedBy: address(0)
         });
-        emit ProfileCreated(msg.sender);
+        emit StationProfileCreated(msg.sender);
     }
 
-    function updateProfile(
+    function updateStationProfile(
         string memory _name,
         string memory _location,
         string memory _district,
@@ -65,22 +66,20 @@ contract Police is Complaint {
         profile.stationType = _stationType;
         profile.addr = _addr;
         profile.mobile = _mobile;
-        emit ProfileUpdated(msg.sender);
+        emit StationProfileUpdated(msg.sender);
     }
 
-    function approvePoliceStation(
+    function approveStationProfile(
         address _policeStation,
         bool _approved
     ) public onlyPoliceSuperior {
         isPoliceStation[_policeStation] = true;
         policeStations[_policeStation].approved = _approved;
         policeStations[_policeStation].approvedBy = msg.sender;
-        emit ApprovalUpdated(_policeStation, _approved);
+        emit StationApprovalUpdated(_policeStation, _approved);
     }
 
-    function getProfileDetails(
-        address _policeStation
-    )
+    function getStationDetails()
         public
         view
         returns (
@@ -94,7 +93,7 @@ contract Police is Complaint {
             address
         )
     {
-        Station memory profile = policeStations[_policeStation];
+        Station memory profile = policeStations[msg.sender];
         return (
             profile.name,
             profile.location,
@@ -106,6 +105,4 @@ contract Police is Complaint {
             profile.approvedBy
         );
     }
-
-  
 }

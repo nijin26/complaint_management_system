@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
+import "hardhat/console.sol";
 import "./Complaint.sol";
 
 contract PoliceSuperior is Complaint {
@@ -58,6 +59,29 @@ contract PoliceSuperior is Complaint {
             approvedBy: address(0)
         });
         emit ProfileCreated(msg.sender);
+    }
+
+    function addApprovedProfile(
+        string memory _name,
+        string memory _email,
+        uint _mobile,
+        string memory _rank,
+        string memory _designation,
+        string memory _unit,
+        address _newSuperior
+    ) public onlyOwnerOrPoliceSuperior {
+        policeSuperiors[_newSuperior] = Superior({
+            name: _name,
+            email: _email,
+            mobile: _mobile,
+            rank: _rank,
+            designation: _designation,
+            unit: _unit,
+            approved: true,
+            approvedBy: msg.sender
+        });
+        isPoliceSuperior[_newSuperior] = true;
+        emit ProfileCreated(_newSuperior);
     }
 
     function updateProfile(

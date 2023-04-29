@@ -20,11 +20,11 @@ contract Complaint {
 
     ComplaintDetails[] public complaints;
     address owner;
-    mapping(address => uint) ComplaintByID;
-    mapping(address => bool) isUser;
-    mapping(address => bool) isPoliceStation;
-    mapping(address => bool) isPoliceSuperior;
-    mapping(address => bool) isJudiciary;
+    mapping(address => uint) public ComplaintByID;
+    mapping(address => bool) public isUser;
+    mapping(address => bool) public isPoliceStation;
+    mapping(address => bool) public isPoliceSuperior;
+    mapping(address => bool) public isJudiciary;
 
     constructor() {
         owner = msg.sender;
@@ -53,7 +53,7 @@ contract Complaint {
 
     modifier onlyPoliceSuperior() {
         require(
-            isPoliceSuperior[msg.sender],
+            isPoliceSuperior[msg.sender] || msg.sender == owner,
             "Only police superior can call this function"
         );
         _;
