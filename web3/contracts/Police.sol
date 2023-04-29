@@ -39,7 +39,7 @@ contract Police is PoliceSuperior {
         uint _mobile
     ) public {
         policeStations[msg.sender] = Station({
-            name: _name,i
+            name: _name,
             location: _location,
             district: _district,
             stationType: _stationType,
