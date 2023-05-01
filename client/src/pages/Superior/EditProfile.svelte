@@ -1,0 +1,127 @@
+<script>
+</script>
+
+<div class="w-full max-w-md mx-auto">
+  <form class="bg-white rounded-lg shadow-lg p-6 mt-5">
+    <div class="mb-4">
+      <label class="block text-gray-700 font-bold mb-2" for="name">
+        Name:
+      </label>
+      <input
+        required
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        id="name"
+        type="text"
+        placeholder="Enter your name"
+      />
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 font-bold mb-2" for="email">
+        Email:
+      </label>
+      <input
+        required
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        id="email"
+        type="email"
+        placeholder="Enter your email"
+      />
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 font-bold mb-2" for="mobile">
+        Mobile:
+      </label>
+      <input
+        required
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        id="mobile"
+        type="tel"
+        placeholder="Enter your mobile number"
+      />
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 font-bold mb-2" for="rank">
+        Rank:
+      </label>
+      <select
+        required
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        id="rank"
+      >
+        <option value="">Select your rank</option>
+        <option value="Constable">Constable</option>
+        <option value="Head Constable">Head Constable</option>
+        <option value="Assistant Sub-Inspector">Assistant Sub-Inspector</option>
+        <option value="Sub-Inspector">Sub-Inspector</option>
+        <option value="Inspector">Inspector</option>
+        <option value="Deputy Superintendent of Police"
+          >Deputy Superintendent of Police</option
+        >
+        <option value="Superintendent of Police"
+          >Superintendent of Police</option
+        >
+        <option value="Deputy Inspector General of Police"
+          >Deputy Inspector General of Police</option
+        >
+        <option value="Inspector General of Police"
+          >Inspector General of Police</option
+        >
+      </select>
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 font-bold mb-2" for="designation">
+        Designation:
+      </label>
+      <select
+        required
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        id="designation"
+      >
+        <option value="">Select your designation</option>
+        <option value="Station House Officer">Station House Officer</option>
+        <option value="Circle Inspector">Circle Inspector</option>
+        <option value="Deputy Commissioner of Police"
+          >Deputy Commissioner of Police</option
+        >
+        <option value="Additional Commissioner of Police"
+          >Additional Commissioner of Police</option
+        >
+        <option value="Joint Commissioner of Police"
+          >Joint Commissioner of Police</option
+        >
+        <option value="Commissioner of Police">Commissioner of Police</option>
+      </select>
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 font-bold mb-2" for="unit">
+        Unit:
+      </label>
+      <select
+        required
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        id="unit"
+      >
+        <option value="">Select your unit</option>
+        <option value="Local police station">Local police station</option>
+        <option value="Crime Branch">Crime Branch</option>
+        <option value="Special Task Force">Special Task Force</option>
+        <option value="Anti-Terrorism Squad">Anti-Terrorism Squad</option>
+        <option value="Traffic Police">Traffic Police</option>
+        <option value="Cyber Crime Cell">Cyber Crime Cell</option>
+        <option value="Narcotics Control Bureau"
+          >Narcotics Control Bureau</option
+        >
+        <option value="Intelligence Bureau">Intelligence Bureau</option>
+      </select>
+    </div>
+    <button
+      class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+      type="submit"
+    >
+      Save Profile Details
+    </button>
+  </form>
+</div>
+
+<style>
+</style>

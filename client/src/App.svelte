@@ -1,4 +1,5 @@
 <script>
+  import "./app.css";
   import { metamask } from "./lib/Store.js";
   import { Router, Route } from "svelte-routing";
 
@@ -9,6 +10,14 @@
   import Profile from "./pages/Profile.svelte";
   import PoliceDashboard from "./pages/Police/PoliceDashboard.svelte";
 
+  // Superior
+  import EditProfile from "./pages/Superior/EditProfile.svelte";
+  import ListofStations from "./pages/Superior/ListofStations.svelte";
+
+  //Station
+  import EditStationProfile from "./pages/Police/EditStationProfile.svelte";
+  import About from "./pages/About.svelte";
+
   $: {
     window.ethereum.on("accountsChanged", function (accounts) {
       if (accounts.length !== 0)
@@ -18,11 +27,16 @@
   }
 </script>
 
-<div class="app">
+<div>
   <NavBar />
   <main>
     <Router>
       <Route component={Home} />
+      <Route path="/About" component={About} />
+      <Route path="/superior/profile/edit" component={EditProfile} />
+      <Route path="/superior/stations" component={ListofStations} />
+      <Route path="/station/profile/edit" component={EditStationProfile} />
+
       {#if $metamask.connected}
         <Route path="/filecomplaint" component={Complaint} />
         <Route path="/profile" component={Profile} />

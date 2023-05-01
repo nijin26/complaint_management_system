@@ -1,23 +1,10 @@
 const { assert, expect } = require("chai");
 
 describe("Police", async function () {
-  let PoliceContract, SuperiorContract, ComplaintContract, station, superior;
+  let PoliceContract, station, superior;
 
   before(async function () {
     [owner, station, superior] = await ethers.getSigners();
-    // console.log(await ethers.getSigners(), "Signers");
-    console.log("Owner", owner.address);
-    console.log("Station", station.address);
-    console.log("Superior", superior.address);
-
-    // const Complaint = await ethers.getContractFactory("Complaint");
-    // ComplaintContract = await Complaint.connect(owner).deploy();
-    // await ComplaintContract.deployed();
-
-    // const PoliceSuperior = await ethers.getContractFactory("PoliceSuperior");
-    // SuperiorContract = await PoliceSuperior.connect(owner).deploy();
-    // await SuperiorContract.deployed();
-
     const PoliceStation = await ethers.getContractFactory("Police");
     PoliceContract = await PoliceStation.connect(owner).deploy();
     await PoliceContract.deployed();
