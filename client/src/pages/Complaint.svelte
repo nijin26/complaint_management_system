@@ -1,12 +1,10 @@
 <script>
-  import { Input, NativeSelect, Button } from "@svelteuidev/core";
-
   import { complaintNature, districts } from "../lib/Lists";
   import { getPoliceStation } from "../lib/ListPoliceStations";
+  import PoliceDashboard from "./Police/PoliceDashboard.svelte";
 
   const complaint = {
     complaintNature: "",
-    casteCategory: "",
     placeOfIncident: "",
     dateAndTime: "",
     policeStation: "",
@@ -15,102 +13,132 @@
     complaintDescription: "",
   };
 
+  let policeStationOptions;
+
+  $: {
+    policeStationOptions = getPoliceStation(complaint.district || "Kollam");
+  }
+
   const submitHandler = () => {};
 </script>
 
-<main>
-  <h1>File a Complaint</h1>
-  <form class="profile" on:submit|preventDefault={submitHandler}>
-    <NativeSelect
-      required
-      data={complaintNature}
-      placeholder="Complaint Nature*"
-      bind:value={complaint.complaintNature}
-    />
-    <NativeSelect
-      required
-      data={["OBC", "SC/ST", "GENERAL"]}
-      placeholder="Caste Category*"
-      bind:value={complaint.casteCategory}
-    />
-    <Input
-      type="text"
-      required
-      variant="default"
-      placeholder="Place of Incident*"
-      bind:value={complaint.placeOfIncident}
-    />
-    <input
-      required
-      placeholder="Date and time of incident*"
-      class="dob"
-      type="text"
-      id="date"
-      bind:value={complaint.dateAndTime}
-    />
-    <NativeSelect
-      required
-      data={districts}
-      placeholder="District*"
-      bind:value={complaint.district}
-    />
-    <NativeSelect
-      required
-      data={getPoliceStation(complaint.district || "Kollam")}
-      placeholder="Police Station*"
-      bind:value={complaint.policeStation}
-    />
+<div class="max-w-md mx-auto mb-10">
+  <form class="mt-8 space-y-6">
+    <div>
+      <label
+        for="complaintNature"
+        class="block text-sm font-medium text-gray-700"
+      >
+        Complaint Nature
+      </label>
+      <select
+        id="complaintNature"
+        name="complaintNature"
+        class="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline-blue focus:border-blue-300"
+        bind:value={complaint.complaintNature}
+      >
+        <option value="" disabled>Select complaint nature</option>
+        {#each complaintNature as nature}
+          <option>{nature}</option>
+        {/each}
+      </select>
+    </div>
 
-    <Input
-      type="text"
-      required
-      variant="default"
-      placeholder="Complaint Description*"
-      bind:value={complaint.complaintDescription}
-    />
-    <textarea
-      name="description"
-      id="complaintDesc"
-      cols="30"
-      rows="5"
-      value={complaint.complaintDescription}
-    />
+    <div>
+      <label
+        for="placeOfIncident"
+        class="block text-sm font-medium text-gray-700"
+      >
+        Place of Incident
+      </label>
+      <input
+        type="text"
+        id="placeOfIncident"
+        name="placeOfIncident"
+        class="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline-blue focus:border-blue-300"
+        bind:value={complaint.placeOfIncident}
+      />
+    </div>
 
-    <Button type="submit" color="teal" radius="md" size="lg" ripple
-      >Register Complaint</Button
+    <div>
+      <label for="dateAndTime" class="block text-sm font-medium text-gray-700">
+        Date and Time
+      </label>
+      <input
+        id="dateAndTime"
+        name="dateAndTime"
+        type="datetime-local"
+        class="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline-blue focus:border-blue-300"
+        placeholder="Enter date and time"
+        bind:value={complaint.dateAndTime}
+      />
+    </div>
+
+    <div>
+      <label for="district" class="block text-gray-700 font-bold mb-2"
+        >District</label
+      >
+      <select
+        id="district"
+        name="district"
+        class="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline-blue focus:border-blue-300"
+        bind:value={complaint.district}
+      >
+        <option value="">-- Select District --</option>
+        {#each districts as district}
+          <option value={district}>{district}</option>
+        {/each}
+      </select>
+    </div>
+
+    <div>
+      <label
+        for="policeStation"
+        class="block text-sm font-medium text-gray-700"
+      >
+        Police Station
+      </label>
+      <select
+        id="policeStation"
+        name="policeStation"
+        class="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline-blue focus:border-blue-300"
+        bind:value={complaint.policeStation}
+      >
+        <option value="" disabled>Select police station</option>
+        {#each policeStationOptions as station}
+          <option>{station}</option>
+        {/each}
+      </select>
+    </div>
+    <div class="my-4">
+      <label for="complaintSubject" class="block text-gray-700 font-bold mb-2"
+        >Complaint Subject</label
+      >
+      <input
+        type="text"
+        id="complaintSubject"
+        name="complaintSubject"
+        class="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline-blue focus:border-blue-300"
+        placeholder="Enter Complaint Subject"
+      />
+    </div>
+    <div class="my-4">
+      <label
+        for="complaintDescription"
+        class="block text-gray-700 font-bold mb-2">Complaint Description</label
+      >
+      <textarea
+        id="complaintDescription"
+        name="complaintDescription"
+        class="w-full h-32 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline-blue focus:border-blue-300"
+        placeholder="Enter Complaint Description"
+      />
+    </div>
+    <button
+      class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      type="submit"
     >
+      Register Complaint
+    </button>
   </form>
-</main>
-
-<style>
-  h1 {
-    text-align: center;
-  }
-  main {
-    width: 50%;
-    margin: 1rem auto;
-    padding: 1rem;
-    border: 1px solid black;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-  }
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .dob {
-    height: 36px;
-    padding: 0 12px;
-    border: 1px solid #ced4da;
-    border-radius: 3px;
-  }
-  #complaintDesc {
-    padding: 10px;
-    border: 1px solid gray;
-    border-radius: 3px;
-    resize: none;
-  }
-</style>
+</div>

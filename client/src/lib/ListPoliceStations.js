@@ -1,10 +1,6 @@
-export const getPoliceStation = (district) => {
-  const detailsOfPolice = policeStations.find((police) => {
-    if (police.district === district) return police;
-  });
-
-  if (detailsOfPolice.stations.length !== 0) return detailsOfPolice.stations;
-  else return [];
+export const getPoliceStation = (districtName) => {
+  const district = policeStations.find((d) => d.district === districtName);
+  return district ? district.stations : [];
 };
 
 const policeStations = [
