@@ -32,6 +32,7 @@
         Complaint Nature
       </label>
       <select
+        required
         id="complaintNature"
         name="complaintNature"
         class="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline-blue focus:border-blue-300"
@@ -52,6 +53,7 @@
         Place of Incident
       </label>
       <input
+        required
         type="text"
         id="placeOfIncident"
         name="placeOfIncident"
@@ -65,6 +67,7 @@
         Date and Time
       </label>
       <input
+        required
         id="dateAndTime"
         name="dateAndTime"
         type="datetime-local"
@@ -79,6 +82,7 @@
         >District</label
       >
       <select
+        required
         id="district"
         name="district"
         class="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline-blue focus:border-blue-300"
@@ -99,6 +103,7 @@
         Police Station
       </label>
       <select
+        required
         id="policeStation"
         name="policeStation"
         class="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline-blue focus:border-blue-300"
@@ -116,6 +121,7 @@
       >
       <input
         type="text"
+        required
         id="complaintSubject"
         name="complaintSubject"
         class="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline-blue focus:border-blue-300"
@@ -128,6 +134,7 @@
         class="block text-gray-700 font-bold mb-2">Complaint Description</label
       >
       <textarea
+        required
         id="complaintDescription"
         name="complaintDescription"
         class="w-full h-32 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline-blue focus:border-blue-300"
