@@ -6,18 +6,31 @@ const { ethers } = require("hardhat");
 describe("Complaint", function () {
   let complaintContract;
 
-  const complaint1 = {
-    complaintId: 0,
+  const complaintLocation = {
+    placeOfIncident: "ABC",
+    landmark: "XYZ",
+    district: "MNO",
+  };
+
+  const complaintParty = {
+    complainant: "0x1234567890123456789012345678901234567890",
+    policeStation: "0x0987654321098765432109876543210987654321",
+    witness: "0x5678901234567890123456789012345678901234",
+    accused: "0x4321098765432109876543210987654321098765",
+  };
+
+  const complaintDetails = {
+    complaintId: 1234,
     complaintNature: "Theft",
-    casteCategory: "General",
-    placeOfIncident: "New Delhi",
-    dateAndTime: "2023-04-19 14:00",
-    policeStation: "Rajouri Garden",
-    officeToFileComplaint: "Sub-Divisional Magistrate",
-    district: "West Delhi",
-    complaintDescription: "My bike was stolen from outside my house",
+    complaintSubject: "Stolen bike",
+    complaintDescription: "Bike was stolen from my house.",
+    dateAndTime: "2022-05-10 10:30:00",
+    location: complaintLocation,
+    party: complaintParty,
+    officeToFileComplaint: "ABC Police Station",
+    ipc: "379",
     status: "Pending",
-    remarks: "Good",
+    remarks: "Investigation in progress",
   };
 
   beforeEach(async function () {
@@ -32,30 +45,32 @@ describe("Complaint", function () {
   });
 
   it("Should add complaint", async function () {
-    await complaintContract.addComplaint(complaint1);
+    await complaintContract.addComplaint(complaintDetails);
     const complaint = await complaintContract.getComplaintDetails(0);
     expect(complaint.complaintId).to.equal(0);
-    expect(complaint.complaintNature).to.equal(complaint1.complaintNature);
-    expect(complaint.casteCategory).to.equal(complaint1.casteCategory);
-    expect(complaint.placeOfIncident).to.equal(complaint1.placeOfIncident);
-    expect(complaint.dateAndTime).to.equal(complaint1.dateAndTime);
-    expect(complaint.policeStation).to.equal(complaint1.policeStation);
+    expect(complaint.complaintNature).to.equal(
+      complaintDetails.complaintNature
+    );
+    expect(complaint.placeOfIncident).to.equal(
+      complaintDetails.placeOfIncident
+    );
+    expect(complaint.dateAndTime).to.equal(complaintDetails.dateAndTime);
+    expect(complaint.policeStation).to.equal(complaintDetails.policeStation);
     expect(complaint.officeToFileComplaint).to.equal(
-      complaint1.officeToFileComplaint
+      complaintDetails.officeToFileComplaint
     );
-    expect(complaint.district).to.equal(complaint1.district);
+    expect(complaint.district).to.equal(complaintDetails.district);
     expect(complaint.complaintDescription).to.equal(
-      complaint1.complaintDescription
+      complaintDetails.complaintDescription
     );
-    expect(complaint.status).to.equal(complaint1.status);
-    expect(complaint.remarks).to.equal(complaint1.remarks);
+    expect(complaint.status).to.equal(complaintDetails.status);
+    expect(complaint.remarks).to.equal(complaintDetails.remarks);
   });
 
   it("Should update complaint", async function () {
     const updatedComplaint = {
       complaintId: 0,
       complaintNature: "Robbery",
-      casteCategory: "Scheduled Caste",
       placeOfIncident: "Mumbai",
       dateAndTime: "2023-04-19 16:00",
       policeStation: "Andheri",
@@ -73,7 +88,6 @@ describe("Complaint", function () {
     expect(complaint.complaintNature).to.equal(
       updatedComplaint.complaintNature
     );
-    expect(complaint.casteCategory).to.equal(updatedComplaint.casteCategory);
     expect(complaint.placeOfIncident).to.equal(
       updatedComplaint.placeOfIncident
     );

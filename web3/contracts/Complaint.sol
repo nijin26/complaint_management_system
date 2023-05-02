@@ -2,18 +2,49 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
-
 contract Complaint {
+    // struct ComplaintDetails {
+    //     uint complaintId;
+    //     string complaintNature;
+    //     string complaintSubject;
+    //     string complaintDescription;
+    //     string dateAndTime;
+    //     string placeOfIncident;
+    //     string landmark;
+    //     string district;
+    //     address complainant;
+    //     address policeStation;
+    //     address witness;
+    //     address accused;
+    //     string officeToFileComplaint;
+    //     string ipc;
+    //     string status;
+    //     string remarks;
+    // }
+
+    struct ComplaintLocation {
+        string placeOfIncident;
+        string landmark;
+        string district;
+    }
+
+    struct ComplaintParty {
+        address complainant;
+        address policeStation;
+        address witness;
+        address accused;
+    }
+
     struct ComplaintDetails {
         uint complaintId;
         string complaintNature;
-        string casteCategory;
-        string placeOfIncident;
-        string dateAndTime;
-        string policeStation;
-        string officeToFileComplaint;
-        string district;
+        string complaintSubject;
         string complaintDescription;
+        string dateAndTime;
+        ComplaintLocation location;
+        ComplaintParty party;
+        string officeToFileComplaint;
+        string ipc;
         string status;
         string remarks;
     }
@@ -78,6 +109,7 @@ contract Complaint {
     function addComplaint(ComplaintDetails memory complaint) public {
         complaint.complaintId = complaints.length; // complaintId is auto-incremented by array index
         complaints.push(complaint);
+        // ComplaintByID[msg.sender]
         emit ComplaintAdded(complaint);
     }
 

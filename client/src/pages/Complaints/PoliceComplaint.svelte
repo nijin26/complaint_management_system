@@ -2,8 +2,8 @@
   let dateAndTime = "";
   let place = "";
   let landmark = "";
+  let complaintNature = "";
   let complainantDetails = "";
-  let searchDetails = "";
   let subject = "";
   let offenceDescription = "";
   let ipc = "";
