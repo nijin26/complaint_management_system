@@ -6,10 +6,9 @@
   // Components
   import NavBar from "./lib/Components/NavBar.svelte";
   import Home from "./pages/Home.svelte";
-  import Complaint from "./pages/Complaint.svelte";
   import Profile from "./pages/Profile.svelte";
   import PoliceDashboard from "./pages/Police/PoliceDashboard.svelte";
-
+  import Complaint from "./pages/Complaints/Complaint.svelte";
   // Superior
   import EditProfile from "./pages/Superior/EditProfile.svelte";
   import ListofStations from "./pages/Superior/ListofStations.svelte";
@@ -17,6 +16,10 @@
   //Station
   import EditStationProfile from "./pages/Police/EditStationProfile.svelte";
   import About from "./pages/About.svelte";
+
+  //Complaints
+  import UserRegisteredComplaintsList from "./pages/Complaints/UserRegisteredComplaintsList.svelte";
+  import ComplaintsAgainstUser from "./pages/Complaints/ComplaintsAgainstUser.svelte";
 
   $: {
     window.ethereum.on("accountsChanged", function (accounts) {
@@ -35,10 +38,14 @@
       <Route path="/About" component={About} />
       <Route path="/superior/profile/edit" component={EditProfile} />
       <Route path="/superior/stations" component={ListofStations} />
+
+      <Route path="/station/profile/edit" component={EditStationProfile} />
       <Route path="/station/profile/edit" component={EditStationProfile} />
 
       {#if $metamask.connected}
         <Route path="/filecomplaint" component={Complaint} />
+        <Route path="/complaints" component={UserRegisteredComplaintsList} />
+        <Route path="/complaints/against" component={ComplaintsAgainstUser} />
         <Route path="/profile" component={Profile} />
         <Route path="/police/dashboard" component={PoliceDashboard} />
       {/if}

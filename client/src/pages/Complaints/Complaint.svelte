@@ -1,7 +1,6 @@
 <script>
-  import { complaintNature, districts } from "../lib/Lists";
-  import { getPoliceStation } from "../lib/ListPoliceStations";
-  import PoliceDashboard from "./Police/PoliceDashboard.svelte";
+  import { complaintNature, districts } from "../../lib/Lists";
+  import { getPoliceStation } from "../../lib/ListPoliceStations";
 
   const complaint = {
     complaintNature: "",
