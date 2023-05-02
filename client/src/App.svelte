@@ -20,6 +20,7 @@
   //Complaints
   import UserRegisteredComplaintsList from "./pages/Complaints/UserRegisteredComplaintsList.svelte";
   import ComplaintsAgainstUser from "./pages/Complaints/ComplaintsAgainstUser.svelte";
+  import PoliceComplaint from "./pages/Complaints/PoliceComplaint.svelte";
 
   $: {
     window.ethereum.on("accountsChanged", function (accounts) {
@@ -46,6 +47,7 @@
         <Route path="/filecomplaint" component={Complaint} />
         <Route path="/complaints" component={UserRegisteredComplaintsList} />
         <Route path="/complaints/against" component={ComplaintsAgainstUser} />
+        <Route path="/police/complaint" component={PoliceComplaint} />
         <Route path="/profile" component={Profile} />
         <Route path="/police/dashboard" component={PoliceDashboard} />
       {/if}
