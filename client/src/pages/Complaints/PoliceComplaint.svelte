@@ -1,6 +1,7 @@
 <script>
   let dateAndTime = "";
   let place = "";
+  let landmark = "";
   let complainantDetails = "";
   let searchDetails = "";
   let subject = "";
@@ -50,41 +51,40 @@
       />
     </div>
     <div class="mb-4">
-      <label
-        class="block text-gray-700 font-bold mb-2"
-        for="complainantDetails"
-      >
-        Details of Complainant
+      <label class="block text-gray-700 font-bold mb-2" for="landmark">
+        Landmark
       </label>
       <input
         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        id="complainantDetails"
+        id="landmark"
         type="text"
-        placeholder="Details of Complainant"
-        bind:value={complainantDetails}
+        placeholder="Landmark"
+        bind:value={landmark}
         required
       />
     </div>
     <div class="mb-4">
-      <label class="block text-gray-700 font-bold mb-2" for="searchDetails">
-        Search Details by User Name
+      <label
+        class="text-left block text-gray-700 font-bold mb-2"
+        for="accused-details"
+      >
+        Details of Complainant
       </label>
-      <div class="flex items-center">
+      <div class="flex">
         <input
-          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mr-2"
-          id="searchDetails"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="accused-details"
           type="text"
-          placeholder="Search by User Name"
-          bind:value={searchDetails}
+          placeholder="Search by name"
         />
         <button
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          type="button"
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-2 rounded"
         >
-          Enter Details
+          Search
         </button>
       </div>
     </div>
+
     <div class="mb-4">
       <label class="block text-gray-700 font-bold mb-2" for="subject">
         Subject
@@ -98,11 +98,9 @@
         required
       />
     </div>
-    <div
-      class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col my-2"
-    >
+    <div class="mb-4">
       <label
-        class="text-left block text-gray-700 text-sm font-bold mb-2"
+        class="text-left block text-gray-700 font-bold mb-2"
         for="offence-description"
       >
         Description of the Offence
@@ -114,13 +112,8 @@
       />
     </div>
 
-    <div
-      class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col my-2"
-    >
-      <label
-        class="text-left block text-gray-700 text-sm font-bold mb-2"
-        for="ipc"
-      >
+    <div class="mb-4">
+      <label class="text-left block text-gray-700 font-bold mb-2" for="ipc">
         IPC
       </label>
       <input
@@ -131,11 +124,9 @@
       />
     </div>
 
-    <div
-      class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col my-2"
-    >
+    <div class="mb-4">
       <label
-        class="text-left block text-gray-700 text-sm font-bold mb-2"
+        class="text-left block text-gray-700 font-bold mb-2"
         for="accused-details"
       >
         Details of Accused
@@ -145,7 +136,7 @@
           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           id="accused-details"
           type="text"
-          placeholder="Enter name of accused or search by user name..."
+          placeholder="Search by name"
         />
         <button
           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-2 rounded"
@@ -155,21 +146,19 @@
       </div>
     </div>
 
-    <div
-      class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col my-2"
-    >
+    <div class="mb-4">
       <label
-        class="text-left block text-gray-700 text-sm font-bold mb-2"
+        class="text-left block text-gray-700 font-bold mb-2"
         for="witness-search"
       >
-        Search for Witness
+        Details for Witness
       </label>
       <div class="flex">
         <input
           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           id="witness-search"
           type="text"
-          placeholder="Enter name of witness or search by user name..."
+          placeholder="Search by name"
         />
         <button
           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-2 rounded"
@@ -179,11 +168,9 @@
       </div>
     </div>
 
-    <div
-      class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col my-2"
-    >
+    <div class="mb-4">
       <label
-        class="text-left block text-gray-700 text-sm font-bold mb-2"
+        class="text-left block text-gray-700 font-bold mb-2"
         for="evidence-description"
       >
         Description of Evidence
@@ -195,12 +182,12 @@
       />
     </div>
 
-    <div class="md:w-1/2 px-3 mb-6 md:mb-0">
+    <div class="mb-4">
       <label
-        class="uppercase text-grey-darker text-sm font-bold mb-2"
+        class="uppercase text-grey-darker font-bold mb-2"
         for="police-station"
       >
-        Search Box for Searching Police Station by Name
+        Search Police Station by Name
       </label>
       <input
         class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-grey"
@@ -210,9 +197,9 @@
       />
     </div>
 
-    <div class="md:w-1/2 px-3">
+    <div class="mb-4">
       <label
-        class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2"
+        class="block uppercase tracking-wide text-grey-darker font-bold mb-2"
         for="latest-remarks"
       >
         Latest Remarks
@@ -225,9 +212,9 @@
       />
     </div>
 
-    <div class="md:w-1/2 px-3 mb-6 md:mb-0">
+    <div class="mb-4">
       <label
-        class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2"
+        class="block uppercase tracking-wide text-grey-darker font-bold mb-2"
         for="status"
       >
         Status
@@ -239,6 +226,9 @@
         >
           <option value="">Select Status</option>
           <option value="pending">Pending</option>
+          <option value="pending">FIR Generated</option>
+          <option value="pending">Forwarded to Superior</option>
+          <option value="pending">Forwarded to Court</option>
           <option value="resolved">Resolved</option>
         </select>
       </div>
@@ -246,7 +236,7 @@
     <button
       class="w-full my-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-2 rounded"
     >
-      Search
+      Update
     </button>
   </form>
 </div>
