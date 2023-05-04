@@ -7,11 +7,13 @@ import "./PoliceSuperior.sol";
 contract Police is PoliceSuperior {
     struct Station {
         string name;
-        string location;
-        string district;
-        string stationType;
         string addr;
+        string district;
+        string landmark;
+        string stationType;
         uint mobile;
+        string nameOfCI;
+        string nameOfSI;
         bool approved;
         address approvedBy;
     }
@@ -32,19 +34,23 @@ contract Police is PoliceSuperior {
 
     function createStationProfile(
         string memory _name,
-        string memory _location,
-        string memory _district,
-        string memory _stationType,
         string memory _addr,
-        uint _mobile
+        string memory _district,
+        string memory _landmark,
+        string memory _stationType,
+        uint _mobile,
+        string memory _nameOfCI,
+        string memory _nameOfSI
     ) public {
         policeStations[msg.sender] = Station({
             name: _name,
-            location: _location,
-            district: _district,
-            stationType: _stationType,
             addr: _addr,
+            district: _district,
+            landmark: _landmark,
+            stationType: _stationType,
             mobile: _mobile,
+            nameOfCI: _nameOfCI,
+            nameOfSI: _nameOfSI,
             approved: false,
             approvedBy: address(0)
         });
@@ -53,17 +59,23 @@ contract Police is PoliceSuperior {
 
     function updateStationProfile(
         string memory _name,
-        string memory _location,
-        string memory _district,
-        string memory _stationType,
         string memory _addr,
-        uint _mobile
+        string memory _district,
+        string memory _landmark,
+        string memory _stationType,
+        uint _mobile,
+        string memory _nameOfCI,
+        string memory _nameOfSI
     ) public onlyApprovedPoliceStation {
         Station storage profile = policeStations[msg.sender];
         profile.name = _name;
-        profile.location = _location;
+        profile.addr = _addr;
         profile.district = _district;
+        profile.landmark = _landmark;
         profile.stationType = _stationType;
+        profile.mobile = _mobile;
+        profile.nameOfCI = _nameOfCI;
+        profile.nameOfSI = _nameOfSI;
         profile.addr = _addr;
         profile.mobile = _mobile;
         emit StationProfileUpdated(msg.sender);
@@ -87,7 +99,9 @@ contract Police is PoliceSuperior {
             string memory,
             string memory,
             string memory,
+            string memory,
             uint,
+            string memory,
             string memory,
             bool,
             address
@@ -96,11 +110,13 @@ contract Police is PoliceSuperior {
         Station memory profile = policeStations[msg.sender];
         return (
             profile.name,
-            profile.location,
+            profile.addr,
             profile.district,
+            profile.landmark,
             profile.stationType,
             profile.mobile,
-            profile.addr,
+            profile.nameOfCI,
+            profile.nameOfSI,
             profile.approved,
             profile.approvedBy
         );

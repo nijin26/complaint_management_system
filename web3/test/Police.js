@@ -1,7 +1,7 @@
 const { assert, expect } = require("chai");
 
 describe("Police", async function () {
-  let PoliceContract, station, superior;
+  let PoliceContract, owner, station, superior;
 
   before(async function () {
     [owner, station, superior] = await ethers.getSigners();
@@ -15,17 +15,21 @@ describe("Police", async function () {
       "John Doe",
       "Kulathupuzha",
       "Kollam",
+      "Pump",
       "Rural",
-      "Near Govt hospital",
-      1234567890
+      234234234,
+      "N",
+      "S"
     );
     const PoliceStation = await PoliceContract.policeStations(station.address);
     assert.equal(PoliceStation.name, "John Doe");
-    assert.equal(PoliceStation.location, "Kulathupuzha");
+    assert.equal(PoliceStation.addr, "Kulathupuzha");
     assert.equal(PoliceStation.district, "Kollam");
+    assert.equal(PoliceStation.landmark, "Pump");
     assert.equal(PoliceStation.stationType, "Rural");
-    assert.equal(PoliceStation.addr, "Near Govt hospital");
-    assert.equal(PoliceStation.mobile, 1234567890);
+    assert.equal(PoliceStation.mobile, 234234234);
+    assert.equal(PoliceStation.nameOfCI, "N");
+    assert.equal(PoliceStation.nameOfSI, "S");
     assert.equal(PoliceStation.approved, false);
     assert.equal(PoliceStation.approvedBy, ethers.constants.AddressZero);
   });
@@ -33,12 +37,13 @@ describe("Police", async function () {
   it("should approve the police station", async function () {
     // Inherit from Superior Contract
     await PoliceContract.connect(owner).addApprovedProfile(
-      "Superior1",
-      "superior1@example.com",
+      "John Doe",
+      "john.doe@example.com",
       1234567890,
-      "Rank1",
-      "Designation1",
-      "Unit1",
+      2234234,
+      "Inspector",
+      "Patrol",
+      "Central Station",
       superior.address
     );
 
@@ -49,11 +54,13 @@ describe("Police", async function () {
 
     const [
       name,
-      location,
-      district,
-      stationType,
       addr,
+      district,
+      landmark,
+      stationType,
       mobile,
+      nameOfCI,
+      nameOfSi,
       approved,
       approvedBy,
     ] = await PoliceContract.connect(station).getStationDetails();
@@ -63,19 +70,24 @@ describe("Police", async function () {
 
   it("should update station profile", async function () {
     await PoliceContract.connect(station).updateStationProfile(
-      "Nijin",
+      "John Doe",
       "Kulathupuzha",
       "Kollam",
+      "Pump",
       "Rural",
-      "Near Govt hospital",
-      2323
+      234234234,
+      "N",
+      "S"
     );
     const updatedStation = await PoliceContract.policeStations(station.address);
-    assert.equal(updatedStation.name, "Nijin");
-    assert.equal(updatedStation.location, "Kulathupuzha");
+    assert.equal(updatedStation.name, "John Doe");
+    assert.equal(updatedStation.addr, "Kulathupuzha");
     assert.equal(updatedStation.district, "Kollam");
+    assert.equal(updatedStation.landmark, "Pump");
     assert.equal(updatedStation.stationType, "Rural");
-    assert.equal(updatedStation.addr, "Near Govt hospital");
-    assert.equal(updatedStation.mobile, 2323);
+    assert.equal(updatedStation.mobile, 234234234);
+    assert.equal(updatedStation.nameOfCI, "N");
+    assert.equal(updatedStation.nameOfSI, "S");
+    assert.equal(updatedStation.approved, true);
   });
 });
