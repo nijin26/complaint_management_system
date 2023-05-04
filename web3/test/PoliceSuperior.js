@@ -9,6 +9,8 @@ describe("PoliceSuperior", function () {
     // complaintContract = await Complaint.connect(owner).deploy();
     // await complaintContract.deployed();
 
+    console.log(user1.address, user.address);
+
     const PoliceSuperior = await ethers.getContractFactory("PoliceSuperior");
     currentContract = await PoliceSuperior.connect(owner).deploy();
     await currentContract.deployed();
