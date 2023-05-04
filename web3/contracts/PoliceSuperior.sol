@@ -9,6 +9,7 @@ contract PoliceSuperior is Complaint {
         string name;
         string email;
         uint mobile;
+        uint aadharID;
         string rank;
         string designation;
         string unit;
@@ -44,6 +45,7 @@ contract PoliceSuperior is Complaint {
         string memory _name,
         string memory _email,
         uint _mobile,
+        uint _aadharID,
         string memory _rank,
         string memory _designation,
         string memory _unit
@@ -52,6 +54,7 @@ contract PoliceSuperior is Complaint {
             name: _name,
             email: _email,
             mobile: _mobile,
+            aadharID: _aadharID,
             rank: _rank,
             designation: _designation,
             unit: _unit,
@@ -65,6 +68,7 @@ contract PoliceSuperior is Complaint {
         string memory _name,
         string memory _email,
         uint _mobile,
+        uint _aadharID,
         string memory _rank,
         string memory _designation,
         string memory _unit,
@@ -74,6 +78,7 @@ contract PoliceSuperior is Complaint {
             name: _name,
             email: _email,
             mobile: _mobile,
+            aadharID: _aadharID,
             rank: _rank,
             designation: _designation,
             unit: _unit,
@@ -88,6 +93,7 @@ contract PoliceSuperior is Complaint {
         string memory _name,
         string memory _email,
         uint _mobile,
+        uint _aadharID,
         string memory _rank,
         string memory _designation,
         string memory _unit
@@ -96,6 +102,7 @@ contract PoliceSuperior is Complaint {
         profile.name = _name;
         profile.email = _email;
         profile.mobile = _mobile;
+        profile.aadharID = _aadharID;
         profile.rank = _rank;
         profile.designation = _designation;
         profile.unit = _unit;
@@ -120,6 +127,7 @@ contract PoliceSuperior is Complaint {
             string memory,
             string memory,
             uint,
+            uint,
             string memory,
             string memory,
             string memory,
@@ -132,6 +140,7 @@ contract PoliceSuperior is Complaint {
             profile.name,
             profile.email,
             profile.mobile,
+            profile.aadharID,
             profile.rank,
             profile.designation,
             profile.unit,

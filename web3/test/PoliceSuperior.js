@@ -1,15 +1,13 @@
 const { assert, expect } = require("chai");
 
 describe("PoliceSuperior", function () {
-  let complaintContract, currentContract;
+  let complaintContract, currentContract, owner, user1, user2;
 
   beforeEach(async function () {
     [owner, user1, user2] = await ethers.getSigners();
     // const Complaint = await ethers.getContractFactory("Complaint");
     // complaintContract = await Complaint.connect(owner).deploy();
     // await complaintContract.deployed();
-
-    console.log(user1.address, user.address);
 
     const PoliceSuperior = await ethers.getContractFactory("PoliceSuperior");
     currentContract = await PoliceSuperior.connect(owner).deploy();
@@ -21,6 +19,7 @@ describe("PoliceSuperior", function () {
       "John Doe",
       "john.doe@example.com",
       1234567890,
+      2234234,
       "Inspector",
       "Patrol",
       "Central Station"
@@ -29,6 +28,7 @@ describe("PoliceSuperior", function () {
     assert.equal(superior.name, "John Doe");
     assert.equal(superior.email, "john.doe@example.com");
     assert.equal(superior.mobile, 1234567890);
+    assert.equal(superior.aadharID, 2234234);
     assert.equal(superior.rank, "Inspector");
     assert.equal(superior.designation, "Patrol");
     assert.equal(superior.unit, "Central Station");
@@ -41,6 +41,7 @@ describe("PoliceSuperior", function () {
       "Nijin",
       "Nijin@example.com",
       232323,
+      2323,
       "CI",
       "Station",
       "Central Station"
@@ -52,6 +53,7 @@ describe("PoliceSuperior", function () {
     assert.equal(updatedSuperior.name, "Nijin");
     assert.equal(updatedSuperior.email, "Nijin@example.com");
     assert.equal(updatedSuperior.mobile, 232323);
+    assert.equal(updatedSuperior.aadharID, 2323);
     assert.equal(updatedSuperior.rank, "CI");
     assert.equal(updatedSuperior.designation, "Station");
     assert.equal(updatedSuperior.unit, "Central Station");
@@ -65,6 +67,7 @@ describe("PoliceSuperior", function () {
         "Superior1",
         "superior1@example.com",
         1234567890,
+        2323,
         "Rank1",
         "Designation1",
         "Unit1"
@@ -91,6 +94,7 @@ describe("PoliceSuperior", function () {
         name,
         email,
         mobile,
+        aadharID,
         rank,
         designation,
         unit,
