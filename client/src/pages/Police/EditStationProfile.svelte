@@ -17,7 +17,29 @@
 
   const submitHandler = async () => {
     const policeContract = await connectingWithPolice();
-    console.log(policeContract);
+    // const {
+    //   name,
+    //   addr,
+    //   district,
+    //   landmark,
+    //   stationType,
+    //   mobile,
+    //   nameOfCI,
+    //   nameOfSI,
+    // } = station;
+    // await policeContract.createStationProfile(
+    //   name,
+    //   addr,
+    //   district,
+    //   landmark,
+    //   stationType,
+    //   mobile,
+    //   nameOfCI,
+    //   nameOfSI
+    // );
+
+    const stationProfileCreated = await policeContract.getStationDetails();
+    console.log(stationProfileCreated, "Details of station created");
     console.log("Submit handler is called from station edit profile", station);
   };
 </script>
