@@ -41,7 +41,6 @@
       <Route path="/superior/stations" component={ListofStations} />
 
       <Route path="/station/profile/edit" component={EditStationProfile} />
-      <Route path="/station/profile/edit" component={EditStationProfile} />
 
       {#if $metamask.connected}
         <Route path="/filecomplaint" component={Complaint} />

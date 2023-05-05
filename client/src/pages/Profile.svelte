@@ -1,7 +1,7 @@
 <script lang="ts">
   import { ethers } from "ethers";
   import { Input, NativeSelect, Button } from "@svelteuidev/core";
-  import { setProfile, viewProfile } from "../lib/MetaMask";
+  import { setProfile, viewProfile } from "../lib/Contract";
 
   const profileInfo = {
     profile: {

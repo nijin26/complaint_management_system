@@ -22,6 +22,7 @@
     "@svelteuidev/composables": "^0.10.0",
     "@svelteuidev/core": "^0.10.0",
     "ethers": "^5.5.4",
-    "svelte-routing": "^1.6.0"
+    "svelte-routing": "^1.6.0",
+    "web3modal": "^1.9.12"
   }
 }

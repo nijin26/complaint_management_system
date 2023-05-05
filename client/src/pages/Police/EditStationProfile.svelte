@@ -1,5 +1,25 @@
 <script>
   import { stationTypes } from "../../lib/Lists";
+  import { connectingWithPolice } from "../../lib/Contract";
+
+  const station = {
+    name: "",
+    addr: "",
+    district: "",
+    landmark: "",
+    stationType: "",
+    mobile: 0,
+    nameOfCI: "",
+    nameOfSI: "",
+    approved: false,
+    approvedBy: "",
+  };
+
+  const submitHandler = async () => {
+    const policeContract = await connectingWithPolice();
+    console.log(policeContract);
+    console.log("Submit handler is called from station edit profile", station);
+  };
 </script>
 
 <div class="w-full max-w-md mx-auto my-5">
@@ -10,6 +30,7 @@
           Station Name
         </label>
         <input
+          bind:value={station.name}
           required
           class="border rounded-lg py-2 px-3 w-full"
           id="station-name"
@@ -22,6 +43,7 @@
           Address
         </label>
         <input
+          bind:value={station.addr}
           required
           class="border rounded-lg py-2 px-3 w-full"
           id="address"
@@ -34,6 +56,7 @@
           District
         </label>
         <input
+          bind:value={station.district}
           required
           class="border rounded-lg py-2 px-3 w-full"
           id="district"
@@ -46,6 +69,7 @@
           Landmark
         </label>
         <input
+          bind:value={station.landmark}
           required
           class="border rounded-lg py-2 px-3 w-full"
           id="landmark"
@@ -58,6 +82,7 @@
           Station Type
         </label>
         <select
+          bind:value={station.stationType}
           required
           class="border rounded-lg py-2 px-3 w-full"
           id="station-type"
@@ -73,6 +98,7 @@
           Mobile Number
         </label>
         <input
+          bind:value={station.mobile}
           required
           class="border rounded-lg py-2 px-3 w-full"
           id="mobile-number"
@@ -85,6 +111,7 @@
           Name of Current CI
         </label>
         <input
+          bind:value={station.nameOfCI}
           required
           class="border rounded-lg py-2 px-3 w-full"
           id="ci-name"
@@ -97,6 +124,7 @@
           Name of Current SI
         </label>
         <input
+          bind:value={station.nameOfSI}
           required
           class="border rounded-lg py-2 px-3 w-full"
           id="si-name"
@@ -105,6 +133,7 @@
         />
       </div>
       <button
+        on:click|preventDefault={submitHandler}
         class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         type="submit"
       >

@@ -1,5 +1,5 @@
 <script>
-  import { connectToMetaMask } from "../MetaMask";
+  import { connectToMetaMask } from "../Contract";
   import { metamask } from "../Store";
   import { Button } from "@svelteuidev/core";
 </script>

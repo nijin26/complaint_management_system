@@ -1,19 +1,102 @@
 import { ethers } from "ethers";
+import Web3Modal from "web3modal";
 import { Web3Provider } from "@ethersproject/providers";
-import { userProfileABI } from "./ContractABI";
 
-let CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+import {
+  complaintAddress,
+  ComplaintABI,
+  policeSuperiorAddress,
+  policeSuperiorABI,
+  policeAddress,
+  policeABI,
+  userAddress,
+  userABI,
+} from "../../../web3/Context/constants";
+
+//CHECK IF WALLET IS CONNECTED
+export const checkIfWalletConnected = async () => {
+  try {
+    if (!window.ethereum) return console.log("Install MetaMask");
+    const accounts = await window.ethereum.request({
+      method: "eth_accounts",
+    });
+    const firstAccount = accounts[0];
+    return firstAccount;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 export const connectToMetaMask = async () => {
-  if (window.ethereum) {
-    try {
-      const provider = new Web3Provider(window.ethereum, "any");
-      await provider.send("eth_requestAccounts", []);
-    } catch (err) {
-      console.log(err);
-    }
-  } else {
-    alert("Please install Metamask (Chrome Extension)");
+  try {
+    if (!window.ethereum) return console.log("Install MetaMask");
+    const accounts = await window.ethereum.request({
+      method: "eth_requestAccounts",
+    });
+    const firstAccount = accounts[0];
+    return firstAccount;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// <<<<< FETCHING CONTRACTS >>>>>>>>>>
+
+// Complaint contract fetching
+export const fetchComplaintContract = (signerOrProvider) =>
+  new ethers.Contract(complaintAddress, ComplaintABI, signerOrProvider);
+
+// CONNECTING WITH SuperiorCONTRACT
+export const connectingWithComplaint = async () => {
+  try {
+    const web3modal = new Web3Modal();
+    const connection = await web3modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+    const contract = fetchComplaintContract(signer);
+    return contract;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// Superior contract fetching
+export const fetchSuperiorContract = (signerOrProvider) =>
+  new ethers.Contract(
+    policeSuperiorAddress,
+    policeSuperiorABI,
+    signerOrProvider
+  );
+
+// CONNECTING WITH SuperiorCONTRACT
+export const connectingWithSuperior = async () => {
+  try {
+    const web3modal = new Web3Modal();
+    const connection = await web3modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+    const contract = fetchSuperiorContract(signer);
+    return contract;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// Police contract fetching
+export const fetchPoliceContract = (signerOrProvider) =>
+  new ethers.Contract(policeAddress, policeABI, signerOrProvider);
+
+// CONNECTING WITH POLICE/STATION CONTRACT
+export const connectingWithPolice = async () => {
+  try {
+    const web3modal = new Web3Modal();
+    const connection = await web3modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+    const contract = fetchPoliceContract(signer);
+    return contract;
+  } catch (error) {
+    console.log(error);
   }
 };
 
@@ -29,11 +112,7 @@ export const setProfile = async (profileInfo) => {
     const provider = new Web3Provider(window.ethereum, "any");
     const signer = provider.getSigner();
 
-    const Contract = new ethers.Contract(
-      CONTRACT_ADDRESS,
-      userProfileABI.abi,
-      signer
-    );
+    const Contract = new ethers.Contract(userAddress, userABI, signer);
 
     const gasLimit = await Contract.estimateGas.setProfile(profileInfo);
     console.log("Estimated gas limit:", gasLimit.toNumber());
@@ -59,11 +138,7 @@ export const viewProfile = async () => {
   try {
     const provider = new Web3Provider(window.ethereum, "any");
 
-    const Contract = new ethers.Contract(
-      CONTRACT_ADDRESS,
-      userProfileABI.abi,
-      provider
-    );
+    const Contract = new ethers.Contract(userAddress, userABI, provider);
 
     const profileInfo = await Contract.getUserProfile();
     console.log(profileInfo, "Profile");
@@ -72,3 +147,16 @@ export const viewProfile = async () => {
     console.log(err.message, "Error while viewing profile");
   }
 };
+
+// export const connectToMetaMask = async () => {
+//   if (window.ethereum) {
+//     try {
+//       const provider = new Web3Provider(window.ethereum, "any");
+//       await provider.send("eth_requestAccounts", []);
+//     } catch (err) {
+//       console.log(err);
+//     }
+//   } else {
+//     alert("Please install Metamask (Chrome Extension)");
+//   }
+// };
