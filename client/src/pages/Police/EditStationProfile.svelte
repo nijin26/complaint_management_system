@@ -27,10 +27,6 @@
 
     const policeContract = await connectingWithPolice();
 
-    const listOfStations = await policeContract.policeStations;
-
-    console.log(listOfStations, "List of stations");
-
     // const {
     //   name,
     //   addr,
@@ -51,6 +47,9 @@
     //   nameOfCI,
     //   nameOfSI
     // );
+
+    const listOfStations = await policeContract.getAllPoliceStations();
+    console.log(listOfStations);
 
     // const address = ethers.utils.getAddress(
     //   "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"

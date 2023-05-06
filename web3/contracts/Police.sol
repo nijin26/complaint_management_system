@@ -125,20 +125,16 @@ contract Police is PoliceSuperior {
         );
     }
 
-    function getAllPoliceStations() public view returns (address[] memory) {
+    function getAllPoliceStations() public view returns (Station[] memory) {
         uint count = 0;
         for (uint i = 0; i < addressList.length; i++) {
-            if (policeStations[addressList[i]].approved) {
-                count++;
-            }
+            count++;
         }
-        address[] memory result = new address[](count);
+        Station[] memory result = new Station[](count);
         uint index = 0;
         for (uint i = 0; i < addressList.length; i++) {
-            if (policeStations[addressList[i]].approved) {
-                result[index] = addressList[i];
-                index++;
-            }
+            result[index] = policeStations[addressList[i]];
+            index++;
         }
         return result;
     }
