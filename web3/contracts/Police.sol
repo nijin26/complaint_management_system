@@ -18,6 +18,7 @@ contract Police is PoliceSuperior {
         address approvedBy;
     }
 
+    address[] public addressList;
     mapping(address => Station) public policeStations;
 
     event StationProfileCreated(address indexed policeStation);
@@ -54,6 +55,8 @@ contract Police is PoliceSuperior {
             approved: false,
             approvedBy: address(0)
         });
+        addressList.push(msg.sender); // Add the new police station address to the addressList array
+
         emit StationProfileCreated(msg.sender);
     }
 
@@ -120,5 +123,23 @@ contract Police is PoliceSuperior {
             profile.approved,
             profile.approvedBy
         );
+    }
+
+    function getAllPoliceStations() public view returns (address[] memory) {
+        uint count = 0;
+        for (uint i = 0; i < addressList.length; i++) {
+            if (policeStations[addressList[i]].approved) {
+                count++;
+            }
+        }
+        address[] memory result = new address[](count);
+        uint index = 0;
+        for (uint i = 0; i < addressList.length; i++) {
+            if (policeStations[addressList[i]].approved) {
+                result[index] = addressList[i];
+                index++;
+            }
+        }
+        return result;
     }
 }

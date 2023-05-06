@@ -90,4 +90,9 @@ describe("Police", async function () {
     assert.equal(updatedStation.nameOfSI, "S");
     assert.equal(updatedStation.approved, true);
   });
+
+  it("should return all police stations", async function () {
+    const stations = await PoliceContract.getAllPoliceStations();
+    expect(stations).to.have.lengthOf(1);
+  });
 });

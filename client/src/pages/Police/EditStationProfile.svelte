@@ -2,7 +2,12 @@
   import { ethers } from "ethers";
 
   import { stationTypes } from "../../lib/Lists";
-  import { connectingWithPolice } from "../../lib/Contract";
+  import {
+    connectingWithPolice,
+    connectingWithSuperior,
+  } from "../../lib/Contract";
+  import { getPoliceStation } from "../../lib/ListPoliceStations";
+  import ListofStations from "../Superior/ListofStations.svelte";
 
   const station = {
     name: "",
@@ -21,16 +26,21 @@
     console.log("Submit handler is called from station edit profile", station);
 
     const policeContract = await connectingWithPolice();
-    const {
-      name,
-      addr,
-      district,
-      landmark,
-      stationType,
-      mobile,
-      nameOfCI,
-      nameOfSI,
-    } = station;
+
+    const listOfStations = await policeContract.policeStations;
+
+    console.log(listOfStations, "List of stations");
+
+    // const {
+    //   name,
+    //   addr,
+    //   district,
+    //   landmark,
+    //   stationType,
+    //   mobile,
+    //   nameOfCI,
+    //   nameOfSI,
+    // } = station;
     // await policeContract.createStationProfile(
     //   name,
     //   addr,
@@ -42,21 +52,16 @@
     //   nameOfSI
     // );
 
+    // const address = ethers.utils.getAddress(
+    //   "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"
+    // );
+    // const approvedstation = await policeContract.approveStationProfile(
+    //   address,
+    //   true
+    // );
+
     // let stationProfileCreated = await policeContract.getStationDetails();
-    // console.log(stationProfileCreated, "Details of station created 1");
-
-    const address = ethers.utils.getAddress(
-      "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"
-    );
-    const approvedstation = await policeContract.approveStationProfile(
-      address,
-      true
-    );
-
-    console.log(approvedstation);
-
-    let stationProfileCreated = await policeContract.getStationDetails();
-    console.log(stationProfileCreated, "Details of station created 2");
+    // console.log(stationProfileCreated, "Details of station created 2");
   };
 </script>
 
