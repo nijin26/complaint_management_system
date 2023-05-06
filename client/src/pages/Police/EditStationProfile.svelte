@@ -1,4 +1,6 @@
 <script>
+  import { ethers } from "ethers";
+
   import { stationTypes } from "../../lib/Lists";
   import { connectingWithPolice } from "../../lib/Contract";
 
@@ -16,17 +18,19 @@
   };
 
   const submitHandler = async () => {
+    console.log("Submit handler is called from station edit profile", station);
+
     const policeContract = await connectingWithPolice();
-    // const {
-    //   name,
-    //   addr,
-    //   district,
-    //   landmark,
-    //   stationType,
-    //   mobile,
-    //   nameOfCI,
-    //   nameOfSI,
-    // } = station;
+    const {
+      name,
+      addr,
+      district,
+      landmark,
+      stationType,
+      mobile,
+      nameOfCI,
+      nameOfSI,
+    } = station;
     // await policeContract.createStationProfile(
     //   name,
     //   addr,
@@ -38,9 +42,21 @@
     //   nameOfSI
     // );
 
-    const stationProfileCreated = await policeContract.getStationDetails();
-    console.log(stationProfileCreated, "Details of station created");
-    console.log("Submit handler is called from station edit profile", station);
+    // let stationProfileCreated = await policeContract.getStationDetails();
+    // console.log(stationProfileCreated, "Details of station created 1");
+
+    const address = ethers.utils.getAddress(
+      "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"
+    );
+    const approvedstation = await policeContract.approveStationProfile(
+      address,
+      true
+    );
+
+    console.log(approvedstation);
+
+    let stationProfileCreated = await policeContract.getStationDetails();
+    console.log(stationProfileCreated, "Details of station created 2");
   };
 </script>
 
