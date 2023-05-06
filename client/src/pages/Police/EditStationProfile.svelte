@@ -59,8 +59,8 @@
     //   true
     // );
 
-    // let stationProfileCreated = await policeContract.getStationDetails();
-    // console.log(stationProfileCreated, "Details of station created 2");
+    let stationProfileCreated = await policeContract.getStationDetails();
+    console.log(stationProfileCreated, "Details of station created 2");
   };
 </script>
 
