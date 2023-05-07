@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "hardhat/console.sol";
 import "./Complaint.sol";
 
 contract PoliceSuperior is Complaint {
@@ -19,9 +18,9 @@ contract PoliceSuperior is Complaint {
 
     mapping(address => Superior) public policeSuperiors;
 
-    event ProfileCreated(address indexed policeSuperior);
-    event ProfileUpdated(address indexed policeSuperior);
-    event ApprovalUpdated(address indexed policeSuperior, bool approved);
+    // event ProfileCreated(address indexed policeSuperior);
+    // event ProfileUpdated(address indexed policeSuperior);
+    // event ApprovalUpdated(address indexed policeSuperior, bool approved);
 
     modifier onlyOwnerOrPoliceSuperior() {
         require(
@@ -61,7 +60,7 @@ contract PoliceSuperior is Complaint {
             approved: false,
             approvedBy: address(0)
         });
-        emit ProfileCreated(msg.sender);
+        // emit ProfileCreated(msg.sender);
     }
 
     function addApprovedProfile(
@@ -86,7 +85,7 @@ contract PoliceSuperior is Complaint {
             approvedBy: msg.sender
         });
         isPoliceSuperior[_newSuperior] = true;
-        emit ProfileCreated(_newSuperior);
+        // emit ProfileCreated(_newSuperior);
     }
 
     function updateProfile(
@@ -106,7 +105,7 @@ contract PoliceSuperior is Complaint {
         profile.rank = _rank;
         profile.designation = _designation;
         profile.unit = _unit;
-        emit ProfileUpdated(msg.sender);
+        // emit ProfileUpdated(msg.sender);
     }
 
     function approvePoliceSuperior(
@@ -116,7 +115,7 @@ contract PoliceSuperior is Complaint {
         isPoliceSuperior[_policeSuperior] = true;
         policeSuperiors[_policeSuperior].approved = _approved;
         policeSuperiors[_policeSuperior].approvedBy = msg.sender;
-        emit ApprovalUpdated(_policeSuperior, _approved);
+        // emit ApprovalUpdated(_policeSuperior, _approved);
     }
 
     function getProfileDetails()

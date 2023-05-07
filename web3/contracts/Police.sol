@@ -21,9 +21,9 @@ contract Police is PoliceSuperior {
     address[] public addressList;
     mapping(address => Station) public policeStations;
 
-    event StationProfileCreated(address indexed policeStation);
-    event StationProfileUpdated(address indexed policeStation);
-    event StationApprovalUpdated(address indexed policeStation, bool approved);
+    // event StationProfileCreated(address indexed policeStation);
+    // event StationProfileUpdated(address indexed policeStation);
+    // event StationApprovalUpdated(address indexed policeStation, bool approved);
 
     modifier onlyApprovedPoliceStation() {
         require(
@@ -57,7 +57,7 @@ contract Police is PoliceSuperior {
         });
         addressList.push(msg.sender); // Add the new police station address to the addressList array
 
-        emit StationProfileCreated(msg.sender);
+        // emit StationProfileCreated(msg.sender);
     }
 
     function updateStationProfile(
@@ -81,7 +81,7 @@ contract Police is PoliceSuperior {
         profile.nameOfSI = _nameOfSI;
         profile.addr = _addr;
         profile.mobile = _mobile;
-        emit StationProfileUpdated(msg.sender);
+        // emit StationProfileUpdated(msg.sender);
     }
 
     function approveStationProfile(
@@ -91,7 +91,7 @@ contract Police is PoliceSuperior {
         isPoliceStation[_policeStation] = true;
         policeStations[_policeStation].approved = _approved;
         policeStations[_policeStation].approvedBy = msg.sender;
-        emit StationApprovalUpdated(_policeStation, _approved);
+        // emit StationApprovalUpdated(_policeStation, _approved);
     }
 
     function getStationDetails()

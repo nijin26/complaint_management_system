@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity >=0.7.0 <0.9.0;
+pragma solidity ^0.8.19;
 
 contract Complaint {
     struct ComplaintLocation {
@@ -42,8 +42,8 @@ contract Complaint {
         owner = msg.sender;
     }
 
-    event ComplaintAdded(ComplaintDetails complaint);
-    event ComplaintUpdated(ComplaintDetails updatedComplaint);
+    // event ComplaintAdded(ComplaintDetails complaint);
+    // event ComplaintUpdated(ComplaintDetails updatedComplaint);
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Only owner can call this function");
@@ -90,7 +90,7 @@ contract Complaint {
     function addComplaint(ComplaintDetails memory complaint) public {
         complaint.complaintId = complaints.length; // complaintId is auto-incremented by array index
         complaints.push(complaint);
-        emit ComplaintAdded(complaint);
+        // emit ComplaintAdded(complaint);
     }
 
     function getComplaintDetails(
@@ -106,6 +106,6 @@ contract Complaint {
     ) public {
         require(complaintId <= complaints.length, "Complaint not found"); // added check for valid complaint ID
         complaints[complaintId] = updatedComplaint;
-        emit ComplaintUpdated(updatedComplaint);
+        // emit ComplaintUpdated(updatedComplaint);
     }
 }
