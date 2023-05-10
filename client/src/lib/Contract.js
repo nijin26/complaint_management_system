@@ -27,7 +27,7 @@ export const checkIfWalletConnected = async () => {
   }
 };
 
-export const connectToMetaMask = async () => {
+export const connectToWallet = async () => {
   try {
     if (!window.ethereum) return console.log("Install MetaMask");
     const accounts = await window.ethereum.request({

@@ -3,7 +3,7 @@ const { assert, expect } = require("chai");
 describe("PoliceSuperior", function () {
   let complaintContract, currentContract, owner, user1, user2;
 
-  beforeEach(async function () {
+  before(async function () {
     [owner, user1, user2] = await ethers.getSigners();
     // const Complaint = await ethers.getContractFactory("Complaint");
     // complaintContract = await Complaint.connect(owner).deploy();

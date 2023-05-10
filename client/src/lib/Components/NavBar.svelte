@@ -1,5 +1,5 @@
 <script>
-  import { connectToMetaMask } from "../Contract";
+  import { connectToWallet } from "../Contract";
   import { metamask } from "../Store";
   import { Button } from "@svelteuidev/core";
 </script>
@@ -38,7 +38,7 @@
           >
         {:else}
           <button
-            on:click={connectToMetaMask}
+            on:click={connectToWallet}
             class="ml-4 px-4 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
             >Login</button
           >

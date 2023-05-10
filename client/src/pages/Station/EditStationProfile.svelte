@@ -1,15 +1,15 @@
 <script>
   import { ethers } from "ethers";
+  import { navigate } from "svelte-routing";
 
   import { stationTypes } from "../../lib/Lists";
   import {
     connectingWithPolice,
     connectingWithSuperior,
   } from "../../lib/Contract";
-  import { getPoliceStation } from "../../lib/ListPoliceStations";
-  import ListofStations from "../Superior/ListofStations.svelte";
+  import { onMount } from "svelte";
 
-  const station = {
+  let station = {
     name: "",
     addr: "",
     district: "",
@@ -22,34 +22,62 @@
     approvedBy: "",
   };
 
-  const submitHandler = async () => {
-    console.log("Submit handler is called from station edit profile", station);
+  let profileMode = "create";
 
+  export let location;
+
+  onMount(async () => {
+    if (location && location.state) {
+      station = location.state;
+      profileMode = "edit";
+    }
+    console.log(station);
+  });
+
+  const submitHandler = async () => {
     const policeContract = await connectingWithPolice();
 
-    // const {
-    //   name,
-    //   addr,
-    //   district,
-    //   landmark,
-    //   stationType,
-    //   mobile,
-    //   nameOfCI,
-    //   nameOfSI,
-    // } = station;
-    // await policeContract.createStationProfile(
-    //   name,
-    //   addr,
-    //   district,
-    //   landmark,
-    //   stationType,
-    //   mobile,
-    //   nameOfCI,
-    //   nameOfSI
-    // );
+    const {
+      name,
+      addr,
+      district,
+      landmark,
+      stationType,
+      mobile,
+      nameOfCI,
+      nameOfSI,
+    } = station;
 
-    const listOfStations = await policeContract.getAllPoliceStations();
-    console.log(listOfStations);
+    if (profileMode === "edit") {
+      const profileUpdated = await policeContract.updateStationProfile(
+        name,
+        addr,
+        district,
+        landmark,
+        stationType,
+        mobile,
+        nameOfCI,
+        nameOfSI
+      );
+      await profileUpdated.wait();
+    } else {
+      const profileCreated = await policeContract.createStationProfile(
+        name,
+        addr,
+        district,
+        landmark,
+        stationType,
+        mobile,
+        nameOfCI,
+        nameOfSI
+      );
+      await profileCreated.wait();
+    }
+
+    navigate("/station/profile");
+
+    // const listOfStations = await policeContract.getAllPoliceStations();
+    // console.log(listOfStations);
 
     // const address = ethers.utils.getAddress(
     //   "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"
@@ -59,8 +87,8 @@
     //   true
     // );
 
-    let stationProfileCreated = await policeContract.getStationDetails();
-    console.log(stationProfileCreated, "Details of station created 2");
+    // let stationProfileCreated = await policeContract.getStationDetails();
+    // console.log(stationProfileCreated, "Details of station created 2");
   };
 </script>
 
@@ -179,7 +207,7 @@
         class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         type="submit"
       >
-        Save Profile
+        Update Profile
       </button>
     </form>
   </div>

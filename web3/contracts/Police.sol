@@ -69,7 +69,7 @@ contract Police is PoliceSuperior {
         uint _mobile,
         string memory _nameOfCI,
         string memory _nameOfSI
-    ) public onlyApprovedPoliceStation {
+    ) public {
         Station storage profile = policeStations[msg.sender];
         profile.name = _name;
         profile.addr = _addr;

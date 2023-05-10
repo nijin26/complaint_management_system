@@ -1,32 +1,37 @@
 <script>
   import "./app.css";
-  import { metamask } from "./lib/Store.js";
-  import { Router, Route } from "svelte-routing";
+  import { metamask, profileType } from "./lib/Store.js";
+  import { Router, Route, navigate } from "svelte-routing";
 
   // Components
   import NavBar from "./lib/Components/NavBar.svelte";
   import Home from "./pages/Home.svelte";
+  import About from "./pages/About.svelte";
   import Profile from "./pages/Profile.svelte";
-  import PoliceDashboard from "./pages/Police/PoliceDashboard.svelte";
   import Complaint from "./pages/Complaints/Complaint.svelte";
   // Superior
   import EditProfile from "./pages/Superior/EditProfile.svelte";
   import ListofStations from "./pages/Superior/ListofStations.svelte";
 
   //Station
-  import EditStationProfile from "./pages/Police/EditStationProfile.svelte";
-  import About from "./pages/About.svelte";
+  import StationLogin from "./pages/Station/StationLogin.svelte";
+  import EditStationProfile from "./pages/Station/EditStationProfile.svelte";
 
   //Complaints
   import UserRegisteredComplaintsList from "./pages/Complaints/UserRegisteredComplaintsList.svelte";
   import ComplaintsAgainstUser from "./pages/Complaints/ComplaintsAgainstUser.svelte";
   import PoliceComplaint from "./pages/Complaints/PoliceComplaint.svelte";
+  import StationProfile from "./pages/Station/StationProfile.svelte";
 
   $: {
     window.ethereum.on("accountsChanged", function (accounts) {
       if (accounts.length !== 0)
         metamask.set({ connected: true, address: accounts[0] });
-      else metamask.set({ connected: false, address: "" });
+      else {
+        metamask.set({ connected: false, address: "" });
+        localStorage.setItem("profileType", "");
+        profileType.set("");
+      }
     });
   }
 </script>
@@ -40,7 +45,8 @@
       <Route path="/superior/profile/edit" component={EditProfile} />
       <Route path="/superior/stations" component={ListofStations} />
 
-      <Route path="/station/profile/edit" component={EditStationProfile} />
+      <Route path="/station" component={StationLogin} />
+      <!-- <Route path="/station/profile/edit" component={EditStationProfile} /> -->
 
       {#if $metamask.connected}
         <Route path="/filecomplaint" component={Complaint} />
@@ -48,7 +54,11 @@
         <Route path="/complaints/against" component={ComplaintsAgainstUser} />
         <Route path="/police/complaint" component={PoliceComplaint} />
         <Route path="/profile" component={Profile} />
-        <Route path="/police/dashboard" component={PoliceDashboard} />
+      {/if}
+
+      {#if $metamask.connected && $profileType === "STATION"}
+        <Route path="/station/profile/edit" component={EditStationProfile} />
+        <Route path="/station/profile" component={StationProfile} />
       {/if}
     </Router>
   </main>
