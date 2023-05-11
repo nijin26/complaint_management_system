@@ -1,4 +1,16 @@
 <script>
+  const superiorProfile = {
+    name: "",
+    email: "",
+    mobile: "",
+    rank: "",
+    designation: "",
+    unit: "",
+  };
+
+  const profileHandler = () => {
+    console.log("profile handler is called");
+  };
 </script>
 
 <div class="w-full max-w-md mx-auto">
@@ -115,10 +127,11 @@
       </select>
     </div>
     <button
+      on:click|preventDefault={profileHandler}
       class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
       type="submit"
     >
-      Save Profile Details
+      Update Profile
     </button>
   </form>
 </div>

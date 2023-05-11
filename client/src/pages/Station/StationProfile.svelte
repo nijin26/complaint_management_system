@@ -40,7 +40,7 @@
   };
 </script>
 
-<div class="w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 my-6">
   <h2 class="text-xl font-bold text-gray-900 mb-4">Station Profile</h2>
 
   <div class="border border-gray-200 rounded-lg p-4 mb-4">

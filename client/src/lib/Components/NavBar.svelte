@@ -1,7 +1,19 @@
 <script>
-  import { connectToWallet } from "../Contract";
-  import { metamask } from "../Store";
-  import { Button } from "@svelteuidev/core";
+  import { navigate } from "svelte-routing";
+  import { checkIfWalletConnected, connectToWallet } from "../Contract";
+  import { metamask, profileType } from "../Store";
+
+  const disconnectWallet = async () => {
+    const address = await checkIfWalletConnected();
+    if (address) {
+      metamask.set({ connected: false, address: "" });
+      profileType.set("");
+      localStorage.setItem("profileType", "");
+      navigate("/");
+    } else {
+      console.log("Authentication Failed");
+    }
+  };
 </script>
 
 <nav class="bg-white shadow-md">
@@ -33,8 +45,9 @@
       <div class="flex items-center">
         {#if $metamask.connected}
           <button
+            on:click={disconnectWallet}
             class="ml-4 px-4 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
-            >Logged In</button
+            >Logout</button
           >
         {:else}
           <button

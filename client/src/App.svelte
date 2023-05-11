@@ -22,8 +22,10 @@
   import ComplaintsAgainstUser from "./pages/Complaints/ComplaintsAgainstUser.svelte";
   import PoliceComplaint from "./pages/Complaints/PoliceComplaint.svelte";
   import StationProfile from "./pages/Station/StationProfile.svelte";
+  import SuperiorLogin from "./pages/Superior/SuperiorLogin.svelte";
 
   $: {
+    console.log("I am runnign again..");
     window.ethereum.on("accountsChanged", function (accounts) {
       if (accounts.length !== 0)
         metamask.set({ connected: true, address: accounts[0] });
@@ -42,6 +44,8 @@
     <Router>
       <Route component={Home} />
       <Route path="/About" component={About} />
+
+      <Route path="/superior" component={SuperiorLogin} />
       <Route path="/superior/profile/edit" component={EditProfile} />
       <Route path="/superior/stations" component={ListofStations} />
 
