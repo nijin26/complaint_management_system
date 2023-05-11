@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
 
 pragma solidity ^0.8.19;
+import "hardhat/console.sol";
 
 contract Complaint {
     struct ComplaintLocation {
@@ -107,5 +108,21 @@ contract Complaint {
         require(complaintId <= complaints.length, "Complaint not found"); // added check for valid complaint ID
         complaints[complaintId] = updatedComplaint;
         // emit ComplaintUpdated(updatedComplaint);
+    }
+
+    function getUserRole() public view returns (string memory) {
+        console.log("%s is police station", isPoliceStation[msg.sender]);
+        console.log("%s message sender", msg.sender);
+        if (isUser[msg.sender]) {
+            return "USER";
+        } else if (isPoliceStation[msg.sender]) {
+            return "STATION";
+        } else if (isPoliceSuperior[msg.sender]) {
+            return "SUPERIOR";
+        } else if (isJudiciary[msg.sender]) {
+            return "JUDICIARY";
+        } else {
+            return "";
+        }
     }
 }

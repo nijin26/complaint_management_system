@@ -23,13 +23,14 @@
   import PoliceComplaint from "./pages/Complaints/PoliceComplaint.svelte";
   import StationProfile from "./pages/Station/StationProfile.svelte";
   import SuperiorLogin from "./pages/Superior/SuperiorLogin.svelte";
+  import { connectingWithComplaint } from "./lib/Contract";
 
   $: {
-    console.log("I am runnign again..");
-    window.ethereum.on("accountsChanged", function (accounts) {
-      if (accounts.length !== 0)
+    window.ethereum.on("accountsChanged", async (accounts) => {
+      console.log("Account changeds");
+      if (accounts.length !== 0) {
         metamask.set({ connected: true, address: accounts[0] });
-      else {
+      } else {
         metamask.set({ connected: false, address: "" });
         localStorage.setItem("profileType", "");
         profileType.set("");
@@ -46,8 +47,6 @@
       <Route path="/About" component={About} />
 
       <Route path="/superior" component={SuperiorLogin} />
-      <Route path="/superior/profile/edit" component={EditProfile} />
-      <Route path="/superior/stations" component={ListofStations} />
 
       <Route path="/station" component={StationLogin} />
       <!-- <Route path="/station/profile/edit" component={EditStationProfile} /> -->
@@ -63,6 +62,11 @@
       {#if $metamask.connected && $profileType === "STATION"}
         <Route path="/station/profile/edit" component={EditStationProfile} />
         <Route path="/station/profile" component={StationProfile} />
+      {/if}
+
+      {#if $metamask.connected && $profileType === "SUPERIOR"}
+        <Route path="/superior/profile/edit" component={EditProfile} />
+        <Route path="/superior/stations" component={ListofStations} />
       {/if}
     </Router>
   </main>

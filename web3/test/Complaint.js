@@ -42,8 +42,6 @@ describe("Complaint", function () {
       remarks: "Investigation in progress",
     };
 
-    console.log(complaintDetails, "Details");
-
     const Complaint = await ethers.getContractFactory("Complaint");
     complaintContract = await Complaint.deploy();
     await complaintContract.deployed();

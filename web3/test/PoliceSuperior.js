@@ -63,15 +63,17 @@ describe("PoliceSuperior", function () {
 
   describe("approvePoliceSuperior", function () {
     it("should approve a police superior", async function () {
-      await currentContract.createProfile(
-        "Superior1",
-        "superior1@example.com",
-        1234567890,
-        2323,
-        "Rank1",
-        "Designation1",
-        "Unit1"
-      );
+      await currentContract
+        .connect(user1)
+        .createProfile(
+          "Superior1",
+          "superior1@example.com",
+          1234567890,
+          2323,
+          "Rank1",
+          "Designation1",
+          "Unit1"
+        );
 
       // Only owner can approve a police superior
       await expect(
@@ -88,7 +90,9 @@ describe("PoliceSuperior", function () {
       ).to.be.revertedWith("Unauthorized");
 
       // Owner can approve a police superior
-      await currentContract.approvePoliceSuperior(user1.address, true);
+      await currentContract
+        .connect(owner)
+        .approvePoliceSuperior(user1.address, true);
 
       const [
         name,

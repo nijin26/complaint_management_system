@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "./Complaint.sol";
+import "./Police.sol";
 
-contract User is Complaint {
+contract User is Police {
     struct BasicDetails {
         string name;
         string email;

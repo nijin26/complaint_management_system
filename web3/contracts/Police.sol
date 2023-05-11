@@ -55,6 +55,12 @@ contract Police is PoliceSuperior {
             approved: false,
             approvedBy: address(0)
         });
+        isPoliceStation[msg.sender] = true;
+        console.log(
+            "%s %s addresss and is police",
+            msg.sender,
+            isPoliceStation[msg.sender]
+        );
         addressList.push(msg.sender); // Add the new police station address to the addressList array
 
         // emit StationProfileCreated(msg.sender);
@@ -88,7 +94,6 @@ contract Police is PoliceSuperior {
         address _policeStation,
         bool _approved
     ) public onlyPoliceSuperior {
-        isPoliceStation[_policeStation] = true;
         policeStations[_policeStation].approved = _approved;
         policeStations[_policeStation].approvedBy = msg.sender;
         // emit StationApprovalUpdated(_policeStation, _approved);

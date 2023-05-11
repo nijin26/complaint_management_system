@@ -24,7 +24,7 @@ contract PoliceSuperior is Complaint {
 
     modifier onlyOwnerOrPoliceSuperior() {
         require(
-            msg.sender == owner || policeSuperiors[msg.sender].approved,
+            msg.sender == owner || isPoliceSuperior[msg.sender],
             "Unauthorized"
         );
         _;
@@ -60,6 +60,7 @@ contract PoliceSuperior is Complaint {
             approved: false,
             approvedBy: address(0)
         });
+        isPoliceSuperior[msg.sender] = true;
         // emit ProfileCreated(msg.sender);
     }
 
@@ -72,7 +73,7 @@ contract PoliceSuperior is Complaint {
         string memory _designation,
         string memory _unit,
         address _newSuperior
-    ) public onlyOwnerOrPoliceSuperior {
+    ) public onlyOwnerOrApprovedPoliceSuperior {
         policeSuperiors[_newSuperior] = Superior({
             name: _name,
             email: _email,
@@ -112,7 +113,7 @@ contract PoliceSuperior is Complaint {
         address _policeSuperior,
         bool _approved
     ) public onlyOwnerOrApprovedPoliceSuperior {
-        isPoliceSuperior[_policeSuperior] = true;
+        isPoliceSuperior[msg.sender] = true;
         policeSuperiors[_policeSuperior].approved = _approved;
         policeSuperiors[_policeSuperior].approvedBy = msg.sender;
         // emit ApprovalUpdated(_policeSuperior, _approved);
@@ -121,7 +122,7 @@ contract PoliceSuperior is Complaint {
     function getProfileDetails()
         public
         view
-        onlyOwnerOrApprovedPoliceSuperior
+        onlyOwnerOrPoliceSuperior
         returns (
             string memory,
             string memory,
@@ -150,7 +151,12 @@ contract PoliceSuperior is Complaint {
 
     function getApprovingSuperiorDetails(
         address _approvedBy
-    ) public view returns (string memory name, string memory designation) {
+    )
+        public
+        view
+        onlyOwnerOrApprovedPoliceSuperior
+        returns (string memory name, string memory designation)
+    {
         require(_approvedBy != address(0), "Invalid address");
         require(
             policeSuperiors[_approvedBy].approved,
