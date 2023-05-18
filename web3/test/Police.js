@@ -1,10 +1,20 @@
 const { assert, expect } = require("chai");
 
 describe("Police", async function () {
-  let PoliceContract, owner, station, superior;
+  let PoliceContract,
+    ComplaintContract,
+    SuperiorContract,
+    owner,
+    station,
+    superior;
 
   before(async function () {
     [owner, station, superior] = await ethers.getSigners();
+
+    const Complaint = await ethers.getContractFactory("Complaint");
+    ComplaintContract = await Complaint.connect(owner).deploy();
+    await ComplaintContract.deployed();
+
     const PoliceStation = await ethers.getContractFactory("Police");
     PoliceContract = await PoliceStation.connect(owner).deploy();
     await PoliceContract.deployed();
@@ -21,7 +31,10 @@ describe("Police", async function () {
       "N",
       "S"
     );
+
     const PoliceStation = await PoliceContract.policeStations(station.address);
+    const userROle = await ComplaintContract.connect(station).getUserRole();
+    console.log(userROle, "user role");
     assert.equal(PoliceStation.name, "John Doe");
     assert.equal(PoliceStation.addr, "Kulathupuzha");
     assert.equal(PoliceStation.district, "Kollam");

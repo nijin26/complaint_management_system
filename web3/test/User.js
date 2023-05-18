@@ -3,11 +3,11 @@ const { expect } = require("chai");
 describe("User Contract", function () {
   let userContract, owner, user1;
 
-  beforeEach(async function () {
-    [owner, user1] = await ethers.getSigners();
-  });
+  // beforeEach(async function () {
+  // });
 
   before(async function () {
+    [owner, user1] = await ethers.getSigners();
     const User = await ethers.getContractFactory("User");
     userContract = await User.deploy();
     await userContract.deployed();

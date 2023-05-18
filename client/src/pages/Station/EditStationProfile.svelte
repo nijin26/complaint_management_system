@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from "svelte";
   import { ethers } from "ethers";
   import { navigate } from "svelte-routing";
 
@@ -7,7 +8,7 @@
     connectingWithPolice,
     connectingWithSuperior,
   } from "../../lib/Contract";
-  import { onMount } from "svelte";
+  import { profileType } from "../../lib/Store";
 
   let station = {
     name: "",
@@ -24,14 +25,15 @@
 
   let profileMode = "create";
 
-  export let location;
+  export let location; // To get state from Route
 
   onMount(async () => {
-    if (location && location.state) {
+    if (location.state && location.state.name) {
       station = location.state;
       profileMode = "edit";
+    } else if ($profileType === "STATION") {
+      navigate("/station/profile");
     }
-    console.log(station);
   });
 
   const submitHandler = async () => {

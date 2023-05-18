@@ -60,8 +60,12 @@ contract PoliceSuperior is Complaint {
             approved: false,
             approvedBy: address(0)
         });
-        isPoliceSuperior[msg.sender] = true;
+        setIsPoliceSuperior(msg.sender, true);
         // emit ProfileCreated(msg.sender);
+    }
+
+    function isPoliceSuperiorRole() public view returns (bool) {
+        return isPoliceSuperior[msg.sender];
     }
 
     function addApprovedProfile(
@@ -85,7 +89,7 @@ contract PoliceSuperior is Complaint {
             approved: true,
             approvedBy: msg.sender
         });
-        isPoliceSuperior[_newSuperior] = true;
+        setIsPoliceSuperior(_newSuperior, true);
         // emit ProfileCreated(_newSuperior);
     }
 
@@ -167,5 +171,19 @@ contract PoliceSuperior is Complaint {
             policeSuperiors[_approvedBy].name,
             policeSuperiors[_approvedBy].designation
         );
+    }
+
+    // <<<<<<< Getter & Setter functions for Mappings >>>>>>>>>.
+
+    // Setter function for policeSuperiors mapping
+    function setPoliceSuperior(address key, Superior memory value) public {
+        policeSuperiors[key] = value;
+    }
+
+    // Getter function for policeSuperiors mapping
+    function getPoliceSuperior(
+        address key
+    ) public view returns (Superior memory) {
+        return policeSuperiors[key];
     }
 }

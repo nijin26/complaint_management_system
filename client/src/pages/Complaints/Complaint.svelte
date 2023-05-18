@@ -1,6 +1,6 @@
 <script>
   import { complaintNature, districts } from "../../lib/Lists";
-  import { getPoliceStation } from "../../lib/ListPoliceStations";
+  import { getPoliceStation } from "../../lib/Lists";
 
   const complaint = {
     complaintNature: "",

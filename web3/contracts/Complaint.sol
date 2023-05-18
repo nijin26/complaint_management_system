@@ -110,12 +110,64 @@ contract Complaint {
         // emit ComplaintUpdated(updatedComplaint);
     }
 
+    // <<<<<<< Getter & Setter functions for Mappings >>>>>>>>>.
+
+    function setComplaintByID(address key, uint value) public {
+        ComplaintByID[key] = value;
+    }
+
+    // Getter function for ComplaintByID mapping
+    function getComplaintByID(address key) public view returns (uint) {
+        return ComplaintByID[key];
+    }
+
+    // Setter function for isUser mapping
+    function setIsUser(address key, bool value) public {
+        isUser[key] = value;
+    }
+
+    // Getter function for isUser mapping
+    function getIsUser(address key) public view returns (bool) {
+        return isUser[key];
+    }
+
+    // Setter function for isPoliceStation mapping
+    function setIsPoliceStation(address key, bool value) public {
+        console.log("set is police station is called by %s %s", key, value);
+        isPoliceStation[key] = value;
+    }
+
+    // Getter function for isPoliceStation mapping
+    function getIsPoliceStation(address key) public view returns (bool) {
+        return isPoliceStation[key];
+    }
+
+    // Setter function for isPoliceSuperior mapping
+    function setIsPoliceSuperior(address key, bool value) public {
+        isPoliceSuperior[key] = value;
+    }
+
+    // Getter function for isPoliceSuperior mapping
+    function getIsPoliceSuperior(address key) public view returns (bool) {
+        return isPoliceSuperior[key];
+    }
+
+    // Setter function for isJudiciary mapping
+    function setIsJudiciary(address key, bool value) public {
+        isJudiciary[key] = value;
+    }
+
+    // Getter function for isJudiciary mapping
+    function getIsJudiciary(address key) public view returns (bool) {
+        return isJudiciary[key];
+    }
+
     function getUserRole() public view returns (string memory) {
         console.log("%s is police station", isPoliceStation[msg.sender]);
         console.log("%s message sender", msg.sender);
         if (isUser[msg.sender]) {
             return "USER";
-        } else if (isPoliceStation[msg.sender]) {
+        } else if (getIsPoliceStation(msg.sender)) {
             return "STATION";
         } else if (isPoliceSuperior[msg.sender]) {
             return "SUPERIOR";

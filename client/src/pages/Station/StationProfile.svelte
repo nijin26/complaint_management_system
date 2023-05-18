@@ -3,7 +3,6 @@
 
   import { connectingWithPolice } from "../../lib/Contract";
   import { navigate } from "svelte-routing";
-  import { ethers } from "ethers";
 
   let stationData = {
     name: "",
@@ -101,6 +100,6 @@
     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
     on:click={updateProfile}
   >
-    Update Profile
+    Edit Profile
   </button>
 </div>

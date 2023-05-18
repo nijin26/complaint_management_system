@@ -1,5 +1,6 @@
 <script>
   import { navigate } from "svelte-routing";
+
   import { checkIfWalletConnected, connectToWallet } from "../Contract";
   import { metamask, profileType } from "../Store";
 

@@ -10,7 +10,7 @@
   import Profile from "./pages/Profile.svelte";
   import Complaint from "./pages/Complaints/Complaint.svelte";
   // Superior
-  import EditProfile from "./pages/Superior/EditProfile.svelte";
+  import EditProfile from "./pages/Superior/EditSuperiorProfile.svelte";
   import ListofStations from "./pages/Superior/ListofStations.svelte";
 
   //Station
@@ -24,12 +24,15 @@
   import StationProfile from "./pages/Station/StationProfile.svelte";
   import SuperiorLogin from "./pages/Superior/SuperiorLogin.svelte";
   import { connectingWithComplaint } from "./lib/Contract";
+  import { getUserRole } from "./lib/GetUserRole";
+  import EditSuperiorProfile from "./pages/Superior/EditSuperiorProfile.svelte";
+  import SuperiorProfile from "./pages/Superior/SuperiorProfile.svelte";
 
   $: {
     window.ethereum.on("accountsChanged", async (accounts) => {
-      console.log("Account changeds");
       if (accounts.length !== 0) {
         metamask.set({ connected: true, address: accounts[0] });
+        getUserRole();
       } else {
         metamask.set({ connected: false, address: "" });
         localStorage.setItem("profileType", "");
@@ -49,6 +52,7 @@
       <Route path="/superior" component={SuperiorLogin} />
 
       <Route path="/station" component={StationLogin} />
+      <Route path="/station/profile/edit" component={EditStationProfile} />
       <!-- <Route path="/station/profile/edit" component={EditStationProfile} /> -->
 
       {#if $metamask.connected}
@@ -56,16 +60,16 @@
         <Route path="/complaints" component={UserRegisteredComplaintsList} />
         <Route path="/complaints/against" component={ComplaintsAgainstUser} />
         <Route path="/police/complaint" component={PoliceComplaint} />
-        <Route path="/profile" component={Profile} />
+        <Route path="/user" component={Profile} />
       {/if}
 
       {#if $metamask.connected && $profileType === "STATION"}
-        <Route path="/station/profile/edit" component={EditStationProfile} />
         <Route path="/station/profile" component={StationProfile} />
       {/if}
 
       {#if $metamask.connected && $profileType === "SUPERIOR"}
-        <Route path="/superior/profile/edit" component={EditProfile} />
+        <Route path="/superior/profile" component={SuperiorProfile} />
+        <Route path="/superior/profile/edit" component={EditSuperiorProfile} />
         <Route path="/superior/stations" component={ListofStations} />
       {/if}
     </Router>

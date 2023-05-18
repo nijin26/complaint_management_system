@@ -1,7 +1,6 @@
 <script lang="ts">
   import { ethers } from "ethers";
-  import { Input, NativeSelect, Button } from "@svelteuidev/core";
-  import { setProfile, viewProfile } from "../lib/Contract";
+  import { connectingWithUser } from "../lib/Contract";
 
   const profileInfo = {
     profile: {
@@ -30,49 +29,55 @@
 
   const { profile, idDetails, relativeDetails } = profileInfo;
 
-  function submitHandler() {
-    console.log("submit handler called");
-    setProfile(profileInfo);
-  }
+  const submitHandler = async () => {
+    const userContract = await connectingWithUser();
+    console.log(userContract);
+    console.log("submit handler called", profileInfo);
+    // setProfile(profileInfo);
+  };
 </script>
 
-<main>
-  <h1>PROFILE DETAILS</h1>
-  <form class="profile" on:submit|preventDefault={submitHandler}>
-    <Input
+<main class="w-1/2 mx-auto p-4 border border-black rounded-md my-10">
+  <h1 class="text-center my-4 text-lg font-bold">PROFILE DETAILS</h1>
+  <form
+    class="profile flex flex-col gap-4"
+    on:submit|preventDefault={submitHandler}
+  >
+    <input
       type="text"
       required
-      variant="default"
+      class="input-default"
       placeholder="Enter your full name*"
       bind:value={profile.name}
     />
-    <Input
+    <input
       type="email"
       required
-      variant="default"
+      class="input-default"
       placeholder="Enter valid Email ID*"
       bind:value={profile.email}
     />
-    <Input
+    <input
       type="number"
       required
-      variant="default"
+      class="input-default"
       placeholder="Mobile Number*"
       bind:value={profile.mobile}
     />
-    <Input
+    <input
       type="number"
       required
-      variant="default"
+      class="input-default"
       placeholder="Age*"
       bind:value={profile.age}
     />
-    <NativeSelect
-      required
-      data={["Male", "Female", "Transgender", "Other"]}
-      placeholder="Gender*"
-      bind:value={profile.gender}
-    />
+    <select required class="input-default" bind:value={profile.gender}>
+      <option disabled selected value="">Gender*</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+      <option value="Transgender">Transgender</option>
+      <option value="Other">Other</option>
+    </select>
     <input
       required
       placeholder="Date of Birth* (DD/MM/YY)"
@@ -81,109 +86,106 @@
       id="date"
       bind:value={profile.dob}
     />
-    <Input
+    <input
       type="text"
       required
-      variant="default"
+      class="input-default"
       placeholder="Address*"
       bind:value={profile.addr}
     />
-    <Input
+    <input
       type="text"
       required
-      variant="default"
+      class="input-default"
       placeholder="City*"
       bind:value={profile.city}
     />
-    <Input
+    <input
       type="text"
       required
-      variant="default"
+      class="input-default"
       placeholder="District*"
       bind:value={profile.district}
     />
-    <Input
+    <input
       type="text"
       required
-      variant="default"
+      class="input-default"
       placeholder="State*"
       bind:value={profile.state}
     />
-    <Input
+    <input
       type="number"
       required
-      variant="default"
+      class="input-default"
       placeholder="Pincode*"
       bind:value={profile.pincode}
     />
-    <Input
+    <input
       type="text"
       required
-      variant="default"
+      class="input-default"
       placeholder="Relative Name*"
       bind:value={relativeDetails.relativeName}
     />
-    <Input
+    <input
       type="number"
       required
-      variant="default"
+      class="input-default"
       placeholder="Relative Mobile Number*"
       bind:value={relativeDetails.relativeMobile}
     />
-    <NativeSelect
+    <select
       required
-      data={[
-        "Father",
-        "Mother",
-        "Brother",
-        "Sister",
-        "Husband",
-        "Wife",
-        "Son",
-        "Daughter",
-        "Other",
-      ]}
-      placeholder="Relation*"
+      class="input-default"
       bind:value={relativeDetails.relation}
-    />
-    <NativeSelect
-      required
-      data={["Aadhar", "PAN", "Driving License", "Passport", "Voter ID"]}
-      placeholder="ID Type*"
-      bind:value={idDetails.selectedID}
-    />
-    <Input
+    >
+      <option disabled selected value="">Relation*</option>
+      <option value="Father">Father</option>
+      <option value="Mother">Mother</option>
+      <option value="Brother">Brother</option>
+      <option value="Sister">Sister</option>
+      <option value="Husband">Husband</option>
+      <option value="Wife">Wife</option>
+      <option value="Son">Son</option>
+      <option value="Daughter">Daughter</option>
+      <option value="Other">Other</option>
+    </select>
+    <select required class="input-default" bind:value={idDetails.selectedID}>
+      <option disabled selected value="">ID Type*</option>
+      <option value="Aadhar">Aadhar</option>
+      <option value="PAN">PAN</option>
+      <option value="Driving License">Driving License</option>
+      <option value="Passport">Passport</option>
+      <option value="Voter ID">Voter ID</option>
+    </select>
+    <input
       type="number"
       required
-      variant="default"
+      class="input-default"
       placeholder="ID Card Number*"
       bind:value={idDetails.IDNumber}
     />
-    <Button type="submit" color="teal" radius="md" size="lg" ripple
-      >Update Profile</Button
+    <button
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      on:click={submitHandler}
     >
-    <button on:click={viewProfile}>View Profile</button>
+      Save Profile
+    </button>
+    <button class="border-2 border-blue-500 rounded-md py-2 px-4 mt-2"
+      >View Profile</button
+    >
   </form>
 </main>
 
 <style>
-  h1 {
-    text-align: center;
+  .input-default {
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid #ced4da;
+    border-radius: 3px;
   }
-  main {
-    width: 50%;
-    margin: 1rem auto;
-    padding: 1rem;
-    border: 1px solid black;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-  }
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
+
   .dob {
     height: 36px;
     padding: 0 12px;

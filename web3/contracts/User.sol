@@ -59,4 +59,16 @@ contract User is Police {
     function updateUserDetails(ProfileInfo memory profileInfo) public {
         userProfiles[msg.sender] = profileInfo;
     }
+
+    // Setter function for userProfiles mapping
+    function setUserProfile(address key, ProfileInfo memory value) public {
+        userProfiles[key] = value;
+    }
+
+    // Getter function for userProfiles mapping
+    function getUserProfile(
+        address key
+    ) public view returns (ProfileInfo memory) {
+        return userProfiles[key];
+    }
 }

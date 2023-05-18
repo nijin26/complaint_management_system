@@ -100,53 +100,71 @@ export const connectingWithPolice = async () => {
   }
 };
 
-export const setProfile = async (profileInfo) => {
-  console.log("Set profile function in svelte is called");
-  if (!window.ethereum) {
-    console.log("Window ethereum not exist");
-    return;
-  }
+// User contract fetching
+export const fetchUserContract = (signerOrProvider) =>
+  new ethers.Contract(userAddress, userABI, signerOrProvider);
 
+// CONNECTING WITH USER CONTRACT
+export const connectingWithUser = async () => {
   try {
-    console.log("Inside try block");
-    const provider = new Web3Provider(window.ethereum, "any");
+    const web3modal = new Web3Modal();
+    const connection = await web3modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
     const signer = provider.getSigner();
-
-    const Contract = new ethers.Contract(userAddress, userABI, signer);
-
-    const gasLimit = await Contract.estimateGas.setProfile(profileInfo);
-    console.log("Estimated gas limit:", gasLimit.toNumber());
-
-    console.log("Contract is created", Contract);
-    console.log("Profile info is", profileInfo);
-    const newProfile = await Contract.setProfile(profileInfo, {
-      gasLimit: gasLimit,
-    });
-    // await newProfile.wait();
-    console.log(await newProfile.wait());
-  } catch (err) {
-    console.log(err.message, "Error while setting profile");
+    const contract = fetchUserContract(signer);
+    return contract;
+  } catch (error) {
+    console.log(error);
   }
 };
 
-export const viewProfile = async () => {
-  if (!window.ethereum) {
-    console.log("Window ethereum not exist");
-    return;
-  }
+// export const setProfile = async (profileInfo) => {
+//   console.log("Set profile function in svelte is called");
+//   if (!window.ethereum) {
+//     console.log("Window ethereum not exist");
+//     return;
+//   }
 
-  try {
-    const provider = new Web3Provider(window.ethereum, "any");
+//   try {
+//     console.log("Inside try block");
+//     const provider = new Web3Provider(window.ethereum, "any");
+//     const signer = provider.getSigner();
 
-    const Contract = new ethers.Contract(userAddress, userABI, provider);
+//     const Contract = new ethers.Contract(userAddress, userABI, signer);
 
-    const profileInfo = await Contract.getUserProfile();
-    console.log(profileInfo, "Profile");
-    // return profile;
-  } catch (err) {
-    console.log(err.message, "Error while viewing profile");
-  }
-};
+//     const gasLimit = await Contract.estimateGas.setProfile(profileInfo);
+//     console.log("Estimated gas limit:", gasLimit.toNumber());
+
+//     console.log("Contract is created", Contract);
+//     console.log("Profile info is", profileInfo);
+//     const newProfile = await Contract.setProfile(profileInfo, {
+//       gasLimit: gasLimit,
+//     });
+//     // await newProfile.wait();
+//     console.log(await newProfile.wait());
+//   } catch (err) {
+//     console.log(err.message, "Error while setting profile");
+//   }
+// };
+
+// export const viewProfile = async () => {
+//   if (!window.ethereum) {
+//     console.log("Window ethereum not exist");
+//     return;
+//   }
+
+//   try {
+//     const provider = new Web3Provider(window.ethereum, "any");
+
+//     const Contract = new ethers.Contract(userAddress, userABI, provider);
+
+//     const profileInfo = await Contract.getUserProfile();
+//     console.log(profileInfo, "Profile");
+//     // return profile;
+//   } catch (err) {
+//     console.log(err.message, "Error while viewing profile");
+//   }
+// };
 
 // export const connectToMetaMask = async () => {
 //   if (window.ethereum) {

@@ -1,15 +1,63 @@
 <script>
-  const superiorProfile = {
+  import { onMount } from "svelte";
+  import { navigate } from "svelte-routing";
+
+  import { connectingWithSuperior } from "../../lib/Contract";
+  import { profileType } from "../../lib/Store";
+
+  let superiorProfile = {
     name: "",
     email: "",
     mobile: "",
+    aadharId: "",
     rank: "",
     designation: "",
     unit: "",
   };
+  let profileMode = "create";
+  export let location;
 
-  const profileHandler = () => {
-    console.log("profile handler is called");
+  onMount(async () => {
+    if (location.state && location.state.name) {
+      superiorProfile = location.state;
+      profileMode = "edit";
+    } else if ($profileType === "SUPERIOR") {
+      console.log("its a superior");
+      navigate("/superior/profile");
+    }
+  });
+
+  const profileHandler = async () => {
+    const superiorContract = await connectingWithSuperior();
+
+    const { name, email, mobile, aadharId, rank, designation, unit } =
+      superiorProfile;
+
+    if (profileMode === "edit") {
+      const profileUpdated = await superiorContract.updateProfile(
+        name,
+        email,
+        mobile,
+        aadharId,
+        rank,
+        designation,
+        unit
+      );
+      await profileUpdated.wait();
+    } else {
+      const profileCreated = await superiorContract.createProfile(
+        name,
+        email,
+        mobile,
+        aadharId,
+        rank,
+        designation,
+        unit
+      );
+      await profileCreated.wait();
+    }
+
+    navigate("/superior/profile");
   };
 </script>
 
@@ -20,6 +68,7 @@
         Name:
       </label>
       <input
+        bind:value={superiorProfile.name}
         required
         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         id="name"
@@ -32,6 +81,7 @@
         Email:
       </label>
       <input
+        bind:value={superiorProfile.email}
         required
         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         id="email"
@@ -44,6 +94,7 @@
         Mobile:
       </label>
       <input
+        bind:value={superiorProfile.mobile}
         required
         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         id="mobile"
@@ -52,10 +103,23 @@
       />
     </div>
     <div class="mb-4">
+      <label class="block text-gray-700 font-bold mb-2" for="aadhar">
+        Aadhar ID:
+      </label>
+      <input
+        bind:value={superiorProfile.aadharId}
+        required
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        id="aadhar"
+        placeholder="Enter your Aadhar ID number."
+      />
+    </div>
+    <div class="mb-4">
       <label class="block text-gray-700 font-bold mb-2" for="rank">
         Rank:
       </label>
       <select
+        bind:value={superiorProfile.rank}
         required
         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         id="rank"
@@ -85,6 +149,7 @@
         Designation:
       </label>
       <select
+        bind:value={superiorProfile.designation}
         required
         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         id="designation"
@@ -109,6 +174,7 @@
         Unit:
       </label>
       <select
+        bind:value={superiorProfile.unit}
         required
         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         id="unit"

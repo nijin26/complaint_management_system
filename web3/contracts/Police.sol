@@ -55,15 +55,16 @@ contract Police is PoliceSuperior {
             approved: false,
             approvedBy: address(0)
         });
-        isPoliceStation[msg.sender] = true;
-        console.log(
-            "%s %s addresss and is police",
-            msg.sender,
-            isPoliceStation[msg.sender]
-        );
+        setIsPoliceStation(msg.sender, true);
+        // isPoliceStation[msg.sender] = true;
+
         addressList.push(msg.sender); // Add the new police station address to the addressList array
 
         // emit StationProfileCreated(msg.sender);
+    }
+
+    function isPoliceStationRole() public view returns (bool) {
+        return isPoliceStation[msg.sender];
     }
 
     function updateStationProfile(
@@ -142,5 +143,19 @@ contract Police is PoliceSuperior {
             index++;
         }
         return result;
+    }
+
+    // <<<<<<< Getter & Setter functions for Mappings >>>>>>>>>.
+
+    // Setter function for policeStations mapping
+    function setPoliceStation(address key, Station memory value) public {
+        policeStations[key] = value;
+    }
+
+    // Getter function for policeStations mapping
+    function getPoliceStation(
+        address key
+    ) public view returns (Station memory) {
+        return policeStations[key];
     }
 }
