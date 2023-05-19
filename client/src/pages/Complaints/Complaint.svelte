@@ -1,7 +1,7 @@
 <script>
   import { navigate } from "svelte-routing";
   import { complaintNature, districts } from "../../lib/Lists";
-  import { getPoliceStation } from "../../lib/Lists";
+  import { getPoliceStation, stationTypes } from "../../lib/Lists";
   import { connectingWithComplaintPortal } from "../../lib/Contract";
 
   const complaint = {
@@ -125,6 +125,26 @@
         <option value="" disabled>Select police station</option>
         {#each policeStationOptions as station}
           <option>{station}</option>
+        {/each}
+      </select>
+    </div>
+    <div>
+      <label
+        for="policeStation"
+        class="block text-sm font-medium text-gray-700"
+      >
+        Office to File Complaint
+      </label>
+      <select
+        required
+        id="policeStation"
+        name="policeStation"
+        class="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline-blue focus:border-blue-300"
+        bind:value={complaint.officeToFileComplaint}
+      >
+        <option value="" disabled>Select station type</option>
+        {#each stationTypes as stationType}
+          <option>{stationType}</option>
         {/each}
       </select>
     </div>

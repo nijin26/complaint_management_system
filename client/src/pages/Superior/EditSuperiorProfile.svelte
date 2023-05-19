@@ -24,20 +24,21 @@
     if (location.state && location.state.name) {
       superiorProfile = location.state;
       profileMode = "edit";
-    } else if ($profileType === "SUPERIOR") {
-      console.log("its a superior");
-      navigate("/superior/profile");
     }
+    // else if ($profileType === "SUPERIOR") {
+    //   console.log("its a superior");
+    //   navigate("/superior/profile");
+    // }
   });
 
   const profileHandler = async () => {
-    const superiorContract = await connectingWithComplaintPortal();
+    const complaintPortal = await connectingWithComplaintPortal();
 
     const { name, email, mobile, aadharId, rank, designation, unit } =
       superiorProfile;
 
     if (profileMode === "edit") {
-      const profileUpdated = await superiorContract.updateProfile(
+      const profileUpdated = await complaintPortal.updateProfile(
         name,
         email,
         mobile,
@@ -48,7 +49,7 @@
       );
       await profileUpdated.wait();
     } else {
-      const profileCreated = await superiorContract.createProfile(
+      const profileCreated = await complaintPortal.createProfile(
         name,
         email,
         mobile,
@@ -65,7 +66,10 @@
 </script>
 
 <div class="w-full max-w-md mx-auto">
-  <form class="bg-white rounded-lg shadow-lg p-6 mt-5">
+  <form
+    class="bg-white rounded-lg shadow-lg p-6 mt-5"
+    on:submit|preventDefault={profileHandler}
+  >
     <div class="mb-4">
       <label class="block text-gray-700 font-bold mb-2" for="name">
         Name:
@@ -196,7 +200,6 @@
       </select>
     </div>
     <button
-      on:click|preventDefault={profileHandler}
       class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
       type="submit"
     >

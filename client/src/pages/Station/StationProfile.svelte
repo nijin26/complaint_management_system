@@ -1,7 +1,10 @@
 <script>
   import { onMount } from "svelte";
 
-  import { connectingWithPolice } from "../../lib/Contract";
+  import {
+    connectingWithComplaintPortal,
+    connectingWithPolice,
+  } from "../../lib/Contract";
   import { navigate } from "svelte-routing";
 
   let stationData = {
@@ -18,10 +21,10 @@
   };
 
   onMount(async () => {
-    const stationContract = await connectingWithPolice();
+    const ComplaintPortal = await connectingWithComplaintPortal();
 
-    const stationProfile = await stationContract.getStationDetails();
-    console.log(stationProfile);
+    const stationProfile = await ComplaintPortal.getStationDetails();
+    console.log(stationProfile, "station profile");
     stationData.name = stationProfile[0];
     stationData.addr = stationProfile[1];
     stationData.district = stationProfile[2];

@@ -3,7 +3,10 @@
   import { ethers } from "ethers";
   import { navigate, Link } from "svelte-routing";
 
-  import { connectingWithSuperior } from "../../lib/Contract";
+  import {
+    connectingWithComplaintPortal,
+    connectingWithSuperior,
+  } from "../../lib/Contract";
 
   let superiorProfile = {
     name: "",
@@ -16,9 +19,9 @@
   };
 
   onMount(async () => {
-    const superiorContract = await connectingWithSuperior();
+    const complaintPortal = await connectingWithComplaintPortal();
 
-    const data = await superiorContract.getProfileDetails();
+    const data = await complaintPortal.getProfileDetails();
     superiorProfile.name = data[0] || "";
     superiorProfile.email = data[1] || "";
     superiorProfile.mobile = data[2] ? data[2].toString() : "";
@@ -56,8 +59,8 @@
 </div>
 
 <div class="flex justify-center">
-  <Link to="/" class={buttonStyles}>Complaints</Link>
+  <Link to="/" class={buttonStyles}>Manage Complaints</Link>
   <Link to="/" class={`${buttonStyles} ml-4 bg-green-500 hover:bg-green-700`}
-    >Police Stations</Link
+    >Manage Police Stations</Link
   >
 </div>

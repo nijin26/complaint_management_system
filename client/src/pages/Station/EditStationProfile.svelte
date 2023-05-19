@@ -32,9 +32,10 @@
     if (location.state && location.state.name) {
       station = location.state;
       profileMode = "edit";
-    } else if ($profileType === "STATION") {
-      navigate("/station/profile");
     }
+    // else if ($profileType === "STATION") {
+    //   navigate("/station/profile");
+    // }
   });
 
   const submitHandler = async () => {
