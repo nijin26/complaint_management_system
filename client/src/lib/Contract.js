@@ -3,6 +3,8 @@ import Web3Modal from "web3modal";
 import { Web3Provider } from "@ethersproject/providers";
 
 import {
+  complaintPortalAddress,
+  ComplaintPortalABI,
   complaintAddress,
   ComplaintABI,
   policeSuperiorAddress,
@@ -41,6 +43,28 @@ export const connectToWallet = async () => {
 };
 
 // <<<<< FETCHING CONTRACTS >>>>>>>>>>
+
+// Complaint Portal contract fetching
+export const fetchComplaintPortalContract = (signerOrProvider) =>
+  new ethers.Contract(
+    complaintPortalAddress,
+    ComplaintPortalABI,
+    signerOrProvider
+  );
+
+// CONNECTING WITH Complaint Portal Contract
+export const connectingWithComplaintPortal = async () => {
+  try {
+    const web3modal = new Web3Modal();
+    const connection = await web3modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+    const contract = fetchComplaintPortalContract(signer);
+    return contract;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // Complaint contract fetching
 export const fetchComplaintContract = (signerOrProvider) =>

@@ -4,6 +4,18 @@
   import { checkIfWalletConnected, connectToWallet } from "../Contract";
   import { metamask, profileType } from "../Store";
 
+  const loginHandler = async () => {
+    const address = await connectToWallet();
+    if (address) {
+      metamask.set({ connected: true, address: address });
+      profileType.set("USER");
+      localStorage.setItem("profileType", "USER");
+      navigate("/user/profile/edit");
+    } else {
+      console.log("Authentication Failed");
+    }
+  };
+
   const disconnectWallet = async () => {
     const address = await checkIfWalletConnected();
     if (address) {
@@ -52,9 +64,9 @@
           >
         {:else}
           <button
-            on:click={connectToWallet}
+            on:click={loginHandler}
             class="ml-4 px-4 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
-            >Login</button
+            >Complainant Login</button
           >
         {/if}
       </div>

@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { ethers } from "ethers";
-  import { connectingWithUser } from "../lib/Contract";
+  import { navigate } from "svelte-routing";
+  import { connectingWithComplaintPortal } from "../../lib/Contract";
 
   const profileInfo = {
-    profile: {
+    basicDetails: {
       name: "",
       email: "",
       mobile: "",
@@ -27,17 +27,27 @@
     },
   };
 
-  const { profile, idDetails, relativeDetails } = profileInfo;
+  const { basicDetails, idDetails, relativeDetails } = profileInfo;
 
   const submitHandler = async () => {
-    const userContract = await connectingWithUser();
-    console.log(userContract);
-    console.log("submit handler called", profileInfo);
-    // setProfile(profileInfo);
+    console.log("Submit handler is called", profileInfo);
+    const complaintPortal = await connectingWithComplaintPortal();
+    const profileCreated = await complaintPortal.createUser(profileInfo);
+    await profileCreated.wait();
+
+    console.log("Profile creation is done");
+
+    navigate("/filecomplaint");
+  };
+
+  const viewHandler = async () => {
+    const complaintPortal = await connectingWithComplaintPortal();
+    const getProfileDetails = await complaintPortal.getUserDetails();
+    console.log(getProfileDetails, "User profile");
   };
 </script>
 
-<main class="w-1/2 mx-auto p-4 border border-black rounded-md my-10">
+<main class="w-3/4 md:w-1/2 mx-auto p-4 border border-black rounded-md my-10">
   <h1 class="text-center my-4 text-lg font-bold">PROFILE DETAILS</h1>
   <form
     class="profile flex flex-col gap-4"
@@ -48,30 +58,30 @@
       required
       class="input-default"
       placeholder="Enter your full name*"
-      bind:value={profile.name}
+      bind:value={basicDetails.name}
     />
     <input
       type="email"
       required
       class="input-default"
       placeholder="Enter valid Email ID*"
-      bind:value={profile.email}
+      bind:value={basicDetails.email}
     />
     <input
       type="number"
       required
       class="input-default"
       placeholder="Mobile Number*"
-      bind:value={profile.mobile}
+      bind:value={basicDetails.mobile}
     />
     <input
       type="number"
       required
       class="input-default"
       placeholder="Age*"
-      bind:value={profile.age}
+      bind:value={basicDetails.age}
     />
-    <select required class="input-default" bind:value={profile.gender}>
+    <select required class="input-default" bind:value={basicDetails.gender}>
       <option disabled selected value="">Gender*</option>
       <option value="Male">Male</option>
       <option value="Female">Female</option>
@@ -84,42 +94,42 @@
       class="dob"
       type="text"
       id="date"
-      bind:value={profile.dob}
+      bind:value={basicDetails.dob}
     />
     <input
       type="text"
       required
       class="input-default"
       placeholder="Address*"
-      bind:value={profile.addr}
+      bind:value={basicDetails.addr}
     />
     <input
       type="text"
       required
       class="input-default"
       placeholder="City*"
-      bind:value={profile.city}
+      bind:value={basicDetails.city}
     />
     <input
       type="text"
       required
       class="input-default"
       placeholder="District*"
-      bind:value={profile.district}
+      bind:value={basicDetails.district}
     />
     <input
       type="text"
       required
       class="input-default"
       placeholder="State*"
-      bind:value={profile.state}
+      bind:value={basicDetails.state}
     />
     <input
       type="number"
       required
       class="input-default"
       placeholder="Pincode*"
-      bind:value={profile.pincode}
+      bind:value={basicDetails.pincode}
     />
     <input
       type="text"
@@ -167,12 +177,14 @@
       bind:value={idDetails.IDNumber}
     />
     <button
+      type="submit"
       class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      on:click={submitHandler}
     >
       Save Profile
     </button>
-    <button class="border-2 border-blue-500 rounded-md py-2 px-4 mt-2"
+    <button
+      on:click={viewHandler}
+      class="border-2 border-blue-500 rounded-md py-2 px-4 mt-2"
       >View Profile</button
     >
   </form>

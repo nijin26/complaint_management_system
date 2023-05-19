@@ -7,10 +7,10 @@
   import NavBar from "./lib/Components/NavBar.svelte";
   import Home from "./pages/Home.svelte";
   import About from "./pages/About.svelte";
-  import Profile from "./pages/Profile.svelte";
   import Complaint from "./pages/Complaints/Complaint.svelte";
   // Superior
-  import EditProfile from "./pages/Superior/EditSuperiorProfile.svelte";
+  import EditSuperiorProfile from "./pages/Superior/EditSuperiorProfile.svelte";
+  import SuperiorProfile from "./pages/Superior/SuperiorProfile.svelte";
   import ListofStations from "./pages/Superior/ListofStations.svelte";
 
   //Station
@@ -23,16 +23,22 @@
   import PoliceComplaint from "./pages/Complaints/PoliceComplaint.svelte";
   import StationProfile from "./pages/Station/StationProfile.svelte";
   import SuperiorLogin from "./pages/Superior/SuperiorLogin.svelte";
-  import { connectingWithComplaint } from "./lib/Contract";
+
+  //User
+  import EditUserProfile from "./pages/User/EditUserProfile.svelte";
+
+  import {
+    connectingWithComplaint,
+    connectingWithComplaintPortal,
+  } from "./lib/Contract";
   import { getUserRole } from "./lib/GetUserRole";
-  import EditSuperiorProfile from "./pages/Superior/EditSuperiorProfile.svelte";
-  import SuperiorProfile from "./pages/Superior/SuperiorProfile.svelte";
 
   $: {
     window.ethereum.on("accountsChanged", async (accounts) => {
       if (accounts.length !== 0) {
         metamask.set({ connected: true, address: accounts[0] });
-        getUserRole();
+        // const complaintPortal = await connectingWithComplaintPortal()
+        // const userRole = await complaintPortal.
       } else {
         metamask.set({ connected: false, address: "" });
         localStorage.setItem("profileType", "");
@@ -56,11 +62,11 @@
       <!-- <Route path="/station/profile/edit" component={EditStationProfile} /> -->
 
       {#if $metamask.connected}
+        <Route path="/user/profile/edit" component={EditUserProfile} />
         <Route path="/filecomplaint" component={Complaint} />
         <Route path="/complaints" component={UserRegisteredComplaintsList} />
         <Route path="/complaints/against" component={ComplaintsAgainstUser} />
         <Route path="/police/complaint" component={PoliceComplaint} />
-        <Route path="/user" component={Profile} />
       {/if}
 
       {#if $metamask.connected && $profileType === "STATION"}

@@ -2,7 +2,10 @@
   import { onMount } from "svelte";
   import { navigate } from "svelte-routing";
 
-  import { connectingWithSuperior } from "../../lib/Contract";
+  import {
+    connectingWithComplaintPortal,
+    connectingWithSuperior,
+  } from "../../lib/Contract";
   import { profileType } from "../../lib/Store";
 
   let superiorProfile = {
@@ -28,7 +31,7 @@
   });
 
   const profileHandler = async () => {
-    const superiorContract = await connectingWithSuperior();
+    const superiorContract = await connectingWithComplaintPortal();
 
     const { name, email, mobile, aadharId, rank, designation, unit } =
       superiorProfile;

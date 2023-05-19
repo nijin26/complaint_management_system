@@ -1,6 +1,8 @@
 <script>
+  import { navigate } from "svelte-routing";
   import { complaintNature, districts } from "../../lib/Lists";
   import { getPoliceStation } from "../../lib/Lists";
+  import { connectingWithComplaintPortal } from "../../lib/Contract";
 
   const complaint = {
     complaintNature: "",
@@ -9,6 +11,7 @@
     policeStation: "",
     officeToFileComplaint: "",
     district: "",
+    subject: "",
     complaintDescription: "",
   };
 
@@ -18,11 +21,22 @@
     policeStationOptions = getPoliceStation(complaint.district || "Kollam");
   }
 
-  const submitHandler = () => {};
+  const submitHandler = async () => {
+    console.log("submith handler to add complaint is called", complaint);
+    const complaintPortal = await connectingWithComplaintPortal();
+    const complaintAdded = await complaintPortal.addComplaint(complaint);
+    await complaintAdded.wait();
+    console.log("Complaint adding is done");
+    alert("Complaint is successfully added");
+    // navigate("/complaints");
+  };
 </script>
 
 <div class="max-w-md mx-auto mb-10">
-  <form class="mt-8 space-y-6">
+  <h2 class="text-xl font-bold font-sans text-center my-11 uppercase">
+    File a Complaint or Offence
+  </h2>
+  <form class="mt-8 space-y-6" on:submit|preventDefault={submitHandler}>
     <div>
       <label
         for="complaintNature"
@@ -119,6 +133,7 @@
         >Complaint Subject</label
       >
       <input
+        bind:value={complaint.subject}
         type="text"
         required
         id="complaintSubject"
@@ -133,6 +148,7 @@
         class="block text-gray-700 font-bold mb-2">Complaint Description</label
       >
       <textarea
+        bind:value={complaint.complaintDescription}
         required
         id="complaintDescription"
         name="complaintDescription"

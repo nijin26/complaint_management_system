@@ -5,6 +5,7 @@
 
   import { stationTypes } from "../../lib/Lists";
   import {
+    connectingWithComplaintPortal,
     connectingWithPolice,
     connectingWithSuperior,
   } from "../../lib/Contract";
@@ -37,7 +38,7 @@
   });
 
   const submitHandler = async () => {
-    const policeContract = await connectingWithPolice();
+    const complaintPortal = await connectingWithComplaintPortal();
 
     const {
       name,
@@ -51,7 +52,7 @@
     } = station;
 
     if (profileMode === "edit") {
-      const profileUpdated = await policeContract.updateStationProfile(
+      const profileUpdated = await complaintPortal.updateStationProfile(
         name,
         addr,
         district,
@@ -63,7 +64,7 @@
       );
       await profileUpdated.wait();
     } else {
-      const profileCreated = await policeContract.createStationProfile(
+      const profileCreated = await complaintPortal.createStationProfile(
         name,
         addr,
         district,

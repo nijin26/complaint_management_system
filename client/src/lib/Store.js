@@ -12,6 +12,6 @@ export const metamask = writable({
 });
 export const profileType = writable("");
 
-if (selectedAddress) {
-  getUserRole();
-}
+// if (selectedAddress) {
+//   getUserRole();
+// }

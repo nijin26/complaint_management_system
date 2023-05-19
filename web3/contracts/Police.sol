@@ -56,7 +56,6 @@ contract Police is PoliceSuperior {
             approvedBy: address(0)
         });
         setIsPoliceStation(msg.sender, true);
-        // isPoliceStation[msg.sender] = true;
 
         addressList.push(msg.sender); // Add the new police station address to the addressList array
 

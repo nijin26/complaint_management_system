@@ -162,19 +162,19 @@ contract Complaint {
         return isJudiciary[key];
     }
 
-    function getUserRole() public view returns (string memory) {
-        console.log("%s is police station", isPoliceStation[msg.sender]);
-        console.log("%s message sender", msg.sender);
-        if (isUser[msg.sender]) {
-            return "USER";
-        } else if (getIsPoliceStation(msg.sender)) {
-            return "STATION";
-        } else if (isPoliceSuperior[msg.sender]) {
-            return "SUPERIOR";
-        } else if (isJudiciary[msg.sender]) {
-            return "JUDICIARY";
-        } else {
-            return "";
-        }
-    }
+    // function getUserRole() public view returns (string memory) {
+    //     console.log("%s is police station", isPoliceStation[msg.sender]);
+    //     console.log("%s message sender", msg.sender);
+    //     if (isUser[msg.sender]) {
+    //         return "USER";
+    //     } else if (isPoliceStation[msg.sender]) {
+    //         return "STATION";
+    //     } else if (isPoliceSuperior[msg.sender]) {
+    //         return "SUPERIOR";
+    //     } else if (isJudiciary[msg.sender]) {
+    //         return "JUDICIARY";
+    //     } else {
+    //         return "";
+    //     }
+    // }
 }
