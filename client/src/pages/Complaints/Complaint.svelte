@@ -26,9 +26,9 @@
     const complaintPortal = await connectingWithComplaintPortal();
     const complaintAdded = await complaintPortal.addComplaint(complaint);
     await complaintAdded.wait();
-    console.log("Complaint adding is done");
+    console.log("Complaint adding is done", complaintAdded);
     alert("Complaint is successfully added");
-    // navigate("/complaints");
+    navigate("/complaints");
   };
 </script>
 

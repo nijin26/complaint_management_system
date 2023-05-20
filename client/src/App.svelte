@@ -69,11 +69,11 @@
         <Route path="/police/complaint" component={PoliceComplaint} />
       {/if}
 
-      {#if $metamask.connected && $profileType === "STATION"}
+      {#if $metamask.connected}
         <Route path="/station/profile" component={StationProfile} />
       {/if}
 
-      {#if $metamask.connected && $profileType === "SUPERIOR"}
+      {#if $metamask.connected}
         <Route path="/superior/profile" component={SuperiorProfile} />
         <Route path="/superior/profile/edit" component={EditSuperiorProfile} />
         <Route path="/superior/stations" component={ListofStations} />
