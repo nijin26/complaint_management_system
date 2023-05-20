@@ -27,11 +27,7 @@
   //User
   import EditUserProfile from "./pages/User/EditUserProfile.svelte";
 
-  import {
-    connectingWithComplaint,
-    connectingWithComplaintPortal,
-  } from "./lib/Contract";
-  import { getUserRole } from "./lib/GetUserRole";
+  import { connectingWithComplaintPortal } from "./lib/Contract";
 
   $: {
     window.ethereum.on("accountsChanged", async (accounts) => {
@@ -54,19 +50,25 @@
     <Router>
       <Route component={Home} />
       <Route path="/About" component={About} />
-
       <Route path="/superior" component={SuperiorLogin} />
-
       <Route path="/station" component={StationLogin} />
       <Route path="/station/profile/edit" component={EditStationProfile} />
-      <!-- <Route path="/station/profile/edit" component={EditStationProfile} /> -->
+      <Route path="/user/profile/edit" component={EditUserProfile} />
+      <Route path="/filecomplaint" component={Complaint} />
+      <Route path="/complaints" component={UserRegisteredComplaintsList} />
+      <Route path="/complaints/against" component={ComplaintsAgainstUser} />
+      <Route path="/station/complaint" component={PoliceComplaint} />
+      <Route path="/station/profile" component={StationProfile} />
+      <Route path="/superior/profile" component={SuperiorProfile} />
+      <Route path="/superior/profile/edit" component={EditSuperiorProfile} />
+      <Route path="/superior/stations" component={ListofStations} />
 
-      {#if $metamask.connected}
+      <!-- {#if $metamask.connected}
         <Route path="/user/profile/edit" component={EditUserProfile} />
         <Route path="/filecomplaint" component={Complaint} />
         <Route path="/complaints" component={UserRegisteredComplaintsList} />
         <Route path="/complaints/against" component={ComplaintsAgainstUser} />
-        <Route path="/police/complaint" component={PoliceComplaint} />
+        <Route path="/station/complaint" component={PoliceComplaint} />
       {/if}
 
       {#if $metamask.connected}
@@ -77,7 +79,7 @@
         <Route path="/superior/profile" component={SuperiorProfile} />
         <Route path="/superior/profile/edit" component={EditSuperiorProfile} />
         <Route path="/superior/stations" component={ListofStations} />
-      {/if}
+      {/if} -->
     </Router>
   </main>
 </div>

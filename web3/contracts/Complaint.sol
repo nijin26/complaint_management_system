@@ -1,180 +1,337 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.18;
 import "hardhat/console.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract Complaint {
-    struct ComplaintLocation {
-        string placeOfIncident;
-        string landmark;
-        string district;
+contract Complaint is AccessControl {
+    bytes32 public constant OWNER = keccak256("OWNER");
+    bytes32 public constant USER = keccak256("USER");
+    bytes32 public constant STATION = keccak256("STATION");
+    bytes32 public constant SUPERIOR = keccak256("SUPERIOR");
+    bytes32 public constant JUDICIARY = keccak256("JUDICIARY");
+
+    constructor() {
+        _grantRole(OWNER, msg.sender);
+        _grantRole(SUPERIOR, msg.sender);
+        _setRoleAdmin(OWNER, OWNER);
+        _setRoleAdmin(USER, OWNER);
+        _setRoleAdmin(STATION, OWNER);
+        _setRoleAdmin(SUPERIOR, OWNER);
+        _setRoleAdmin(JUDICIARY, OWNER);
     }
 
-    struct ComplaintParty {
-        address complainant;
-        address policeStation;
-        address witness;
-        address accused;
-    }
-
-    struct ComplaintDetails {
-        uint complaintId;
+    struct UserComplaintDetails {
         string complaintNature;
         string complaintSubject;
         string complaintDescription;
         string dateAndTime;
-        ComplaintLocation location;
-        ComplaintParty party;
+        string placeOfIncident;
+        string landmark;
+        string district;
+        address policeStation;
         string officeToFileComplaint;
+    }
+
+    struct ComplaintDetailsByPolice {
+        address witness;
+        address accused;
         string ipc;
         string status;
         string remarks;
     }
 
-    ComplaintDetails[] public complaints;
-    address owner;
-    mapping(address => uint) public ComplaintByID;
-    mapping(address => bool) public isUser;
-    mapping(address => bool) public isPoliceStation;
-    mapping(address => bool) public isPoliceSuperior;
-    mapping(address => bool) public isJudiciary;
-
-    constructor() {
-        owner = msg.sender;
+    struct ComplaintEntry {
+        uint complaintID;
+        UserComplaintDetails userComplaint;
+        ComplaintDetailsByPolice policeComplaint;
     }
 
-    // event ComplaintAdded(ComplaintDetails complaint);
-    // event ComplaintUpdated(ComplaintDetails updatedComplaint);
-
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only owner can call this function");
-        _;
+    struct Superior {
+        string name;
+        string email;
+        uint mobile;
+        uint aadharID;
+        string rank;
+        string designation;
+        string unit;
+        bool approved;
+        address approvedBy;
     }
 
-    modifier onlyUser() {
-        require(isUser[msg.sender], "Only user can call this function");
-        _;
+    struct Station {
+        string name;
+        string addr;
+        string district;
+        string landmark;
+        string stationType;
+        uint mobile;
+        string nameOfCI;
+        string nameOfSI;
+        bool approved;
+        address approvedBy;
     }
 
-    modifier onlyPoliceStation() {
-        require(
-            isPoliceStation[msg.sender],
-            "Only police station can call this function"
-        );
-        _;
+    struct BasicDetails {
+        string name;
+        string email;
+        uint mobile;
+        uint age;
+        string gender;
+        string dob;
+        string addr;
+        string city;
+        string district;
+        string state;
+        uint pincode;
     }
 
-    modifier onlyPoliceSuperior() {
-        require(
-            isPoliceSuperior[msg.sender] || msg.sender == owner,
-            "Only police superior can call this function"
-        );
-        _;
+    struct IDDetails {
+        string selectedID;
+        string IDNumber;
     }
 
-    modifier onlyOwnerOrIsSuperior() {
-        require(
-            isPoliceSuperior[msg.sender] || msg.sender == owner,
-            "Only police superior or owner can call this function"
-        );
-        _;
+    struct RelativeDetails {
+        string relativeName;
+        uint relativeMobile;
+        string relation;
     }
 
-    modifier onlyJudiciary() {
-        require(
-            isJudiciary[msg.sender],
-            "Only judiciary can call this function"
-        );
-        _;
+    struct ProfileInfo {
+        BasicDetails basicDetails;
+        IDDetails idDetails;
+        RelativeDetails relativeDetails;
     }
 
-    function addComplaint(ComplaintDetails memory complaint) public {
-        complaint.complaintId = complaints.length; // complaintId is auto-incremented by array index
-        complaints.push(complaint);
-        // emit ComplaintAdded(complaint);
+    ComplaintEntry[] public complaints;
+
+    address[] public listOfUsers;
+    address[] public listOfStations;
+    address[] public listOfSuperiors;
+
+    mapping(address => Superior) public policeSuperiors;
+    mapping(address => Station) public policeStations;
+    mapping(address => ProfileInfo) public userProfiles;
+
+    // <<<<<<<<<<<< COMPLAINT MODULE >>>>>>>>>>>>>>>>>>
+
+    function addComplaintByUser(
+        UserComplaintDetails memory _details
+    ) public onlyRole(USER) {
+        ComplaintEntry memory entry;
+        entry.userComplaint = _details;
+        entry.complaintID = complaints.length; // complaintId is auto-incremented by array index
+        complaints.push(entry);
     }
 
-    function getComplaintDetails(
-        uint complaintId
-    ) public view returns (ComplaintDetails memory) {
-        require(complaintId < complaints.length, "Complaint not found"); // added check for valid complaint ID
-        return complaints[complaintId];
-    }
-
-    function updateComplaint(
-        uint complaintId,
-        ComplaintDetails memory updatedComplaint
+    function addComplaintByPolice(
+        UserComplaintDetails memory _details,
+        ComplaintDetailsByPolice memory _otherDetails
     ) public {
-        require(complaintId <= complaints.length, "Complaint not found"); // added check for valid complaint ID
-        complaints[complaintId] = updatedComplaint;
-        // emit ComplaintUpdated(updatedComplaint);
+        // Check authorization
+        require(
+            hasRole(STATION, msg.sender) || hasRole(SUPERIOR, msg.sender),
+            "YOU ARE NOT AUTHORIZED"
+        );
+
+        ComplaintEntry memory entry;
+        entry.complaintID = complaints.length; // complaintId is auto-incremented by array index
+        entry.userComplaint = _details;
+        entry.policeComplaint = _otherDetails;
+        complaints.push(entry);
     }
 
-    // <<<<<<< Getter & Setter functions for Mappings >>>>>>>>>.
+    //<<<<<<<<< GET COMPLAINT DETAILS >>>>>>>>>>>>>>>
+    function getComplaintDetailsById(
+        uint _complaintId
+    )
+        public
+        view
+        returns (UserComplaintDetails memory, ComplaintDetailsByPolice memory)
+    {
+        require(_complaintId < complaints.length, "Invalid complaint ID");
 
-    function setComplaintByID(address key, uint value) public {
-        ComplaintByID[key] = value;
+        ComplaintEntry storage complaint = complaints[_complaintId];
+        return (complaint.userComplaint, complaint.policeComplaint);
     }
 
-    // Getter function for ComplaintByID mapping
-    function getComplaintByID(address key) public view returns (uint) {
-        return ComplaintByID[key];
+    // <<<<<<<<< UPDATE COMPLAINT >>>>>>>>>>>>
+    function updateComplaintByUser(
+        uint _complaintId,
+        UserComplaintDetails memory _updatedDetails
+    ) public onlyRole(USER) {
+        require(_complaintId < complaints.length, "Invalid complaint ID");
+
+        ComplaintEntry storage complaint = complaints[_complaintId];
+        complaint.userComplaint = _updatedDetails;
     }
 
-    // Setter function for isUser mapping
-    function setIsUser(address key, bool value) public {
-        isUser[key] = value;
+    function updateComplaintByPolice(
+        uint complaintId,
+        UserComplaintDetails memory updatedDetails,
+        ComplaintDetailsByPolice memory updatedPoliceDetails
+    ) public {
+        require(complaintId < complaints.length, "Invalid complaint ID");
+        require(
+            hasRole(STATION, msg.sender) || hasRole(SUPERIOR, msg.sender),
+            "YOU ARE NOT AUTHORIZED"
+        );
+
+        ComplaintEntry storage complaint = complaints[complaintId];
+        complaint.userComplaint = updatedDetails;
+        complaint.policeComplaint = updatedPoliceDetails;
     }
 
-    // Getter function for isUser mapping
-    function getIsUser(address key) public view returns (bool) {
-        return isUser[key];
+    // <<<<<<<<<<<<< USER MODULE >>>>>>>>>>>>
+
+    function createUser(ProfileInfo memory profileInfo) public {
+        userProfiles[msg.sender] = profileInfo;
+        _grantRole(USER, msg.sender);
     }
 
-    // Setter function for isPoliceStation mapping
-    function setIsPoliceStation(address key, bool value) public {
-        console.log("set is police station is called by %s %s", key, value);
-        isPoliceStation[key] = value;
+    function getUserDetails() public view returns (ProfileInfo memory) {
+        return userProfiles[msg.sender];
     }
 
-    // Getter function for isPoliceStation mapping
-    function getIsPoliceStation(address key) public view returns (bool) {
-        return isPoliceStation[key];
+    function updateUserDetails(
+        ProfileInfo memory profileInfo
+    ) public onlyRole(USER) {
+        userProfiles[msg.sender] = profileInfo;
     }
 
-    // Setter function for isPoliceSuperior mapping
-    function setIsPoliceSuperior(address key, bool value) public {
-        isPoliceSuperior[key] = value;
+    // <<<<<<<<< SUPERIOR MODULE >>>>>>>>>>>>>>>
+
+    function createSuperiorProfile(Superior memory profileInfo) public {
+        policeSuperiors[msg.sender] = profileInfo;
     }
 
-    // Getter function for isPoliceSuperior mapping
-    function getIsPoliceSuperior(address key) public view returns (bool) {
-        return isPoliceSuperior[key];
+    function updateSuperiorProfile(Superior memory profileInfo) public {
+        policeSuperiors[msg.sender] = profileInfo;
     }
 
-    // Setter function for isJudiciary mapping
-    function setIsJudiciary(address key, bool value) public {
-        isJudiciary[key] = value;
+    function approvePoliceSuperior(address _policeSuperior) public {
+        require(
+            hasRole(OWNER, msg.sender) || hasRole(SUPERIOR, msg.sender),
+            "YOU ARE NOT AUTHORIZED"
+        );
+        _grantRole(SUPERIOR, _policeSuperior);
+        policeSuperiors[_policeSuperior].approved = true;
+        policeSuperiors[_policeSuperior].approvedBy = msg.sender;
     }
 
-    // Getter function for isJudiciary mapping
-    function getIsJudiciary(address key) public view returns (bool) {
-        return isJudiciary[key];
+    function addApprovedSuperiorProfile(
+        address _newSuperior,
+        Superior memory profileInfo
+    ) public onlyRole(OWNER) {
+        policeSuperiors[_newSuperior] = profileInfo;
+        grantRole(SUPERIOR, _newSuperior);
     }
 
-    // function getUserRole() public view returns (string memory) {
-    //     console.log("%s is police station", isPoliceStation[msg.sender]);
-    //     console.log("%s message sender", msg.sender);
-    //     if (isUser[msg.sender]) {
-    //         return "USER";
-    //     } else if (isPoliceStation[msg.sender]) {
-    //         return "STATION";
-    //     } else if (isPoliceSuperior[msg.sender]) {
-    //         return "SUPERIOR";
-    //     } else if (isJudiciary[msg.sender]) {
-    //         return "JUDICIARY";
-    //     } else {
-    //         return "";
+    function getSuperiorProfileDetails()
+        public
+        view
+        onlyRole(SUPERIOR)
+        returns (Superior memory)
+    {
+        Superior storage profile = policeSuperiors[msg.sender];
+        return (profile);
+    }
+
+    function getApprovingSuperiorDetails(
+        address _approvedBy
+    ) public view returns (string memory name, string memory designation) {
+        require(_approvedBy != address(0), "Invalid address");
+        require(hasRole(SUPERIOR, _approvedBy), "Not an approved superior");
+
+        return (
+            policeSuperiors[_approvedBy].name,
+            policeSuperiors[_approvedBy].designation
+        );
+    }
+
+    function createStationProfile(Station memory _stationDetails) public {
+        policeStations[msg.sender] = _stationDetails;
+    }
+
+    function updateStationProfile(
+        Station memory _updatedStationDetails
+    ) public onlyRole(STATION) {
+        policeStations[msg.sender] = _updatedStationDetails;
+    }
+
+    function approveStationProfile(
+        address _policeStation
+    ) public onlyRole(SUPERIOR) {
+        _grantRole(STATION, _policeStation);
+        policeStations[_policeStation].approved = true;
+        policeStations[_policeStation].approvedBy = msg.sender;
+    }
+
+    function getStationDetails() public view returns (Station memory) {
+        Station memory profile = policeStations[msg.sender];
+        return (profile);
+    }
+
+    function getUserType() public view returns (string memory) {
+        if (hasRole(SUPERIOR, msg.sender)) {
+            return "SUPERIOR";
+        } else if (hasRole(STATION, msg.sender)) {
+            return "STATION";
+        } else if (hasRole(USER, msg.sender)) {
+            return "USER";
+        } else {
+            return "";
+        }
+    }
+
+    // function getAllUsers()
+    //     public
+    //     view
+    //     onlyRole(SUPERIOR)
+    //     returns (ProfileInfo[] memory)
+    // {
+    //     uint userCount = listOfUsers.length;
+    //     ProfileInfo[] memory result = new ProfileInfo[](userCount);
+
+    //     uint index = 0;
+    //     for (uint i = 0; i < userCount; i++) {
+    //         result[index] = userProfiles[listOfUsers[i]];
+    //         index++;
     //     }
+    //     return result;
+    // }
+
+    // function getAllSuperiors()
+    //     public
+    //     view
+    //     onlyRole(SUPERIOR)
+    //     returns (Superior[] memory)
+    // {
+    //     uint superiorCount = listOfSuperiors.length;
+    //     Superior[] memory result = new Superior[](superiorCount);
+
+    //     uint index = 0;
+    //     for (uint i = 0; i < superiorCount; i++) {
+    //         result[index] = policeSuperiors[listOfSuperiors[i]];
+    //         index++;
+    //     }
+    //     return result;
+    // }
+
+    // function getAllPoliceStations()
+    //     public
+    //     view
+    //     onlyRole(SUPERIOR)
+    //     returns (Station[] memory)
+    // {
+    //     uint stationCount = listOfStations.length;
+    //     Station[] memory result = new Station[](stationCount);
+
+    //     uint index = 0;
+    //     for (uint i = 0; i < stationCount; i++) {
+    //         result[index] = policeStations[listOfStations[i]];
+    //         index++;
+    //     }
+    //     return result;
     // }
 }

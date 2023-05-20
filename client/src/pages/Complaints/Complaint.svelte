@@ -6,13 +6,14 @@
 
   const complaint = {
     complaintNature: "",
-    placeOfIncident: "",
+    complaintSubject: "",
+    complaintDescription: "",
     dateAndTime: "",
+    placeOfIncident: "",
+    landmark: "",
+    district: "",
     policeStation: "",
     officeToFileComplaint: "",
-    district: "",
-    subject: "",
-    complaintDescription: "",
   };
 
   let policeStationOptions;
