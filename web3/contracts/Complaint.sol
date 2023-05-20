@@ -203,6 +203,11 @@ contract Complaint is AccessControl {
 
     function createSuperiorProfile(Superior memory profileInfo) public {
         policeSuperiors[msg.sender] = profileInfo;
+        if (hasRole(SUPERIOR, msg.sender)) {
+            console.log("Has role for superior is executed");
+            policeSuperiors[msg.sender].approved = true;
+            policeSuperiors[msg.sender].approvedBy = msg.sender;
+        }
     }
 
     function updateSuperiorProfile(Superior memory profileInfo) public {
@@ -214,7 +219,7 @@ contract Complaint is AccessControl {
             hasRole(OWNER, msg.sender) || hasRole(SUPERIOR, msg.sender),
             "YOU ARE NOT AUTHORIZED"
         );
-        _grantRole(SUPERIOR, _policeSuperior);
+        grantRole(SUPERIOR, _policeSuperior);
         policeSuperiors[_policeSuperior].approved = true;
         policeSuperiors[_policeSuperior].approvedBy = msg.sender;
     }
@@ -233,8 +238,7 @@ contract Complaint is AccessControl {
         onlyRole(SUPERIOR)
         returns (Superior memory)
     {
-        Superior storage profile = policeSuperiors[msg.sender];
-        return (profile);
+        return policeSuperiors[msg.sender];
     }
 
     function getApprovingSuperiorDetails(

@@ -7,7 +7,7 @@ describe("Complaint", function () {
     [owner, complainant, station, superior] = await ethers.getSigners();
     const Complaint = await ethers.getContractFactory("Complaint");
     complaintContract = await Complaint.connect(owner).deploy();
-    complaintContract.deployed();
+    await complaintContract.deployed();
   });
 
   it("should create an user", async function () {
@@ -39,10 +39,51 @@ describe("Complaint", function () {
       .connect(complainant)
       .createUser(profileInfo);
     userCreated.wait();
-    // const userType = await complaintContract.connect(complainant).getUserType();
 
+    // const userType = await complaintContract.connect(complainant).getUserType();
+    // console.log(userType, "ROLE");
     // const userDetails = await complaintContract
     //   .connect(complainant)
     //   .getUserDetails();
+    // console.log(userDetails, "user details");
+  });
+
+  it("should create a superior profile", async function () {
+    const superiorProfile = {
+      name: "John Doe",
+      email: "john.doe@example.com",
+      mobile: 1234567890,
+      aadharID: 123456789012,
+      rank: "Inspector",
+      designation: "Superintendent",
+      unit: "XYZ Division",
+      approved: false,
+      approvedBy: ethers.constants.AddressZero,
+    };
+    console.log(superior.address);
+    const superiorProfileCreated = await complaintContract
+      .connect(superior)
+      .createSuperiorProfile(superiorProfile);
+    superiorProfileCreated.wait();
+
+    const superiorIsApproved = await complaintContract.approvePoliceSuperior(
+      superior.address
+    );
+    superiorIsApproved.wait();
+  });
+
+  it("Should create a station profile", async function () {
+    const stationProfile = {
+      name: "ABC Police Station",
+      addr: "123 Main Street",
+      district: "XYZ District",
+      landmark: "Near City Park",
+      stationType: "Local",
+      mobile: 9876543210,
+      nameOfCI: "John Smith",
+      nameOfSI: "Jane Doe",
+      approved: false,
+      approvedBy: ethers.constants.AddressZero,
+    };
   });
 });
