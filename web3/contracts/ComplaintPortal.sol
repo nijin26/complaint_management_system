@@ -184,6 +184,7 @@ contract ComplaintPortal is AccessControl {
 
     function createUser(ProfileInfo memory profileInfo) public {
         userProfiles[msg.sender] = profileInfo;
+        grantRole(USER, msg.sender);
     }
 
     function getUserDetails() public view returns (ProfileInfo memory) {
@@ -206,20 +207,22 @@ contract ComplaintPortal is AccessControl {
         policeSuperiors[msg.sender] = profileInfo;
     }
 
-    function addApprovedSuperiorProfile(
-        address _newSuperior,
-        Superior memory profileInfo
-    ) public onlyRole(OWNER) {
-        policeSuperiors[_newSuperior] = profileInfo;
-    }
-
     function approvePoliceSuperior(address _policeSuperior) public {
         require(
             hasRole(OWNER, msg.sender) || hasRole(SUPERIOR, msg.sender),
             "YOU ARE NOT AUTHORIZED"
         );
+        grantRole(SUPERIOR, _policeSuperior);
         policeSuperiors[_policeSuperior].approved = true;
         policeSuperiors[_policeSuperior].approvedBy = msg.sender;
+    }
+
+    function addApprovedSuperiorProfile(
+        address _newSuperior,
+        Superior memory profileInfo
+    ) public onlyRole(OWNER) {
+        policeSuperiors[_newSuperior] = profileInfo;
+        grantRole(SUPERIOR, _newSuperior);
     }
 
     function getSuperiorProfileDetails()
@@ -257,6 +260,7 @@ contract ComplaintPortal is AccessControl {
     function approveStationProfile(
         address _policeStation
     ) public onlyRole(SUPERIOR) {
+        grantRole(STATION, _policeStation);
         policeStations[_policeStation].approved = true;
         policeStations[_policeStation].approvedBy = msg.sender;
     }
