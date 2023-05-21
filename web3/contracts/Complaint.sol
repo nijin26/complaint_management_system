@@ -272,8 +272,7 @@ contract Complaint is AccessControl {
     }
 
     function getStationDetails() public view returns (Station memory) {
-        Station memory profile = policeStations[msg.sender];
-        return (profile);
+        return policeStations[msg.sender];
     }
 
     function getUserType() public view returns (string memory) {

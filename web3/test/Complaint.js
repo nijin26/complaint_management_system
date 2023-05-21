@@ -70,6 +70,10 @@ describe("Complaint", function () {
       superior.address
     );
     superiorIsApproved.wait();
+
+    // const superiorDetails = await complaintContract
+    //   .connect(superior)
+    //   .getSuperiorProfileDetails();
   });
 
   it("Should create a station profile", async function () {
@@ -85,5 +89,36 @@ describe("Complaint", function () {
       approved: false,
       approvedBy: ethers.constants.AddressZero,
     };
+    const stationProfileCreated = await complaintContract
+      .connect(station)
+      .createStationProfile(stationProfile);
+
+    await complaintContract
+      .connect(superior)
+      .approveStationProfile(station.address);
+
+    // const userDetails = await complaintContract
+    //   .connect(station)
+    //   .getStationDetails();
+    // console.log(userDetails, "user details");
+
+    it("Add complaint by user", async function () {
+      const userComplaintDetails = {
+        complaintNature: "Theft",
+        complaintSubject: "Stolen Wallet",
+        complaintDescription:
+          "My wallet was stolen while traveling on the bus.",
+        dateAndTime: "2023-05-20 15:30",
+        placeOfIncident: "City Center",
+        landmark: "Bus Stop",
+        district: "ABC District",
+        policeStation: "0x1234567890abcdef1234567890abcdef12345678",
+        officeToFileComplaint: "Complaint Office 1",
+      };
+
+      const complaintAdded = await complaintContract
+        .connect(complainant)
+        .addComplaintByUser(userComplaintDetails);
+    });
   });
 });
