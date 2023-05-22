@@ -1,19 +1,19 @@
 <script>
+  import { onMount } from "svelte";
+  import { connectingWithComplaintPortal } from "../../lib/Contract";
+
   const complaints = [
     {
-      id: 1,
-      subject: "Missing person",
-      date: "2023-04-28",
-    },
-    {
-      id: 2,
-      subject: "Theft",
-      date: "2023-04-29",
-    },
-    {
-      id: 3,
-      subject: "Assault",
-      date: "2023-04-30",
+      id: 0,
+      complaintNature: "",
+      complaintSubject: "",
+      complaintDescription: "",
+      dateAndTime: "",
+      placeOfIncident: "",
+      landmark: "",
+      district: "",
+      policeStation: "",
+      officeToFileComplaint: "",
     },
   ];
 
@@ -26,6 +26,23 @@
   const viewFIRHandler = () => {
     isModalOpen = false;
   };
+
+  onMount(async () => {
+    const complaintPortal = await connectingWithComplaintPortal();
+    const complaint = await complaintPortal.getComplaintDetailsById(0);
+    complaints[0].complaintNature = complaint[0].complaintNature;
+    complaints[0].complaintSubject = complaint[0].complaintSubject;
+    complaints[0].complaintDescription = complaint[0].complaintDescription;
+    complaints[0].placeOfIncident = complaint[0].placeOfIncident;
+    complaints[0].landmark = complaint[0].landmark;
+    complaints[0].district = complaint[0].district;
+    complaints[0].policeStation = complaint[0].policeStation;
+    complaints[0].officeToFileComplaint = complaint[0].officeToFileComplaint;
+
+    //Convert & set date and time
+    const dateTime = new Date(complaint[0].dateAndTime.toLocaleString());
+    complaints[0].dateAndTime = dateTime.toLocaleString();
+  });
 </script>
 
 <table class="table-auto w-full my-4">
@@ -41,8 +58,8 @@
     {#each complaints as complaint}
       <tr class="border-b hover:bg-gray-100 text-center">
         <td class="px-4 py-2">{complaint.id}</td>
-        <td class="px-4 py-2">{complaint.subject}</td>
-        <td class="px-4 py-2">{complaint.date}</td>
+        <td class="px-4 py-2">{complaint.complaintSubject}</td>
+        <td class="px-4 py-2">{complaint.dateAndTime}</td>
         <td class="px-4 py-2">
           <button
             on:click={viewDetailsHandler}
@@ -91,22 +108,28 @@
       <div class="bg-gray-50 px-4 py-6">
         <div class="mb-4">
           <p class="text-gray-600 mb-2">
-            <span class="font-bold">Station Name:</span> Example Station
+            <span class="font-bold">Station Name:</span>
+            {complaints[0].policeStation}
           </p>
           <p class="text-gray-600 mb-2">
-            <span class="font-bold">Location/Place:</span> Example Location
+            <span class="font-bold">Location/Place:</span>
+            {complaints[0].placeOfIncident}
           </p>
           <p class="text-gray-600 mb-2">
-            <span class="font-bold">District:</span> Example District
+            <span class="font-bold">District:</span>
+            {complaints[0].district}
           </p>
           <p class="text-gray-600 mb-2">
-            <span class="font-bold">Station Type:</span> Example Type
+            <span class="font-bold">Station Type:</span>
+            {complaints[0].officeToFileComplaint}
           </p>
           <p class="text-gray-600 mb-2">
-            <span class="font-bold">Address:</span> Example Address
+            <span class="font-bold">Landmark:</span>
+            {complaints[0].landmark}
           </p>
           <p class="text-gray-600 mb-2">
-            <span class="font-bold">Mobile Number:</span> 1234567890
+            <span class="font-bold">Description:</span>
+            {complaints[0].complaintDescription}
           </p>
         </div>
         <!-- Modal footer -->

@@ -2,57 +2,78 @@
   import { navigate } from "svelte-routing";
   import { connectingWithComplaintPortal } from "../../lib/Contract";
 
+  // const profileInfo = {
+  //   basicDetails: {
+  //     name: "",
+  //     email: "",
+  //     mobile: "",
+  //     age: "",
+  //     gender: "",
+  //     dob: "",
+  //     addr: "",
+  //     city: "",
+  //     district: "",
+  //     state: "",
+  //     pincode: "",
+  //   },
+  //   idDetails: {
+  //     selectedID: "",
+  //     IDNumber: "",
+  //   },
+  //   relativeDetails: {
+  //     relativeName: "",
+  //     relativeMobile: "",
+  //     relation: "",
+  //   },
+  // };
+
   const profileInfo = {
     basicDetails: {
-      name: "",
-      email: "",
-      mobile: "",
-      age: "",
-      gender: "",
-      dob: "",
-      addr: "",
-      city: "",
-      district: "",
-      state: "",
-      pincode: "",
+      name: "John Doe",
+      email: "johndoe@example.com",
+      mobile: 1234567890,
+      age: 25,
+      gender: "Male",
+      dob: "1998-05-10",
+      addr: "123 Main Street",
+      city: "New York",
+      district: "ABC District",
+      state: "New York",
+      pincode: 12345,
     },
     idDetails: {
-      selectedID: "",
-      IDNumber: "",
+      selectedID: "Driving License",
+      IDNumber: "DL-123456789",
     },
     relativeDetails: {
-      relativeName: "",
-      relativeMobile: "",
-      relation: "",
+      relativeName: "Jane Doe",
+      relativeMobile: 9876543210,
+      relation: "Other",
     },
   };
 
   const { basicDetails, idDetails, relativeDetails } = profileInfo;
 
   const submitHandler = async () => {
-    console.log("Submit handler is called", profileInfo);
-    const complaintPortal = await connectingWithComplaintPortal();
-    const profileCreated = await complaintPortal.createUser(profileInfo);
+    const complaintPortalContract = await connectingWithComplaintPortal();
+    const profileCreated = await complaintPortalContract.createUser(
+      profileInfo
+    );
     await profileCreated.wait();
-
-    console.log("Profile creation is done");
 
     navigate("/filecomplaint");
   };
 
   const viewHandler = async () => {
-    const complaintPortal = await connectingWithComplaintPortal();
-    const getProfileDetails = await complaintPortal.getUserDetails();
-    console.log(getProfileDetails, "User profile");
+    console.log("View handler is called");
+
+    navigate("/user/profile");
   };
 </script>
 
 <main class="w-3/4 md:w-1/2 mx-auto p-4 border border-black rounded-md my-10">
   <h1 class="text-center my-4 text-lg font-bold">PROFILE DETAILS</h1>
-  <form
-    class="profile flex flex-col gap-4"
-    on:submit|preventDefault={submitHandler}
-  >
+  <form class="profile flex flex-col gap-4">
     <input
       type="text"
       required
@@ -170,20 +191,20 @@
       <option value="Voter ID">Voter ID</option>
     </select>
     <input
-      type="number"
+      type="text"
       required
       class="input-default"
       placeholder="ID Card Number*"
       bind:value={idDetails.IDNumber}
     />
     <button
-      type="submit"
+      on:click|preventDefault={submitHandler}
       class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
     >
       Save Profile
     </button>
     <button
-      on:click={viewHandler}
+      on:click|preventDefault={viewHandler}
       class="border-2 border-blue-500 rounded-md py-2 px-4 mt-2"
       >View Profile</button
     >

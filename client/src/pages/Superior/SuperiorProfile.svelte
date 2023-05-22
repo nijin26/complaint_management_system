@@ -1,12 +1,8 @@
 <script>
   import { onMount } from "svelte";
-  import { ethers } from "ethers";
   import { navigate, Link } from "svelte-routing";
 
-  import {
-    connectingWithComplaintPortal,
-    connectingWithSuperior,
-  } from "../../lib/Contract";
+  import { connectingWithComplaintPortal } from "../../lib/Contract";
 
   let superiorProfile = {
     name: "",

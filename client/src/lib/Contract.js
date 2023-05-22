@@ -1,18 +1,17 @@
 import { ethers } from "ethers";
 import Web3Modal from "web3modal";
-import { Web3Provider } from "@ethersproject/providers";
 
 import {
   complaintPortalAddress,
   ComplaintPortalABI,
-  complaintAddress,
-  ComplaintABI,
-  policeSuperiorAddress,
-  policeSuperiorABI,
-  policeAddress,
-  policeABI,
-  userAddress,
-  userABI,
+  // complaintAddress,
+  // ComplaintABI,
+  // policeSuperiorAddress,
+  // policeSuperiorABI,
+  // policeAddress,
+  // policeABI,
+  // userAddress,
+  // userABI,
 } from "../../../web3/Context/constants";
 
 //CHECK IF WALLET IS CONNECTED
@@ -67,80 +66,80 @@ export const connectingWithComplaintPortal = async () => {
 };
 
 // Complaint contract fetching
-export const fetchComplaintContract = (signerOrProvider) =>
-  new ethers.Contract(complaintAddress, ComplaintABI, signerOrProvider);
+// export const fetchComplaintContract = (signerOrProvider) =>
+//   new ethers.Contract(complaintAddress, ComplaintABI, signerOrProvider);
 
-// CONNECTING WITH SuperiorCONTRACT
-export const connectingWithComplaint = async () => {
-  try {
-    const web3modal = new Web3Modal();
-    const connection = await web3modal.connect();
-    const provider = new ethers.providers.Web3Provider(connection);
-    const signer = provider.getSigner();
-    const contract = fetchComplaintContract(signer);
-    return contract;
-  } catch (error) {
-    console.log(error);
-  }
-};
+// // CONNECTING WITH SuperiorCONTRACT
+// export const connectingWithComplaint = async () => {
+//   try {
+//     const web3modal = new Web3Modal();
+//     const connection = await web3modal.connect();
+//     const provider = new ethers.providers.Web3Provider(connection);
+//     const signer = provider.getSigner();
+//     const contract = fetchComplaintContract(signer);
+//     return contract;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
-// Superior contract fetching
-export const fetchSuperiorContract = (signerOrProvider) =>
-  new ethers.Contract(
-    policeSuperiorAddress,
-    policeSuperiorABI,
-    signerOrProvider
-  );
+// // Superior contract fetching
+// export const fetchSuperiorContract = (signerOrProvider) =>
+//   new ethers.Contract(
+//     policeSuperiorAddress,
+//     policeSuperiorABI,
+//     signerOrProvider
+//   );
 
-// CONNECTING WITH SuperiorCONTRACT
-export const connectingWithSuperior = async () => {
-  try {
-    const web3modal = new Web3Modal();
-    const connection = await web3modal.connect();
-    const provider = new ethers.providers.Web3Provider(connection);
-    const signer = provider.getSigner();
-    const contract = fetchSuperiorContract(signer);
-    return contract;
-  } catch (error) {
-    console.log(error);
-  }
-};
+// // CONNECTING WITH SuperiorCONTRACT
+// export const connectingWithSuperior = async () => {
+//   try {
+//     const web3modal = new Web3Modal();
+//     const connection = await web3modal.connect();
+//     const provider = new ethers.providers.Web3Provider(connection);
+//     const signer = provider.getSigner();
+//     const contract = fetchSuperiorContract(signer);
+//     return contract;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
-// Police contract fetching
-export const fetchPoliceContract = (signerOrProvider) =>
-  new ethers.Contract(policeAddress, policeABI, signerOrProvider);
+// // Police contract fetching
+// export const fetchPoliceContract = (signerOrProvider) =>
+//   new ethers.Contract(policeAddress, policeABI, signerOrProvider);
 
-// CONNECTING WITH POLICE/STATION CONTRACT
-export const connectingWithPolice = async () => {
-  try {
-    const web3modal = new Web3Modal();
-    const connection = await web3modal.connect();
-    const provider = new ethers.providers.Web3Provider(connection);
-    const signer = provider.getSigner();
-    const contract = fetchPoliceContract(signer);
-    return contract;
-  } catch (error) {
-    console.log(error);
-  }
-};
+// // CONNECTING WITH POLICE/STATION CONTRACT
+// export const connectingWithPolice = async () => {
+//   try {
+//     const web3modal = new Web3Modal();
+//     const connection = await web3modal.connect();
+//     const provider = new ethers.providers.Web3Provider(connection);
+//     const signer = provider.getSigner();
+//     const contract = fetchPoliceContract(signer);
+//     return contract;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
-// User contract fetching
-export const fetchUserContract = (signerOrProvider) =>
-  new ethers.Contract(userAddress, userABI, signerOrProvider);
+// // User contract fetching
+// export const fetchUserContract = (signerOrProvider) =>
+//   new ethers.Contract(userAddress, userABI, signerOrProvider);
 
-// CONNECTING WITH USER CONTRACT
-export const connectingWithUser = async () => {
-  try {
-    const web3modal = new Web3Modal();
-    const connection = await web3modal.connect();
-    const provider = new ethers.providers.Web3Provider(connection);
-    const signer = provider.getSigner();
-    const contract = fetchUserContract(signer);
-    return contract;
-  } catch (error) {
-    console.log(error);
-  }
-};
+// // CONNECTING WITH USER CONTRACT
+// export const connectingWithUser = async () => {
+//   try {
+//     const web3modal = new Web3Modal();
+//     const connection = await web3modal.connect();
+//     const provider = new ethers.providers.Web3Provider(connection);
+//     const signer = provider.getSigner();
+//     const contract = fetchUserContract(signer);
+//     return contract;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
 // export const setProfile = async (profileInfo) => {
 //   console.log("Set profile function in svelte is called");

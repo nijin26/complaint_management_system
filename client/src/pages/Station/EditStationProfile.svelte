@@ -4,24 +4,32 @@
   import { navigate } from "svelte-routing";
 
   import { stationTypes } from "../../lib/Lists";
-  import {
-    connectingWithComplaintPortal,
-    connectingWithPolice,
-    connectingWithSuperior,
-  } from "../../lib/Contract";
+  import { connectingWithComplaintPortal } from "../../lib/Contract";
   import { profileType } from "../../lib/Store";
 
+  // let station = {
+  //   name: "",
+  //   addr: "",
+  //   district: "",
+  //   landmark: "",
+  //   stationType: "",
+  //   mobile: 0,
+  //   nameOfCI: "",
+  //   nameOfSI: "",
+  //   approved: false,
+  //   approvedBy: "",
+  // };
   let station = {
-    name: "",
-    addr: "",
-    district: "",
-    landmark: "",
-    stationType: "",
-    mobile: 0,
-    nameOfCI: "",
-    nameOfSI: "",
+    name: "ABC Police Station",
+    addr: "123 Main Street",
+    district: "XYZ District",
+    landmark: "Near City Park",
+    stationType: "Rural Police Station",
+    mobile: 9876543210,
+    nameOfCI: "John Smith",
+    nameOfSI: "Jane Doe",
     approved: false,
-    approvedBy: "",
+    approvedBy: ethers.constants.AddressZero,
   };
 
   let profileMode = "create";
@@ -66,14 +74,7 @@
       await profileUpdated.wait();
     } else {
       const profileCreated = await complaintPortal.createStationProfile(
-        name,
-        addr,
-        district,
-        landmark,
-        stationType,
-        mobile,
-        nameOfCI,
-        nameOfSI
+        station
       );
       await profileCreated.wait();
     }

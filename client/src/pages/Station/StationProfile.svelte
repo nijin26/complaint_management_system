@@ -1,10 +1,7 @@
 <script>
   import { onMount } from "svelte";
 
-  import {
-    connectingWithComplaintPortal,
-    connectingWithPolice,
-  } from "../../lib/Contract";
+  import { connectingWithComplaintPortal } from "../../lib/Contract";
   import { navigate } from "svelte-routing";
 
   let stationData = {
@@ -99,10 +96,18 @@
     </div>
   </div>
 
-  <button
-    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-    on:click={updateProfile}
-  >
-    Edit Profile
-  </button>
+  <div class="flex justify-center">
+    <button
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      on:click={updateProfile}
+    >
+      Edit Profile
+    </button>
+    <button
+      disabled
+      class="mx-2 border-blue-600 border-2 hover:bg-blue-200 text-black font-bold py-2 px-4 rounded cursor-not-allowed"
+    >
+      Manage Complaints
+    </button>
+  </div>
 </div>

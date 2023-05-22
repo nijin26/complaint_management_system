@@ -2,10 +2,7 @@
   import { onMount } from "svelte";
   import { navigate } from "svelte-routing";
 
-  import {
-    connectingWithComplaintPortal,
-    connectingWithSuperior,
-  } from "../../lib/Contract";
+  import { connectingWithComplaintPortal } from "../../lib/Contract";
   import { profileType } from "../../lib/Store";
 
   let superiorProfile = {

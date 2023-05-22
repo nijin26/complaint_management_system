@@ -3,17 +3,31 @@
   import { complaintNature, districts } from "../../lib/Lists";
   import { getPoliceStation, stationTypes } from "../../lib/Lists";
   import { connectingWithComplaintPortal } from "../../lib/Contract";
+  import { ethers } from "ethers";
+
+  // const complaint = {
+  //   complaintNature: "",
+  //   complaintSubject: "",
+  //   complaintDescription: "",
+  //   dateAndTime: "",
+  //   placeOfIncident: "",
+  //   landmark: "",
+  //   district: "",
+  //   policeStation: "",
+  //   officeToFileComplaint: "",
+  // };
 
   const complaint = {
-    complaintNature: "",
-    complaintSubject: "",
-    complaintDescription: "",
-    dateAndTime: "",
-    placeOfIncident: "",
-    landmark: "",
-    district: "",
-    policeStation: "",
-    officeToFileComplaint: "",
+    complaintNature: "Domestic violence complaints",
+    complaintSubject: "Stolen items from residence",
+    complaintDescription:
+      "I discovered that several valuable items were stolen from my residence.",
+    dateAndTime: "2023-05-19T05:47",
+    placeOfIncident: "123 Main Street",
+    landmark: "City Park",
+    district: "Kollam",
+    policeStation: "Kundara",
+    officeToFileComplaint: "Rural Police Station",
   };
 
   let policeStationOptions;
@@ -23,9 +37,10 @@
   }
 
   const submitHandler = async () => {
-    console.log("submith handler to add complaint is called", complaint);
+    complaint.policeStation = ethers.constants.AddressZero;
+    console.log("submit handler is called", complaint);
     const complaintPortal = await connectingWithComplaintPortal();
-    const complaintAdded = await complaintPortal.addComplaint(complaint);
+    const complaintAdded = await complaintPortal.addComplaintByUser(complaint);
     await complaintAdded.wait();
     console.log("Complaint adding is done", complaintAdded);
     alert("Complaint is successfully added");
@@ -154,7 +169,7 @@
         >Complaint Subject</label
       >
       <input
-        bind:value={complaint.subject}
+        bind:value={complaint.complaintSubject}
         type="text"
         required
         id="complaintSubject"

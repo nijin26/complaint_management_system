@@ -5,10 +5,10 @@ async function main() {
 
   console.log("Deploying contracts with the account:", deployer.address);
 
-  const ComplaintPortal = await ethers.getContractFactory("ComplaintPortal");
-  const portalContract = await ComplaintPortal.deploy();
-  await portalContract.deployed();
-  console.log("Contract address", portalContract.address);
+  const Complaint = await ethers.getContractFactory("Complaint");
+  const complaintContract = await Complaint.deploy();
+  await complaintContract.deployed();
+  console.log("Contract address", complaintContract.address);
 
   // const Complaint = await ethers.getContractFactory("Complaint");
   // const complaint = await Complaint.deploy();

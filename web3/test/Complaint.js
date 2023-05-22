@@ -101,24 +101,54 @@ describe("Complaint", function () {
     //   .connect(station)
     //   .getStationDetails();
     // console.log(userDetails, "user details");
+  });
 
-    it("Add complaint by user", async function () {
-      const userComplaintDetails = {
-        complaintNature: "Theft",
-        complaintSubject: "Stolen Wallet",
-        complaintDescription:
-          "My wallet was stolen while traveling on the bus.",
-        dateAndTime: "2023-05-20 15:30",
-        placeOfIncident: "City Center",
-        landmark: "Bus Stop",
-        district: "ABC District",
-        policeStation: "0x1234567890abcdef1234567890abcdef12345678",
-        officeToFileComplaint: "Complaint Office 1",
-      };
+  it("Add complaint by user", async function () {
+    const userComplaintDetails = {
+      complaintNature: "Theft",
+      complaintSubject: "Stolen Wallet",
+      complaintDescription: "My wallet was stolen while traveling on the bus.",
+      dateAndTime: "2023-05-20 15:30",
+      placeOfIncident: "City Center",
+      landmark: "Bus Stop",
+      district: "ABC District",
+      policeStation: "0x1234567890abcdef1234567890abcdef12345678",
+      officeToFileComplaint: "Complaint Office 1",
+    };
 
-      const complaintAdded = await complaintContract
-        .connect(complainant)
-        .addComplaintByUser(userComplaintDetails);
-    });
+    await complaintContract
+      .connect(complainant)
+      .addComplaintByUser(userComplaintDetails);
+    const FetcheduserComplaintDetails =
+      await complaintContract.getComplaintDetailsById(0);
+    console.log("Complaint details", FetcheduserComplaintDetails);
+  });
+
+  it("should add complaint by police", async function () {
+    const userComplaintDetails = {
+      complaintNature: "Theft",
+      complaintSubject: "Stolen Wallet",
+      complaintDescription: "My wallet was stolen while traveling on the bus.",
+      dateAndTime: "2023-05-20 15:30",
+      placeOfIncident: "City Center",
+      landmark: "Bus Stop",
+      district: "ABC District",
+      policeStation: "0x1234567890abcdef1234567890abcdef12345678",
+      officeToFileComplaint: "Complaint Office 1",
+    };
+    const complaintDetailsByPolice = {
+      witness: "0x9876543210fedcba09876543210fedcba0987654",
+      accused: "0xfedcba09876543210fedcba09876543210fedcba",
+      ipc: "Section 379",
+      status: "Under Investigation",
+      remarks: "Further inquiries needed.",
+    };
+    await complaintContract.addComplaintByPolice(
+      userComplaintDetails,
+      complaintDetailsByPolice
+    );
+    const FetcheduserComplaintDetails =
+      await complaintContract.getComplaintDetailsById(1);
+    console.log("Complaint details", FetcheduserComplaintDetails);
   });
 });
