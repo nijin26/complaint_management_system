@@ -1,19 +1,33 @@
 <script>
   import { onMount } from "svelte";
   import { navigate } from "svelte-routing";
+  import { ethers } from "ethers";
 
   import { connectingWithComplaintPortal } from "../../lib/Contract";
   import { profileType } from "../../lib/Store";
 
+  // let superiorProfile = {
+  //   name: "",
+  //   email: "",
+  //   mobile: "",
+  //   aadharId: "",
+  //   rank: "",
+  //   designation: "",
+  //   unit: "",
+  // };
+
   let superiorProfile = {
-    name: "",
-    email: "",
-    mobile: "",
-    aadharId: "",
-    rank: "",
-    designation: "",
-    unit: "",
+    name: "John Doe",
+    email: "john.doe@example.com",
+    mobile: 1234567890,
+    aadharID: "123456789012",
+    rank: "Inspector",
+    designation: "Commissioner of Police",
+    unit: "Narcotics Control Bureau",
+    approved: false,
+    approvedBy: ethers.constants.AddressZero,
   };
+
   let profileMode = "create";
   export let location;
 
@@ -35,7 +49,7 @@
       superiorProfile;
 
     if (profileMode === "edit") {
-      const profileUpdated = await complaintPortal.updateProfile(
+      const profileUpdated = await complaintPortal.updateSuperiorProfile(
         name,
         email,
         mobile,
@@ -46,14 +60,8 @@
       );
       await profileUpdated.wait();
     } else {
-      const profileCreated = await complaintPortal.createProfile(
-        name,
-        email,
-        mobile,
-        aadharId,
-        rank,
-        designation,
-        unit
+      const profileCreated = await complaintPortal.createSuperiorProfile(
+        superiorProfile
       );
       await profileCreated.wait();
     }
@@ -111,8 +119,9 @@
         Aadhar ID:
       </label>
       <input
-        bind:value={superiorProfile.aadharId}
+        bind:value={superiorProfile.aadharID}
         required
+        type="text"
         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         id="aadhar"
         placeholder="Enter your Aadhar ID number."
@@ -160,7 +169,6 @@
       >
         <option value="">Select your designation</option>
         <option value="Station House Officer">Station House Officer</option>
-        <option value="Circle Inspector">Circle Inspector</option>
         <option value="Deputy Commissioner of Police"
           >Deputy Commissioner of Police</option
         >
@@ -184,11 +192,9 @@
         id="unit"
       >
         <option value="">Select your unit</option>
-        <option value="Local police station">Local police station</option>
         <option value="Crime Branch">Crime Branch</option>
         <option value="Special Task Force">Special Task Force</option>
         <option value="Anti-Terrorism Squad">Anti-Terrorism Squad</option>
-        <option value="Traffic Police">Traffic Police</option>
         <option value="Cyber Crime Cell">Cyber Crime Cell</option>
         <option value="Narcotics Control Bureau"
           >Narcotics Control Bureau</option

@@ -1,27 +1,40 @@
 <script>
   import { onMount } from "svelte";
   import { navigate, Link } from "svelte-routing";
+  import { ethers } from "ethers";
 
   import { connectingWithComplaintPortal } from "../../lib/Contract";
 
-  let superiorProfile = {
-    name: "",
-    email: "",
-    mobile: "",
-    aadharId: "",
-    rank: "",
-    designation: "",
-    unit: "",
-  };
+  // let superiorProfile = {
+  //   name: "",
+  //   email: "",
+  //   mobile: "",
+  //   aadharId: "",
+  //   rank: "",
+  //   designation: "",
+  //   unit: "",
+  // };
 
+  let superiorProfile = {
+    name: "Nijin Doe",
+    email: "john.doe@example.com",
+    mobile: 1234567890,
+    aadharID: "123456789012",
+    rank: "Inspector",
+    designation: "Commissioner of Police",
+    unit: "Narcotics Control Bureau",
+    approved: false,
+    approvedBy: ethers.constants.AddressZero,
+  };
   onMount(async () => {
     const complaintPortal = await connectingWithComplaintPortal();
 
-    const data = await complaintPortal.getProfileDetails();
+    const data = await complaintPortal.getSuperiorProfileDetails();
+    console.log(data);
     superiorProfile.name = data[0] || "";
     superiorProfile.email = data[1] || "";
     superiorProfile.mobile = data[2] ? data[2].toString() : "";
-    superiorProfile.aadharId = data[3] ? data[3].toString() : "";
+    superiorProfile.aadharID = data[3] ? data[3].toString() : "";
     superiorProfile.rank = data[4] || "";
     superiorProfile.designation = data[5] || "";
     superiorProfile.unit = data[6] || "";
