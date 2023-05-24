@@ -1,14 +1,20 @@
 {
-  "name": "hardhat-javascript-starter",
+  "name": "web3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "build": "npx thirdweb@latest detect",
-    "deploy": "npx thirdweb@latest deploy",
-    "release": "npx thirdweb@latest release"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
-    "hardhat": "^2.10.1"
+    "@nomicfoundation/hardhat-toolbox": "^2.0.2",
+    "hardhat": "^2.13.1"
   },
   "dependencies": {
-    "@thirdweb-dev/contracts": "^3"
+    "@openzeppelin/contracts": "^4.8.3",
+    "@thirdweb-dev/contracts": "^3.5.4"
   }
 }
