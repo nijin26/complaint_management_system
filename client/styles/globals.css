@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.input-default {
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid #ced4da;
+  border-radius: 3px;
+}
+
+.dob {
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid #ced4da;
+  border-radius: 3px;
+}

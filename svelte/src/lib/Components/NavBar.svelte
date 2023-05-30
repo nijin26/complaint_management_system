@@ -5,15 +5,16 @@
   import { metamask, profileType } from "../Store";
 
   const loginHandler = async () => {
-    const address = await connectToWallet();
-    if (address) {
-      metamask.set({ connected: true, address: address });
-      profileType.set("USER");
-      localStorage.setItem("profileType", "USER");
-      navigate("/user/profile/edit");
-    } else {
-      console.log("Authentication Failed");
-    }
+    // const address = await connectToWallet();
+    // if (address) {
+    //   metamask.set({ connected: true, address: address });
+    //   profileType.set("USER");
+    //   localStorage.setItem("profileType", "USER");
+    //   navigate("/user/profile/edit");
+    // } else {
+    //   console.log("Authentication Failed");
+    // }
+    navigate("/user/login");
   };
 
   const disconnectWallet = async () => {

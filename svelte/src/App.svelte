@@ -29,6 +29,7 @@
 
   import { connectingWithComplaintPortal } from "./lib/Contract";
   import ViewUserProfile from "./pages/User/ViewUserProfile.svelte";
+  import UserLogin from "./pages/User/UserLogin.svelte";
 
   $: {
     window.ethereum.on("accountsChanged", async (accounts) => {
@@ -54,6 +55,7 @@
       <Route path="/superior" component={SuperiorLogin} />
       <Route path="/station" component={StationLogin} />
       <Route path="/station/profile/edit" component={EditStationProfile} />
+      <Route path="/user/login" component={UserLogin} />
       <Route path="/user/profile/edit" component={EditUserProfile} />
       <Route path="/user/profile" component={ViewUserProfile} />
       <Route path="/filecomplaint" component={Complaint} />

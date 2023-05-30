@@ -2,31 +2,6 @@
   import { navigate } from "svelte-routing";
   import { connectingWithComplaintPortal } from "../../lib/Contract";
 
-  // const profileInfo = {
-  //   basicDetails: {
-  //     name: "",
-  //     email: "",
-  //     mobile: "",
-  //     age: "",
-  //     gender: "",
-  //     dob: "",
-  //     addr: "",
-  //     city: "",
-  //     district: "",
-  //     state: "",
-  //     pincode: "",
-  //   },
-  //   idDetails: {
-  //     selectedID: "",
-  //     IDNumber: "",
-  //   },
-  //   relativeDetails: {
-  //     relativeName: "",
-  //     relativeMobile: "",
-  //     relation: "",
-  //   },
-  // };
-
   const profileInfo = {
     basicDetails: {
       name: "John Doe",

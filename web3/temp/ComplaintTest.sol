@@ -2,9 +2,9 @@
 
 pragma solidity ^0.8.9;
 import "hardhat/console.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@thirdweb-dev/contracts/extension/PermissionsEnumerable.sol";
 
-contract Complaint is AccessControl {
+contract Complaint is PermissionsEnumerable {
     bytes32 public constant OWNER = keccak256("OWNER");
     bytes32 public constant USER = keccak256("USER");
     bytes32 public constant STATION = keccak256("STATION");
@@ -12,8 +12,8 @@ contract Complaint is AccessControl {
     bytes32 public constant JUDICIARY = keccak256("JUDICIARY");
 
     constructor() {
-        _grantRole(OWNER, msg.sender);
-        _grantRole(SUPERIOR, msg.sender);
+        grantRole(OWNER, msg.sender);
+        grantRole(SUPERIOR, msg.sender);
         _setRoleAdmin(OWNER, OWNER);
         _setRoleAdmin(USER, OWNER);
         _setRoleAdmin(STATION, OWNER);
@@ -186,7 +186,7 @@ contract Complaint is AccessControl {
 
     function createUser(ProfileInfo memory profileInfo) public {
         userProfiles[msg.sender] = profileInfo;
-        _grantRole(USER, msg.sender);
+        grantRole(USER, msg.sender);
     }
 
     function getUserDetails() public view returns (ProfileInfo memory) {
@@ -266,7 +266,7 @@ contract Complaint is AccessControl {
     function approveStationProfile(
         address _policeStation
     ) public onlyRole(SUPERIOR) {
-        _grantRole(STATION, _policeStation);
+        grantRole(STATION, _policeStation);
         policeStations[_policeStation].approved = true;
         policeStations[_policeStation].approvedBy = msg.sender;
     }

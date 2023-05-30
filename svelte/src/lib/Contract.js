@@ -1,5 +1,7 @@
 import { ethers } from "ethers";
 import Web3Modal from "web3modal";
+// import { MetaMaskWallet } from "@thirdweb-dev/wallets";
+// import { globalWallet } from "./Store";
 
 import {
   complaintPortalAddress,
@@ -29,6 +31,10 @@ export const checkIfWalletConnected = async () => {
 };
 
 export const connectToWallet = async () => {
+  // const wallet = new MetaMaskWallet({ qrcode: false });
+  // wallet.connect();
+  // globalWallet.set(wallet);
+
   try {
     if (!window.ethereum) return console.log("Install MetaMask");
     const accounts = await window.ethereum.request({
