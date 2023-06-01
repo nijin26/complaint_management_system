@@ -1,4 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useStorage } from "@thirdweb-dev/react";
+import { toast } from "react-toastify";
+import { v4 as uuid } from "uuid";
+
+import useImageEncryption from "../../../Hooks/useImageEncryption";
+import useDataEncryption from "../../../Hooks/useDataEncryption";
+import useDataDecryption from "../../../Hooks/useDataDecryption";
 
 import {
   complaintType,
@@ -8,17 +15,25 @@ import {
 import Button from "../../../Components/Button";
 
 const ComplaintForm = () => {
+  const encryptImage = useImageEncryption();
+  const encryptData = useDataEncryption();
+  const decryptData = useDataDecryption();
+
   const [complaint, setComplaint] = useState({
+    complaintID: "",
     complaintType: "",
     placeOfIncident: "",
+    landmark: "",
     dateAndTime: "",
     stationSector: "",
     policeStation: "",
     complaintSubject: "",
     complaintDescription: "",
+    image: "",
   });
 
   const [policeStations, setPoliceStations] = useState([]);
+  const storage = useStorage();
 
   useEffect(() => {
     const listOfStations = getPoliceStation(
@@ -27,10 +42,36 @@ const ComplaintForm = () => {
     setPoliceStations(listOfStations);
   }, [complaint.stationSector]);
 
-  const submitHandler = (e) => {
+  const handleImage = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (
+        !file.type.startsWith("image/jpeg") &&
+        !file.type.startsWith("image/png")
+      ) {
+        toast.warn("Selected file is not a JPEG or PNG image. Try Again");
+        return;
+      }
+
+      if (file.size > 3 * 1024 * 1024) {
+        toast.warn("Selected image exceeds the maximum file size of 3MB.");
+        return;
+      }
+
+      const encryptedImage = await encryptImage(file);
+      setComplaint((prev) => ({ ...prev, image: encryptedImage }));
+      toast.success("Selected Image is Encrypted");
+    }
+  };
+
+  const submitHandler = async (e) => {
     e.preventDefault();
-    // Handle form submission
-    console.log("Form submitted:", complaint);
+    const complaintData = complaint;
+    complaintData.complaintID = uuid();
+    const encryptedData = encryptData(complaintData);
+    const complaintUploadedHash = await storage.upload(
+      JSON.stringify(encryptedData)
+    );
   };
 
   const handleChange = (e) => {
@@ -56,8 +97,8 @@ const ComplaintForm = () => {
           </label>
           <select
             required
-            id="complaintNature"
-            name="complaintNature"
+            id="complaintType"
+            name="complaintType"
             className="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline-blue focus:border-blue-300"
             value={complaint.complaintType}
             onChange={handleChange}
@@ -84,6 +125,23 @@ const ComplaintForm = () => {
             name="placeOfIncident"
             className="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline-blue focus:border-blue-300"
             value={complaint.placeOfIncident}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="landmark"
+            className="block text-sm font-medium text-gray-700"
+          >
+            LandMark{" "}
+          </label>
+          <input
+            required
+            type="text"
+            id="landmark"
+            name="landmark"
+            className="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline-blue focus:border-blue-300"
+            value={complaint.landmark}
             onChange={handleChange}
           />
         </div>
@@ -199,12 +257,13 @@ const ComplaintForm = () => {
             Upload Related Image
           </label>
           <input
+            onChange={handleImage}
             type="file"
             className="bg-stone-400 text-white shadow-md shadow-slate-400 w-full rounded-md p-2"
           />
         </div>
 
-        <Button className={"w-full"} onClick={submitHandler}>
+        <Button className={"w-full"} type="submit">
           {" "}
           Register Complaint
         </Button>

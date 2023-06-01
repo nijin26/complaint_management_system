@@ -1,7 +1,7 @@
 import { ThirdwebProvider } from "@thirdweb-dev/react";
 import { ToastContainer, Zoom } from "react-toastify";
 import Layout from "../Components/Layout";
-import "../styles/globals.css";
+import "../public/globals.css";
 
 import "react-toastify/dist/ReactToastify.css";
 
