@@ -21,183 +21,175 @@ contract Complaint is PermissionsEnumerable {
         _setRoleAdmin(JUDICIARY, OWNER);
     }
 
-    struct UserComplaintDetails {
-        string complaintNature;
+    struct ComplaintDetails {
+        string complaintID;
         string complaintSubject;
-        string complaintDescription;
-        string dateAndTime;
-        string placeOfIncident;
-        string landmark;
-        string district;
-        address policeStation;
-        string officeToFileComplaint;
+        string complaintDataHash;
     }
 
-    struct ComplaintDetailsByPolice {
-        address witness;
-        address accused;
-        string ipc;
-        string status;
-        string remarks;
-    }
+    // struct ComplaintDetailsByPolice {
+    //     address witness;
+    //     address accused;
+    //     string ipc;
+    //     string status;
+    //     string remarks;
+    // }
 
-    struct ComplaintEntry {
-        uint complaintID;
-        UserComplaintDetails userComplaint;
-        ComplaintDetailsByPolice policeComplaint;
-    }
+    // struct ComplaintEntry {
+    //     uint complaintID;
+    //     UserComplaintDetails userComplaint;
+    //     ComplaintDetailsByPolice policeComplaint;
+    // }
 
-    struct Superior {
-        string name;
-        string email;
-        uint mobile;
-        uint aadharID;
-        string rank;
-        string designation;
-        string unit;
-        bool approved;
-        address approvedBy;
-    }
+    // struct Superior {
+    //     string name;
+    //     string email;
+    //     uint mobile;
+    //     uint aadharID;
+    //     string rank;
+    //     string designation;
+    //     string unit;
+    //     bool approved;
+    //     address approvedBy;
+    // }
 
-    struct Station {
-        string name;
-        string addr;
-        string district;
-        string landmark;
-        string stationType;
-        uint mobile;
-        string nameOfCI;
-        string nameOfSI;
-        bool approved;
-        address approvedBy;
-    }
+    // struct Station {
+    //     string name;
+    //     string addr;
+    //     string district;
+    //     string landmark;
+    //     string stationType;
+    //     uint mobile;
+    //     string nameOfCI;
+    //     string nameOfSI;
+    //     bool approved;
+    //     address approvedBy;
+    // }
 
-    struct BasicDetails {
-        string name;
-        string email;
-        uint mobile;
-        uint age;
-        string gender;
-        string dob;
-        string addr;
-        string city;
-        string district;
-        string state;
-        uint pincode;
-    }
+    // struct BasicDetails {
+    //     string name;
+    //     string email;
+    //     uint mobile;
+    //     uint age;
+    //     string gender;
+    //     string dob;
+    //     string addr;
+    //     string city;
+    //     string district;
+    //     string state;
+    //     uint pincode;
+    // }
 
-    struct IDDetails {
-        string selectedID;
-        string IDNumber;
-    }
+    // struct IDDetails {
+    //     string selectedID;
+    //     string IDNumber;
+    // }
 
-    struct RelativeDetails {
-        string relativeName;
-        uint relativeMobile;
-        string relation;
-    }
+    // struct RelativeDetails {
+    //     string relativeName;
+    //     uint relativeMobile;
+    //     string relation;
+    // }
 
-    struct ProfileInfo {
-        BasicDetails basicDetails;
-        IDDetails idDetails;
-        RelativeDetails relativeDetails;
-    }
+    // struct ProfileInfo {
+    //     BasicDetails basicDetails;
+    //     IDDetails idDetails;
+    //     RelativeDetails relativeDetails;
+    // }
 
-    ComplaintEntry[] public complaints;
+    ComplaintDetails[] public complaints;
 
     address[] public listOfUsers;
     address[] public listOfStations;
     address[] public listOfSuperiors;
 
-    mapping(address => Superior) public policeSuperiors;
-    mapping(address => Station) public policeStations;
-    mapping(address => ProfileInfo) public userProfiles;
+    // mapping(address => Superior) public policeSuperiors;
+    // mapping(address => Station) public policeStations;
+    // mapping(address => ProfileInfo) public userProfiles;
 
     // <<<<<<<<<<<< COMPLAINT MODULE >>>>>>>>>>>>>>>>>>
 
     function addComplaintByUser(
-        UserComplaintDetails memory _details
+        ComplaintDetails memory _details
     ) public onlyRole(USER) {
-        ComplaintEntry memory entry;
-        entry.userComplaint = _details;
-        entry.complaintID = complaints.length; // complaintId is auto-incremented by array index
+        ComplaintDetails memory entry;
+        entry = _details;
         complaints.push(entry);
     }
 
-    function addComplaintByPolice(
-        UserComplaintDetails memory _details,
-        ComplaintDetailsByPolice memory _otherDetails
-    ) public {
-        // Check authorization
-        require(
-            hasRole(STATION, msg.sender) || hasRole(SUPERIOR, msg.sender),
-            "YOU ARE NOT AUTHORIZED"
-        );
+    // function addComplaintByPolice(
+    //     UserComplaintDetails memory _details,
+    //     ComplaintDetailsByPolice memory _otherDetails
+    // ) public {
+    //     // Check authorization
+    //     require(
+    //         hasRole(STATION, msg.sender) || hasRole(SUPERIOR, msg.sender),
+    //         "YOU ARE NOT AUTHORIZED"
+    //     );
 
-        ComplaintEntry memory entry;
-        entry.complaintID = complaints.length; // complaintId is auto-incremented by array index
-        entry.userComplaint = _details;
-        entry.policeComplaint = _otherDetails;
-        complaints.push(entry);
-    }
+    //     ComplaintEntry memory entry;
+    //     entry.complaintID = complaints.length; // complaintId is auto-incremented by array index
+    //     entry.userComplaint = _details;
+    //     entry.policeComplaint = _otherDetails;
+    //     complaints.push(entry);
+    // }
 
-    //<<<<<<<<< GET COMPLAINT DETAILS >>>>>>>>>>>>>>>
-    function getComplaintDetailsById(
-        uint _complaintId
-    )
-        public
-        view
-        returns (UserComplaintDetails memory, ComplaintDetailsByPolice memory)
-    {
-        require(_complaintId < complaints.length, "Invalid complaint ID");
+    // //<<<<<<<<< GET COMPLAINT DETAILS >>>>>>>>>>>>>>>
+    // function getComplaintDetailsById(
+    //     uint _complaintId
+    // )
+    //     public
+    //     view
+    //     returns (ComplaintDetails memory)
+    // {
 
-        ComplaintEntry storage complaint = complaints[_complaintId];
-        return (complaint.userComplaint, complaint.policeComplaint);
-    }
+    //     ComplaintDetails storage complaint = complaints[_complaintId];
+    //     return (complaint.userComplaint, complaint.policeComplaint);
+    // }
 
-    // <<<<<<<<< UPDATE COMPLAINT >>>>>>>>>>>>
-    function updateComplaintByUser(
-        uint _complaintId,
-        UserComplaintDetails memory _updatedDetails
-    ) public onlyRole(USER) {
-        require(_complaintId < complaints.length, "Invalid complaint ID");
+    // // <<<<<<<<< UPDATE COMPLAINT >>>>>>>>>>>>
+    // function updateComplaintByUser(
+    //     uint _complaintId,
+    //     UserComplaintDetails memory _updatedDetails
+    // ) public onlyRole(USER) {
+    //     require(_complaintId < complaints.length, "Invalid complaint ID");
 
-        ComplaintEntry storage complaint = complaints[_complaintId];
-        complaint.userComplaint = _updatedDetails;
-    }
+    //     ComplaintEntry storage complaint = complaints[_complaintId];
+    //     complaint.userComplaint = _updatedDetails;
+    // }
 
-    function updateComplaintByPolice(
-        uint complaintId,
-        UserComplaintDetails memory updatedDetails,
-        ComplaintDetailsByPolice memory updatedPoliceDetails
-    ) public {
-        require(complaintId < complaints.length, "Invalid complaint ID");
-        require(
-            hasRole(STATION, msg.sender) || hasRole(SUPERIOR, msg.sender),
-            "YOU ARE NOT AUTHORIZED"
-        );
+    // function updateComplaintByPolice(
+    //     uint complaintId,
+    //     UserComplaintDetails memory updatedDetails,
+    //     ComplaintDetailsByPolice memory updatedPoliceDetails
+    // ) public {
+    //     require(complaintId < complaints.length, "Invalid complaint ID");
+    //     require(
+    //         hasRole(STATION, msg.sender) || hasRole(SUPERIOR, msg.sender),
+    //         "YOU ARE NOT AUTHORIZED"
+    //     );
 
-        ComplaintEntry storage complaint = complaints[complaintId];
-        complaint.userComplaint = updatedDetails;
-        complaint.policeComplaint = updatedPoliceDetails;
-    }
+    //     ComplaintEntry storage complaint = complaints[complaintId];
+    //     complaint.userComplaint = updatedDetails;
+    //     complaint.policeComplaint = updatedPoliceDetails;
+    // }
 
-    // <<<<<<<<<<<<< USER MODULE >>>>>>>>>>>>
+    // // <<<<<<<<<<<<< USER MODULE >>>>>>>>>>>>
 
-    function createUser(ProfileInfo memory profileInfo) public {
-        userProfiles[msg.sender] = profileInfo;
-        grantRole(USER, msg.sender);
-    }
+    // function createUser(ProfileInfo memory profileInfo) public {
+    //     userProfiles[msg.sender] = profileInfo;
+    //     grantRole(USER, msg.sender);
+    // }
 
-    function getUserDetails() public view returns (ProfileInfo memory) {
-        return userProfiles[msg.sender];
-    }
+    // function getUserDetails() public view returns (ProfileInfo memory) {
+    //     return userProfiles[msg.sender];
+    // }
 
-    function updateUserDetails(
-        ProfileInfo memory profileInfo
-    ) public onlyRole(USER) {
-        userProfiles[msg.sender] = profileInfo;
-    }
+    // function updateUserDetails(
+    //     ProfileInfo memory profileInfo
+    // ) public onlyRole(USER) {
+    //     userProfiles[msg.sender] = profileInfo;
+    // }
 
     // <<<<<<<<< SUPERIOR MODULE >>>>>>>>>>>>>>>
 
@@ -275,17 +267,17 @@ contract Complaint is PermissionsEnumerable {
     //     return policeStations[msg.sender];
     // }
 
-    function getUserType() public view returns (string memory) {
-        if (hasRole(SUPERIOR, msg.sender)) {
-            return "SUPERIOR";
-        } else if (hasRole(STATION, msg.sender)) {
-            return "STATION";
-        } else if (hasRole(USER, msg.sender)) {
-            return "USER";
-        } else {
-            return "";
-        }
-    }
+    // function getUserType() public view returns (string memory) {
+    //     if (hasRole(SUPERIOR, msg.sender)) {
+    //         return "SUPERIOR";
+    //     } else if (hasRole(STATION, msg.sender)) {
+    //         return "STATION";
+    //     } else if (hasRole(USER, msg.sender)) {
+    //         return "USER";
+    //     } else {
+    //         return "";
+    //     }
+    // }
 
     // function getAllUsers()
     //     public

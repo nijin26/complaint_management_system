@@ -1,26 +1,33 @@
 import React, { useEffect, useState } from "react";
-import { useStorage } from "@thirdweb-dev/react";
+import useRouter from "next/router";
+import { setDoc, doc } from "firebase/firestore";
+import { useContract, useStorage, useAddress } from "@thirdweb-dev/react";
 import { toast } from "react-toastify";
 import { v4 as uuid } from "uuid";
 
 import useImageEncryption from "../../../Hooks/useImageEncryption";
 import useDataEncryption from "../../../Hooks/useDataEncryption";
-import useDataDecryption from "../../../Hooks/useDataDecryption";
+import { db } from "../../../config/firebaseConfig";
+
+import Button from "../../../Components/Button";
+import Spinner from "../../../Components/Spinner";
 
 import {
   complaintType,
   stationSectors,
   getPoliceStation,
 } from "../../../public/utils";
-import Button from "../../../Components/Button";
 
 const ComplaintForm = () => {
-  const encryptImage = useImageEncryption();
+  // const router = useRouter();
+  const address = useAddress();
+  const storage = useStorage();
   const encryptData = useDataEncryption();
-  const decryptData = useDataDecryption();
+  const encryptImage = useImageEncryption();
 
   const [complaint, setComplaint] = useState({
     complaintID: "",
+    userAddress: "",
     complaintType: "",
     placeOfIncident: "",
     landmark: "",
@@ -29,11 +36,13 @@ const ComplaintForm = () => {
     policeStation: "",
     complaintSubject: "",
     complaintDescription: "",
+    complaintCreatedAt: "",
+    lastUpdated: "",
     image: "",
   });
 
   const [policeStations, setPoliceStations] = useState([]);
-  const storage = useStorage();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const listOfStations = getPoliceStation(
@@ -66,12 +75,38 @@ const ComplaintForm = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const complaintData = complaint;
     complaintData.complaintID = uuid();
+    complaintData.userAddress = address;
+    complaintData.complaintCreatedAt = new Date().getTime();
     const encryptedData = encryptData(complaintData);
-    const complaintUploadedHash = await storage.upload(
+    toast.success("Complaint data is succesfully encrypted. Please wait.");
+    const complaintUploadedCID = await storage.upload(
       JSON.stringify(encryptedData)
     );
+    toast.success("Encrypted data is uploaded to IPFS network.");
+    const data = {
+      compalintID: complaintData.complaintID,
+      stationID: complaint.policeStation.stationID,
+      userAddress: address,
+      detailsIPFSCID: complaintUploadedCID,
+      complaintCreatedAt: complaintData.complaintCreatedAt,
+      status: "Pending For Approval",
+      remarks: "",
+    };
+    console.log(data, "data");
+    try {
+      console.log("inside try");
+      await setDoc(doc(db, "complaints", complaintData.complaintID), data);
+      toast.success("Complaint registered successfully.");
+      setLoading(false);
+    } catch (error) {
+      console.log("inside catch");
+      toast.error("Complaint Registration Error. Try Again");
+      console.error("Error adding complaint:", error);
+      setLoading(false);
+    }
   };
 
   const handleChange = (e) => {
@@ -97,6 +132,7 @@ const ComplaintForm = () => {
           </label>
           <select
             required
+            disabled={loading}
             id="complaintType"
             name="complaintType"
             className="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline-blue focus:border-blue-300"
@@ -120,6 +156,7 @@ const ComplaintForm = () => {
           </label>
           <input
             required
+            disabled={loading}
             type="text"
             id="placeOfIncident"
             name="placeOfIncident"
@@ -137,6 +174,7 @@ const ComplaintForm = () => {
           </label>
           <input
             required
+            disabled={loading}
             type="text"
             id="landmark"
             name="landmark"
@@ -155,6 +193,7 @@ const ComplaintForm = () => {
           </label>
           <input
             required
+            disabled={loading}
             id="dateAndTime"
             name="dateAndTime"
             type="datetime-local"
@@ -174,6 +213,7 @@ const ComplaintForm = () => {
           </label>
           <select
             required
+            disabled={loading}
             id="stationSector"
             name="stationSector"
             className="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline-blue focus:border-blue-300"
@@ -198,17 +238,28 @@ const ComplaintForm = () => {
           </label>
           <select
             required
+            disabled={loading}
             id="policeStation"
             name="policeStation"
             className="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline-blue focus:border-blue-300"
-            value={complaint.policeStation}
-            onChange={handleChange}
+            value={complaint.policeStation.stationID || ""}
+            onChange={(e) => {
+              const selectedStationObject = policeStations.find(
+                (station) => station.stationID === e.target.value
+              );
+              setComplaint((prev) => ({
+                ...prev,
+                policeStation: selectedStationObject,
+              }));
+            }}
           >
             <option value="" disabled>
               Select police station
             </option>
             {policeStations.map((station) => (
-              <option key={station.stationID}>{station.stationName}</option>
+              <option key={station.stationID} value={station.stationID}>
+                {station.stationName}
+              </option>
             ))}
           </select>
         </div>
@@ -221,6 +272,7 @@ const ComplaintForm = () => {
             Complaint Subject
           </label>
           <input
+            disabled={loading}
             value={complaint.complaintSubject}
             type="text"
             required
@@ -242,6 +294,7 @@ const ComplaintForm = () => {
           <textarea
             value={complaint.complaintDescription}
             required
+            disabled={loading}
             id="complaintDescription"
             name="complaintDescription"
             className="w-full h-32 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline-blue focus:border-blue-300"
@@ -257,16 +310,20 @@ const ComplaintForm = () => {
             Upload Related Image
           </label>
           <input
+            disabled={loading}
             onChange={handleImage}
             type="file"
             className="bg-stone-400 text-white shadow-md shadow-slate-400 w-full rounded-md p-2"
           />
         </div>
-
-        <Button className={"w-full"} type="submit">
-          {" "}
-          Register Complaint
-        </Button>
+        {loading ? (
+          <Spinner />
+        ) : (
+          <Button className={"w-full"} type="submit" disabled={loading}>
+            {" "}
+            Register Complaint
+          </Button>
+        )}
       </form>
     </div>
   );
