@@ -4,16 +4,17 @@ import { useAddress, useStorage } from "@thirdweb-dev/react";
 
 //Firebase Firestore
 import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "../../../config/firebaseConfig";
+import { db } from "@/config/firebaseConfig";
 
 // Custom Hooks
-import useDataDecryption from "../../../Hooks/useDataDecryption";
-import useImageDecryption from "../../../Hooks/useImageDecryption";
+import useDataDecryption from "@/Hooks/useDataDecryption";
+import useImageDecryption from "@/Hooks/useImageDecryption";
 
 // Components
-import Button from "../../../Components/Button";
-import Spinner from "../../../Components/Spinner";
-import Modal from "../../../Components/Modal";
+import Button from "@/Components/Button";
+import Spinner from "@/Components/Spinner";
+import Modal from "@/Components/Modal";
+// import { Dialog, DialogContent } from "../../../Components/UI/dialog";
 
 const ListOfComplaints = () => {
   const storage = useStorage();

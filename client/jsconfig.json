@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    // Using "paths" allows you to configure module path aliases
+    "paths": {
+      "@/Components/*": ["Components/*"],
+      "@/Hooks/*": ["Hooks/*"],
+      "@/config/*": ["config/*"]
+    }
+  }
+}

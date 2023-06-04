@@ -11,12 +11,14 @@
     "deploy": "next build && next export && npx thirdweb@latest upload out"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.0.4",
     "@thirdweb-dev/react": "^3",
     "@thirdweb-dev/sdk": "^3",
     "crypto-js": "^4.1.1",
     "ethers": "^5",
     "firebase": "^9.22.1",
     "firebase-admin": "^11.9.0",
+    "lucide-react": "^0.234.0",
     "next": "^13",
     "react": "^18.2",
     "react-dom": "^18.2",
