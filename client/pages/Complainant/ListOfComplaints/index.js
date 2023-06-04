@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
-import useDataDecryption from "../../../Hooks/useDataDecryption";
+import { toast } from "react-toastify"; // Notification or Toast
 import { useAddress, useStorage } from "@thirdweb-dev/react";
+
+//Firebase Firestore
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../../../config/firebaseConfig";
-import Modal from "../../../Components/Modal";
+
+// Custom Hooks
+import useDataDecryption from "../../../Hooks/useDataDecryption";
+import useImageDecryption from "../../../Hooks/useImageDecryption";
+
+// Components
 import Button from "../../../Components/Button";
 import Spinner from "../../../Components/Spinner";
-import useImageDecryption from "../../../Hooks/useImageDecryption";
+import Modal from "../../../Components/Modal";
 
 const ListOfComplaints = () => {
   const storage = useStorage();
@@ -37,6 +43,8 @@ const ListOfComplaints = () => {
     status: "",
     remarks: "",
   });
+
+  // Fetch list of data on mount
   useEffect(() => {
     if (address) {
       const fetchComplaints = async () => {

@@ -19,7 +19,7 @@ const Navbar = () => {
   const status = useConnectionStatus();
 
   const magicLinkConfig = magicLink({
-    apiKey: "pk_live_162862A27A5AC661",
+    apiKey: process.env.NEXT_PUBLIC_MAGIC_AUTH,
   });
 
   const submitLoginMobile = async (e) => {
@@ -43,7 +43,7 @@ const Navbar = () => {
     <>
       <nav className="bg-white shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
+          <div className="flex max-[610px]:flex-col max-[610px]:justify-center max-[610px]:items-center justify-between min-h-16 py-2">
             <div className="flex">
               <div className="-my-px ml-6 flex items-center">
                 <Link
@@ -60,7 +60,7 @@ const Navbar = () => {
                 </Link>
               </div>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center max-[610px]:my-3">
               {status === "connected" ? (
                 <Button onClick={handleDisconnect}>Disconnect</Button>
               ) : (
