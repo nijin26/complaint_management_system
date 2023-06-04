@@ -15,7 +15,9 @@ const Modal = ({ isOpen, setIsOpen, children }) => {
         className="fixed inset-0 bg-black opacity-50"
         onClick={closeModal}
       ></div>
-      <div className="fixed z-20">{children}</div>
+      <div className="fixed z-20">
+        <div className="bg-white rounded-md p-6 z-50">{children}</div>
+      </div>
     </div>
   );
 };

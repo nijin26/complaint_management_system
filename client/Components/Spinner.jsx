@@ -1,6 +1,6 @@
-const Spinner = () => {
+const Spinner = ({ className }) => {
   return (
-    <div className="flex justify-center">
+    <div className="my-5 flex justify-center">
       <div className="lds-roller ">
         <div></div>
         <div></div>

@@ -3,7 +3,8 @@ import useRouter from "next/router";
 import { setDoc, doc } from "firebase/firestore";
 import { useContract, useStorage, useAddress } from "@thirdweb-dev/react";
 import { toast } from "react-toastify";
-import { v4 as uuid } from "uuid";
+// import { v4 as uuid } from "uuid";
+import ShortUniqueId from "short-unique-id";
 
 import useImageEncryption from "../../../Hooks/useImageEncryption";
 import useDataEncryption from "../../../Hooks/useDataEncryption";
@@ -24,6 +25,7 @@ const ComplaintForm = () => {
   const storage = useStorage();
   const encryptData = useDataEncryption();
   const encryptImage = useImageEncryption();
+  const uid = new ShortUniqueId({ length: 6 });
 
   const [complaint, setComplaint] = useState({
     complaintID: "",
@@ -77,7 +79,7 @@ const ComplaintForm = () => {
     e.preventDefault();
     setLoading(true);
     const complaintData = complaint;
-    complaintData.complaintID = uuid();
+    complaintData.complaintID = uid();
     complaintData.userAddress = address;
     complaintData.complaintCreatedAt = new Date().getTime();
     const encryptedData = encryptData(complaintData);
@@ -95,14 +97,11 @@ const ComplaintForm = () => {
       status: "Pending For Approval",
       remarks: "",
     };
-    console.log(data, "data");
     try {
-      console.log("inside try");
       await setDoc(doc(db, "complaints", complaintData.complaintID), data);
       toast.success("Complaint registered successfully.");
       setLoading(false);
     } catch (error) {
-      console.log("inside catch");
       toast.error("Complaint Registration Error. Try Again");
       console.error("Error adding complaint:", error);
       setLoading(false);

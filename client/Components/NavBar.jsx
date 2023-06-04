@@ -9,6 +9,7 @@ import {
 } from "@thirdweb-dev/react";
 import { toast } from "react-toastify";
 import Button from "./Button";
+import Modal from "./Modal";
 
 const Navbar = () => {
   const [phoneNumber, setPhoneNumber] = useState("+919645116496");
@@ -79,31 +80,21 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
-      <div
-        className={` fixed inset-0 ${
-          isOpen ? "flex" : "hidden"
-        } items-center justify-center z-10 `}
-      >
-        <div
-          className="fixed inset-0 bg-black opacity-50"
-          onClick={() => setIsOpen(false)}
-        ></div>
-        <div className="bg-white rounded-md p-6 z-50">
-          <h2 className="text-lg font-medium mb-4">Enter Mobile Number</h2>
-          <form onSubmit={submitLoginMobile}>
-            <input
-              type="text"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md mb-4"
-              placeholder="Mobile Number"
-            />
-            <Button onClick={submitLoginMobile} className="w-full">
-              Submit
-            </Button>
-          </form>
-        </div>
-      </div>
+      <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+        <h2 className="text-lg font-medium mb-4">Enter Mobile Number</h2>
+        <form onSubmit={submitLoginMobile}>
+          <input
+            type="text"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md mb-4"
+            placeholder="Mobile Number"
+          />
+          <Button onClick={submitLoginMobile} className="w-full">
+            Submit
+          </Button>
+        </form>
+      </Modal>
     </>
   );
 };
