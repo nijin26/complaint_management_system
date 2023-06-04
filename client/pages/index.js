@@ -12,7 +12,7 @@ const Home = () => {
           <p className="mt-3 text-base text-gray-300 sm:mt-5 sm:text-xl md:mt-5 md:text-2xl">
             Complaints made easy, justice made possible.
           </p>
-          <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
+          <div className="w-1/2 xs:w-full mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
             <div className="rounded-md shadow">
               <a
                 href="#features"
@@ -25,9 +25,9 @@ const Home = () => {
         </div>
       </section>
 
-      <div className="container mx-auto mb-14" id="features">
+      <div className="container mx-auto mb-32 xs:mb-60" id="features">
         <h2 className="text-3xl font-bold text-center my-4">Our Features</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="flex flex-wrap content-start justify-around [&>*]:w-[30%] [&>*]:m-2 xs:[&>*]:w-[100%]">
           <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out">
             <div className="px-4 py-6">
               <h3 className="text-lg font-medium text-gray-900 mb-2">
@@ -101,10 +101,10 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <footer className="bg-gray-900 text-white py-4 px-8 fixed bottom-0 w-full">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+      <footer className="bg-gray-900 text-white py-4 px-2 fixed bottom-0 w-full">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center xs:flex-col ">
           <p>&copy; 2023 Complaint Management System</p>
-          <ul className="flex">
+          <ul className="flex xs:my-3 xs:flex-col xs:justify-center items-center">
             <li className="mx-3">
               <a href="#" className="hover:text-gray-400">
                 Privacy Policy

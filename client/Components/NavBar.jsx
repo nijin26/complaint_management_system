@@ -43,30 +43,30 @@ const Navbar = () => {
     <>
       <nav className="bg-white shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex max-[610px]:flex-col max-[610px]:justify-center max-[610px]:items-center justify-between min-h-16 py-2">
+          <div className="flex xs:flex-col xs:justify-center xs:items-center xs:content-center  justify-between min-h-16 py-2">
             <div className="flex">
-              <div className="-my-px ml-6 flex items-center">
+              <div className="-my-px ml-6  xs:ml-0 flex items-center">
                 <Link
                   href="/"
-                  className="ml-3 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-100"
+                  className="ml-3 xs:ml-0 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-100"
                 >
                   Home
                 </Link>
                 <Link
                   href="/About"
-                  className="ml-3 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-100"
+                  className="ml-3  xs:ml-0 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-100"
                 >
                   About
                 </Link>
               </div>
             </div>
-            <div className="flex items-center max-[610px]:my-3">
+            <div>
               {status === "connected" ? (
                 <Button onClick={handleDisconnect}>Disconnect</Button>
               ) : (
-                <div>
+                <div className="flex xs:flex-col xs:justify-center  xs:items-center xs:my-3">
                   <Button
-                    className="mr-2"
+                    className="mr-2 xs:my-2"
                     outlined
                     onClick={() => setIsOpen(true)}
                   >
