@@ -1,6 +1,8 @@
 export const complaintType = [
   "Consumer complaints",
+
   "Police complaints",
+
   "Landlord-tenant complaints",
   "Employment complaints",
   "Traffic complaints",
