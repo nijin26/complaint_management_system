@@ -25,6 +25,7 @@ const ListOfComplaints = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [complaints, setComplaints] = useState([]);
+  const [remarks, setRemarks] = useState("");
   const [selectedComplaint, setSelectedComplaint] = useState({
     complaintCreatedAt: "",
     complaintDescription: "",
@@ -48,10 +49,11 @@ const ListOfComplaints = () => {
   // Fetch list of data on mount
   useEffect(() => {
     if (address) {
+      const stationID = localStorage.getItem("stationID");
       const fetchComplaints = async () => {
         const q = query(
           collection(db, "complaints"),
-          where("userAddress", "==", address)
+          where("stationID", "==", stationID)
         );
 
         const querySnapshot = await getDocs(q);
@@ -84,6 +86,14 @@ const ListOfComplaints = () => {
     }));
     toast.success("Selected Complaint Data is Successfully Decrypted");
     setLoading(false);
+  };
+
+  const handleApprove = () => {
+    if (remarks != "") return console.log("Handle Approve is called");
+  };
+
+  const handleIgnore = () => {
+    if (remarks != "") return console.log("Handle Ignore is called");
   };
 
   return (
@@ -170,7 +180,9 @@ const ListOfComplaints = () => {
                 </p>
                 <p>
                   <span className="font-bold">Complaint Created At:</span>{" "}
-                  {selectedComplaint.complaintCreatedAt}
+                  {new Date(
+                    selectedComplaint.complaintCreatedAt
+                  ).toLocaleString()}
                 </p>
                 <p>
                   <span className="font-bold block">
@@ -187,11 +199,48 @@ const ListOfComplaints = () => {
             </div>
             <div className="mt-6 flex flex-col items-center justify-center">
               <h3 className="text-lg  font-bold mb-2">Image</h3>
-              <img
-                src={selectedComplaint.image}
-                alt="Complaint Image"
-                className="w-64 h-auto"
-              />
+              <a href={selectedComplaint.image} target="_blank">
+                <img
+                  src={selectedComplaint.image}
+                  alt="Complaint Image"
+                  className="w-64 h-auto"
+                />
+              </a>
+
+              <div className="my-5">
+                <label
+                  htmlFor="remarks"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Remarks:
+                </label>
+                <input
+                  required
+                  disabled={loading}
+                  type="text"
+                  id="remarks"
+                  name="remarks"
+                  className="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline-blue focus:border-blue-300"
+                  value={remarks}
+                  onChange={(e) => setRemarks(e.target.value)}
+                />
+              </div>
+              <div className="flex justify-between my-3">
+                <Button
+                  disabled={remarks === ""}
+                  className="mx-2"
+                  onClick={handleApprove}
+                >
+                  Approve
+                </Button>
+                <Button
+                  disabled={remarks === ""}
+                  outlined={true}
+                  onClick={handleIgnore}
+                >
+                  Ignore
+                </Button>
+              </div>
             </div>
           </div>
         )}
