@@ -4,6 +4,7 @@ import { useAddress, useStorage } from "@thirdweb-dev/react";
 
 //Firebase Firestore
 import { collection, query, where, getDocs } from "firebase/firestore";
+// import { db } from "@/config/firebaseConfig";
 import { db } from "@/config/firebaseConfig";
 
 // Custom Hooks
@@ -86,6 +87,10 @@ const ListOfComplaints = () => {
     setLoading(false);
   };
 
+  const handlePDFDownload = () => {
+    console.log("Download the given complaint as PDF");
+  };
+
   return (
     <>
       <div className="container mx-auto my-10 ">
@@ -128,6 +133,11 @@ const ListOfComplaints = () => {
             <h2 className="text-xl font-bold mb-4 text-center">
               Complaint Details
             </h2>
+            <div className="flex justify-center my-3">
+              <Button outlined={true} onClick={handlePDFDownload}>
+                Download as PDF
+              </Button>
+            </div>
             <div className="flex flex-wrap">
               <div className="w-full md:w-1/2 [&>p]:my-2">
                 <p>
