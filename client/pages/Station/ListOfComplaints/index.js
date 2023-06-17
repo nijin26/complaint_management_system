@@ -22,6 +22,7 @@ import useImageDecryption from "@/Hooks/useImageDecryption";
 import Button from "@/Components/Button";
 import Spinner from "@/Components/Spinner";
 import Modal from "@/Components/Modal";
+import { ethers } from "ethers";
 // import { Dialog, DialogContent } from "../../../Components/UI/dialog";
 
 const ListOfComplaints = () => {
@@ -57,7 +58,7 @@ const ListOfComplaints = () => {
   });
 
   const { contract } = useContract(
-    "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
+    "0x5FbDB2315678afecb367f032d93F642f64180aa3"
   );
   const { mutateAsync: addComplaint, isLoading } = useContractWrite(
     contract,
@@ -93,6 +94,7 @@ const ListOfComplaints = () => {
       complaintData.detailsIPFSCID
     );
     const decryptedData = await decryptData(dataFetched);
+    console.log(decryptedData);
     const decryptedImage = await decryptImage(decryptedData.image);
     decryptedData.image = decryptedImage;
     setSelectedComplaint((prev) => ({
@@ -101,6 +103,7 @@ const ListOfComplaints = () => {
       dateAndTime: new Date(decryptedData.dateAndTime).toLocaleString(),
       status: complaintData.status,
       remarks: complaintData.remarks,
+      detailsIPFSCID: complaintData.detailsIPFSCID,
     }));
     toast.success("Selected Complaint Data is Successfully Decrypted");
     setLoading(false);
@@ -120,20 +123,20 @@ const ListOfComplaints = () => {
     // Add approved data to blockchain network
     updateContract("Approved");
     //Update status and remarks when approved in Firebase
-    // const currentComplaintRef = doc(
-    //   db,
-    //   "complaints",
-    //   selectedComplaint.complaintID
-    // );
-    // await updateDoc(currentComplaintRef, {
-    //   status: "Approved",
-    //   remarks: remarks,
-    // });
-    // setSelectedComplaint((prev) => ({
-    //   ...prev,
-    //   status: "Approved",
-    //   remarks: remarks,
-    // }));
+    const currentComplaintRef = doc(
+      db,
+      "complaints",
+      selectedComplaint.complaintID
+    );
+    await updateDoc(currentComplaintRef, {
+      status: "Approved",
+      remarks: remarks,
+    });
+    setSelectedComplaint((prev) => ({
+      ...prev,
+      status: "Approved",
+      remarks: remarks,
+    }));
     toast.success("Selected complaint is approved");
 
     setIsOpen(false);
@@ -147,21 +150,21 @@ const ListOfComplaints = () => {
     updateContract("Ignored");
 
     // Update status & remarks when ignored
-    // const currentComplaintRef = doc(
-    //   db,
-    //   "complaints",
-    //   selectedComplaint.complaintID
-    // );
-    // await updateDoc(currentComplaintRef, {
-    //   status: "Ignored",
-    //   remarks: remarks,
-    // });
-    //
-    // setSelectedComplaint((prev) => ({
-    //   ...prev,
-    //   status: "Ignored",
-    //   remarks: remarks,
-    // }));
+    const currentComplaintRef = doc(
+      db,
+      "complaints",
+      selectedComplaint.complaintID
+    );
+    await updateDoc(currentComplaintRef, {
+      status: "Ignored",
+      remarks: remarks,
+    });
+
+    setSelectedComplaint((prev) => ({
+      ...prev,
+      status: "Ignored",
+      remarks: remarks,
+    }));
     toast.success("Selected complaint is ignored.");
     setIsOpen(false);
   };
@@ -169,15 +172,17 @@ const ListOfComplaints = () => {
   const updateContract = async (status) => {
     // Blockchain Integration
     //Update or Add complaint to Blockchain network
+    const currentTime = new Date().getTime().toString();
+    const complaintCreated = selectedComplaint.complaintCreatedAt.toString();
     try {
       const data = await addComplaint({
         args: [
           selectedComplaint.complaintID,
-          selectedComplaint.stationID,
-          selectedComplaint.userAddress,
-          address,
-          selectedComplaint.complaintCreatedAt,
-          new Date().getTime(),
+          selectedComplaint.policeStation.stationID,
+          ethers.utils.getAddress(selectedComplaint.userAddress),
+          ethers.utils.getAddress(address),
+          complaintCreated,
+          currentTime,
           selectedComplaint.detailsIPFSCID,
           remarks,
           status,
@@ -185,6 +190,7 @@ const ListOfComplaints = () => {
       });
       console.info("contract call successs", data);
     } catch (err) {
+      console.log("Insdie catch block");
       console.error("contract call failure", err);
     }
   };
