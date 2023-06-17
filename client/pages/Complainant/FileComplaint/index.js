@@ -91,7 +91,7 @@ const ComplaintForm = () => {
     );
     toast.success("Encrypted data is uploaded to IPFS network.");
     const data = {
-      compalintID: complaintData.complaintID,
+      complaintID: complaintData.complaintID,
       stationID: complaint.policeStation.stationID,
       userAddress: address,
       detailsIPFSCID: complaintUploadedCID,

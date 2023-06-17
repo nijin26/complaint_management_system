@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify"; // Notification or Toast
-import { useAddress, useStorage } from "@thirdweb-dev/react";
-import { useContract, useContractWrite } from "@thirdweb-dev/react";
+import {
+  useContract,
+  useContractWrite,
+  useAddress,
+  useContractRead,
+  useStorage,
+} from "@thirdweb-dev/react";
 
 //Firebase Firestore
 import {
@@ -59,10 +64,6 @@ const ListOfComplaints = () => {
 
   const { contract } = useContract(
     "0x5FbDB2315678afecb367f032d93F642f64180aa3"
-  );
-  const { mutateAsync: addComplaint, isLoading } = useContractWrite(
-    contract,
-    "addComplaint"
   );
 
   // Fetch list of data on mount
@@ -176,19 +177,17 @@ const ListOfComplaints = () => {
     const currentTime = new Date().getTime().toString();
     const complaintCreated = selectedComplaint.complaintCreatedAt.toString();
     try {
-      const data = await addComplaint({
-        args: [
-          selectedComplaint.complaintID,
-          selectedComplaint.policeStation.stationID,
-          ethers.utils.getAddress(selectedComplaint.userAddress),
-          ethers.utils.getAddress(address),
-          complaintCreated,
-          currentTime,
-          selectedComplaint.detailsIPFSCID,
-          remarks,
-          status,
-        ],
-      });
+      const data = await contract.call("addComplaint", [
+        selectedComplaint.complaintID,
+        selectedComplaint.policeStation.stationID,
+        ethers.utils.getAddress(selectedComplaint.userAddress),
+        ethers.utils.getAddress(address),
+        complaintCreated,
+        currentTime,
+        selectedComplaint.detailsIPFSCID,
+        remarks,
+        status,
+      ]);
       console.info("contract call successs", data);
     } catch (err) {
       console.log("Insdie catch block");
@@ -196,11 +195,42 @@ const ListOfComplaints = () => {
     }
   };
 
+  const viewApproved = async (currentComplaintData) => {
+    setIsOpen(true);
+    setLoading(true);
+    console.log(contract);
+    const data = await contract.call("getComplaintByID", [
+      currentComplaintData.compalintID,
+    ]);
+    toast.info("Fetched encrypted data from Blockchain network");
+
+    const dataFetched = await storage.downloadJSON(data.detailsIPFSCID);
+    const decryptedData = await decryptData(dataFetched);
+    console.log(decryptedData);
+    const decryptedImage = await decryptImage(decryptedData.image);
+    decryptedData.image = decryptedImage;
+    setSelectedComplaint((prev) => ({
+      ...prev,
+      ...decryptedData,
+      status: data.status,
+      remarks: data.remarks,
+      detailsIPFSCID: data.detailsIPFSCID,
+    }));
+    toast.success(
+      "Selected Complaint Data is Successfully Fetched from Blockchain Network & Decrypted"
+    );
+    setLoading(false);
+  };
+
+  const handleFIR = (complaintData) => {
+    console.log("handle fir is called", complaintData);
+  };
+
   return (
     <>
       <div className="container mx-auto my-10 ">
         <h1 className="text-2xl font-bold text-center my-5">
-          List Of Complaints
+          List Of Pending Complaints
         </h1>
         <table className="w-full bg-white border border-gray-300 rounded-lg shadow-lg">
           <thead>
@@ -212,21 +242,84 @@ const ListOfComplaints = () => {
             </tr>
           </thead>
           <tbody>
-            {complaints.map((complaint, index) => (
-              <tr key={complaint.id} className="border-b border-gray-300">
-                <td className="py-2 px-4 text-center">{index + 1}</td>
-                <td className="py-2 px-4 text-center">
-                  {new Date(complaint.complaintCreatedAt).toLocaleString()}
-                </td>
-                <td className="py-2 px-4 text-center">{complaint.status}</td>
-                <td className="py-2 px-4 text-center">
-                  <Button onClick={() => viewHandler(complaint)}>View</Button>
-                </td>
-              </tr>
-            ))}
+            {complaints.map((complaint, index) => {
+              if (complaint.status !== "Approved")
+                return (
+                  <tr key={complaint.id} className="border-b border-gray-300">
+                    <td className="py-2 px-4 text-center">{index + 1}</td>
+                    <td className="py-2 px-4 text-center">
+                      {new Date(complaint.complaintCreatedAt).toLocaleString()}
+                    </td>
+                    <td className="py-2 px-4 text-center">
+                      {complaint.status}
+                    </td>
+                    <td className="py-2 px-4 text-center">
+                      <Button onClick={() => viewHandler(complaint)}>
+                        View
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              else
+                return (
+                  <h2 className="text-center text-red-500 font-bold">
+                    {" "}
+                    Empty{" "}
+                  </h2>
+                );
+            })}
           </tbody>
         </table>
       </div>
+      <div className="container mx-auto my-10 ">
+        <h1 className="text-2xl font-bold text-center my-5">
+          Approved Complaints List
+        </h1>
+        <table className="w-full bg-white border border-gray-300 rounded-lg shadow-lg">
+          <thead>
+            <tr className="bg-stone text-stone-700 border-b border-gray-700 ">
+              <th className="py-2 px-4"> # </th>
+              <th className="py-2 px-4"> Registered at </th>
+              <th className="py-2 px-4"> Register FIR/NCR </th>
+              <th className="py-2 px-4"> View </th>
+            </tr>
+          </thead>
+          <tbody>
+            {complaints.map((complaint, index) => {
+              if (complaint.status === "Approved")
+                return (
+                  <tr key={complaint.id} className="border-b border-gray-300">
+                    <td className="py-2 px-4 text-center">{index + 1}</td>
+                    <td className="py-2 px-4 text-center">
+                      {new Date(complaint.complaintCreatedAt).toLocaleString()}
+                    </td>
+                    <td className="py-2 px-4 text-center">
+                      <Button
+                        outlined={true}
+                        onClick={() => handleFIR(complaint)}
+                      >
+                        Register
+                      </Button>
+                    </td>
+                    <td className="py-2 px-4 text-center">
+                      <Button onClick={() => viewApproved(complaint)}>
+                        View
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              else
+                return (
+                  <h2 className="text-center text-red-500 font-bold">
+                    {" "}
+                    Empty{" "}
+                  </h2>
+                );
+            })}
+          </tbody>
+        </table>
+      </div>
+
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
         {loading ? (
           <div className="flex flex-col justify-center items-center">
