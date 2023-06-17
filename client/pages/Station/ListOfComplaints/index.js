@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify"; // Notification or Toast
 import { useAddress, useStorage } from "@thirdweb-dev/react";
+import { useContract, useContractWrite } from "@thirdweb-dev/react";
 
 //Firebase Firestore
-import { collection, query, where, getDocs } from "firebase/firestore";
+import {
+  doc,
+  updateDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "@/config/firebaseConfig";
 
 // Custom Hooks
@@ -24,9 +32,11 @@ const ListOfComplaints = () => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [complaints, setComplaints] = useState([]);
   const [remarks, setRemarks] = useState("");
+  const [complaints, setComplaints] = useState([]);
   const [selectedComplaint, setSelectedComplaint] = useState({
+    userAddress: "",
+    userName: "",
     complaintCreatedAt: "",
     complaintDescription: "",
     complaintID: "",
@@ -45,6 +55,14 @@ const ListOfComplaints = () => {
     status: "",
     remarks: "",
   });
+
+  const { contract } = useContract(
+    "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
+  );
+  const { mutateAsync: addComplaint, isLoading } = useContractWrite(
+    contract,
+    "addComplaint"
+  );
 
   // Fetch list of data on mount
   useEffect(() => {
@@ -88,12 +106,87 @@ const ListOfComplaints = () => {
     setLoading(false);
   };
 
-  const handleApprove = () => {
-    if (remarks != "") return console.log("Handle Approve is called");
+  const viewComplainantHandler = () => {
+    console.log(
+      "View handler is called",
+      selectedComplaint.userAddress,
+      selectedComplaint.userName
+    );
   };
 
-  const handleIgnore = () => {
-    if (remarks != "") return console.log("Handle Ignore is called");
+  const handleApprove = async () => {
+    if (remarks === "" || remarks.length <= 3)
+      return toast.warn("Add any remarks beforing approving");
+    // Add approved data to blockchain network
+    updateContract("Approved");
+    //Update status and remarks when approved in Firebase
+    // const currentComplaintRef = doc(
+    //   db,
+    //   "complaints",
+    //   selectedComplaint.complaintID
+    // );
+    // await updateDoc(currentComplaintRef, {
+    //   status: "Approved",
+    //   remarks: remarks,
+    // });
+    // setSelectedComplaint((prev) => ({
+    //   ...prev,
+    //   status: "Approved",
+    //   remarks: remarks,
+    // }));
+    toast.success("Selected complaint is approved");
+
+    setIsOpen(false);
+  };
+
+  const handleIgnore = async () => {
+    if (remarks === "" || remarks.length <= 3)
+      return toast.warn("Add any remarks or reason for ignoring.");
+    //Update blockchain network
+
+    updateContract("Ignored");
+
+    // Update status & remarks when ignored
+    // const currentComplaintRef = doc(
+    //   db,
+    //   "complaints",
+    //   selectedComplaint.complaintID
+    // );
+    // await updateDoc(currentComplaintRef, {
+    //   status: "Ignored",
+    //   remarks: remarks,
+    // });
+    //
+    // setSelectedComplaint((prev) => ({
+    //   ...prev,
+    //   status: "Ignored",
+    //   remarks: remarks,
+    // }));
+    toast.success("Selected complaint is ignored.");
+    setIsOpen(false);
+  };
+
+  const updateContract = async (status) => {
+    // Blockchain Integration
+    //Update or Add complaint to Blockchain network
+    try {
+      const data = await addComplaint({
+        args: [
+          selectedComplaint.complaintID,
+          selectedComplaint.stationID,
+          selectedComplaint.userAddress,
+          address,
+          selectedComplaint.complaintCreatedAt,
+          new Date().getTime(),
+          selectedComplaint.detailsIPFSCID,
+          remarks,
+          status,
+        ],
+      });
+      console.info("contract call successs", data);
+    } catch (err) {
+      console.error("contract call failure", err);
+    }
   };
 
   return (
@@ -143,6 +236,14 @@ const ListOfComplaints = () => {
                 <p>
                   <span className="font-bold">Complaint ID:</span>{" "}
                   {selectedComplaint.complaintID}
+                </p>
+
+                <p
+                  className="text-blue-500 cursor-pointer"
+                  onClick={viewComplainantHandler}
+                >
+                  <span className="font-bold">Complainant's Name:</span>{" "}
+                  {selectedComplaint.userName}
                 </p>
                 <p>
                   <span className="font-bold">Complaint Type:</span>{" "}
@@ -226,18 +327,10 @@ const ListOfComplaints = () => {
                 />
               </div>
               <div className="flex justify-between my-3">
-                <Button
-                  disabled={remarks === ""}
-                  className="mx-2"
-                  onClick={handleApprove}
-                >
+                <Button className="mx-2" onClick={handleApprove}>
                   Approve
                 </Button>
-                <Button
-                  disabled={remarks === ""}
-                  outlined={true}
-                  onClick={handleIgnore}
-                >
+                <Button outlined={true} onClick={handleIgnore}>
                   Ignore
                 </Button>
               </div>

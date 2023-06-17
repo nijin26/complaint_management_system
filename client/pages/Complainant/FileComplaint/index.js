@@ -30,6 +30,7 @@ const ComplaintForm = () => {
   const [complaint, setComplaint] = useState({
     complaintID: "",
     userAddress: "",
+    userName: "",
     complaintType: "",
     placeOfIncident: "",
     landmark: "",
@@ -81,6 +82,7 @@ const ComplaintForm = () => {
     const complaintData = complaint;
     complaintData.complaintID = uid();
     complaintData.userAddress = address;
+    complaintData.userName = localStorage.getItem("userName");
     complaintData.complaintCreatedAt = new Date().getTime();
     const encryptedData = encryptData(complaintData);
     toast.success("Complaint data is succesfully encrypted. Please wait.");
