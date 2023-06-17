@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify"; // Notification or Toast
-import { useAddress, useStorage } from "@thirdweb-dev/react";
+import { useAddress, useStorage, useContract } from "@thirdweb-dev/react";
 
 //Firebase Firestore
-import { collection, query, where, getDocs } from "firebase/firestore";
+import {
+  doc,
+  updateDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 // import { db } from "@/config/firebaseConfig";
 import { db } from "@/config/firebaseConfig";
 
@@ -46,6 +53,10 @@ const ListOfComplaints = () => {
     remarks: "",
   });
 
+  const { contract } = useContract(
+    "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+  );
+
   // Fetch list of data on mount
   useEffect(() => {
     if (address) {
@@ -82,6 +93,7 @@ const ListOfComplaints = () => {
       dateAndTime: new Date(decryptedData.dateAndTime).toLocaleString(),
       status: complaintData.status,
       remarks: complaintData.remarks,
+      detailsIPFSCID: complaintData.detailsIPFSCID,
     }));
     toast.success("Selected Complaint Data is Successfully Decrypted");
     setLoading(false);
@@ -91,37 +103,124 @@ const ListOfComplaints = () => {
     console.log("Download the given complaint as PDF");
   };
 
+  const viewApproved = async (currentComplaintData) => {
+    setIsOpen(true);
+    setLoading(true);
+    const data = await contract.call("getComplaintByID", [
+      currentComplaintData.compalintID,
+    ]);
+    toast.info("Fetched encrypted data from Blockchain network");
+
+    const dataFetched = await storage.downloadJSON(data.detailsIPFSCID);
+    const decryptedData = await decryptData(dataFetched);
+    const decryptedImage = await decryptImage(decryptedData.image);
+    decryptedData.image = decryptedImage;
+    setSelectedComplaint((prev) => ({
+      ...prev,
+      ...decryptedData,
+      status: data.status,
+      remarks: data.remarks,
+      detailsIPFSCID: data.detailsIPFSCID,
+    }));
+    toast.success(
+      "Selected Complaint Data is Successfully Fetched from Blockchain Network & Decrypted"
+    );
+    setLoading(false);
+  };
+
   return (
     <>
       <div className="container mx-auto my-10 ">
         <h1 className="text-2xl font-bold text-center my-5">
-          List Of Complaints
+          List of Complaints - Pending
         </h1>
-        <table className="w-full bg-white border border-gray-300 rounded-lg shadow-lg">
-          <thead>
-            <tr className="bg-stone text-stone-700 border-b border-gray-700 ">
-              <th className="py-2 px-4"> # </th>
-              <th className="py-2 px-4"> Registered at </th>
-              <th className="py-2 px-4"> Status </th>
-              <th className="py-2 px-4"> More Details </th>
-            </tr>
-          </thead>
-          <tbody>
-            {complaints.map((complaint, index) => (
-              <tr key={complaint.id} className="border-b border-gray-300">
-                <td className="py-2 px-4 text-center">{index + 1}</td>
-                <td className="py-2 px-4 text-center">
-                  {new Date(complaint.complaintCreatedAt).toLocaleString()}
-                </td>
-                <td className="py-2 px-4 text-center">{complaint.status}</td>
-                <td className="py-2 px-4 text-center">
-                  <Button onClick={() => viewHandler(complaint)}>View</Button>
-                </td>
+        {complaints.length !== 0 ? (
+          <table className="w-full bg-white border border-gray-300 rounded-lg shadow-lg">
+            <thead>
+              <tr className="bg-stone text-stone-700 border-b border-gray-700 ">
+                <th className="py-2 px-4"> # </th>
+                <th className="py-2 px-4"> Registered at </th>
+                <th className="py-2 px-4"> Status </th>
+                <th className="py-2 px-4"> More Details </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {complaints.map((complaint, index) => {
+                if (
+                  complaint.status !== "Approved" &&
+                  complaint.status !== "Ignored"
+                )
+                  return (
+                    <tr key={complaint.id} className="border-b border-gray-300">
+                      <td className="py-2 px-4 text-center">{index + 1}</td>
+                      <td className="py-2 px-4 text-center">
+                        {new Date(
+                          complaint.complaintCreatedAt
+                        ).toLocaleString()}
+                      </td>
+                      <td className="py-2 px-4 text-center">
+                        {complaint.status}
+                      </td>
+                      <td className="py-2 px-4 text-center">
+                        <Button onClick={() => viewHandler(complaint)}>
+                          View
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+              })}
+            </tbody>
+          </table>
+        ) : (
+          <h1 className="font-bold text-red-500 text-center">No Complaints</h1>
+        )}
       </div>
+      <div className="container mx-auto my-10 ">
+        <h1 className="text-2xl font-bold text-center my-5">
+          Validated Complaints
+        </h1>
+        {complaints.length !== 0 ? (
+          <table className="w-full bg-white border border-gray-300 rounded-lg shadow-lg">
+            <thead>
+              <tr className="bg-stone text-stone-700 border-b border-gray-700 ">
+                <th className="py-2 px-4"> # </th>
+                <th className="py-2 px-4"> Registered at </th>
+                <th className="py-2 px-4">Status</th>
+                <th className="py-2 px-4"> View </th>
+              </tr>
+            </thead>
+            <tbody>
+              {complaints.map((complaint, index) => {
+                if (
+                  complaint.status === "Approved" ||
+                  complaint.status === "Ignored"
+                )
+                  return (
+                    <tr key={complaint.id} className="border-b border-gray-300">
+                      <td className="py-2 px-4 text-center">{index + 1}</td>
+                      <td className="py-2 px-4 text-center">
+                        {new Date(
+                          complaint.complaintCreatedAt
+                        ).toLocaleString()}
+                      </td>
+                      <td className="py-2 px-4 text-center">
+                        {complaint.status}
+                      </td>
+                      <td className="py-2 px-4 text-center">
+                        <Button onClick={() => viewApproved(complaint)}>
+                          View
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+              })}
+            </tbody>
+          </table>
+        ) : (
+          <h1 className="font-bold text-red-500 text-center">No Complaints</h1>
+        )}
+      </div>
+
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
         {loading ? (
           <div className="flex flex-col justify-center items-center">
