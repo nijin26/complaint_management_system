@@ -120,8 +120,10 @@ const ListOfComplaints = () => {
   const handleApprove = async () => {
     if (remarks === "" || remarks.length <= 3)
       return toast.warn("Add any remarks beforing approving");
+
     // Add approved data to blockchain network
     updateContract("Approved");
+
     //Update status and remarks when approved in Firebase
     const currentComplaintRef = doc(
       db,
@@ -145,11 +147,10 @@ const ListOfComplaints = () => {
   const handleIgnore = async () => {
     if (remarks === "" || remarks.length <= 3)
       return toast.warn("Add any remarks or reason for ignoring.");
-    //Update blockchain network
-
+    //Update or add data to blockchain network
     updateContract("Ignored");
 
-    // Update status & remarks when ignored
+    // Update status & remarks to Firebase when ignored
     const currentComplaintRef = doc(
       db,
       "complaints",
