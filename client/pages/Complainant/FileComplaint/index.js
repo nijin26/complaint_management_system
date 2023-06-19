@@ -86,9 +86,7 @@ const ComplaintForm = () => {
     complaintData.complaintCreatedAt = new Date().getTime();
     const encryptedData = encryptData(complaintData);
     toast.success("Complaint data is succesfully encrypted. Please wait.");
-    const complaintUploadedCID = await storage.upload(
-      JSON.stringify(encryptedData)
-    );
+    const complaintUploadedCID = await storage.upload(encryptedData);
     toast.success("Encrypted data is uploaded to IPFS network.");
     const data = {
       complaintID: complaintData.complaintID,

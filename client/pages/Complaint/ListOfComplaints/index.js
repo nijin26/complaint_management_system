@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import { toast } from "react-toastify"; // Notification or Toast
 import { useContract, useAddress, useStorage } from "@thirdweb-dev/react";
 
@@ -29,6 +30,7 @@ const ListOfComplaints = () => {
   const address = useAddress();
   const decryptData = useDataDecryption();
   const decryptImage = useImageDecryption();
+  const router = useRouter();
 
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -89,7 +91,6 @@ const ListOfComplaints = () => {
       complaintData.detailsIPFSCID
     );
     const decryptedData = await decryptData(dataFetched);
-    console.log(decryptedData);
     const decryptedImage = await decryptImage(decryptedData.image);
     decryptedData.image = decryptedImage;
     setSelectedComplaint((prev) => ({
@@ -218,8 +219,11 @@ const ListOfComplaints = () => {
     setLoading(false);
   };
 
-  const handleFIR = (complaintData) => {
-    console.log("handle fir is called", complaintData);
+  const handleReport = (complaintData) => {
+    router.push({
+      pathname: "/Complaint/Report/Register",
+      query: { complaintData: JSON.stringify(complaintData) },
+    });
   };
 
   return (
@@ -292,7 +296,7 @@ const ListOfComplaints = () => {
                     <td className="py-2 px-4 text-center">
                       <Button
                         outlined={true}
-                        onClick={() => handleFIR(complaint)}
+                        onClick={() => handleReport(complaint)}
                       >
                         Register
                       </Button>

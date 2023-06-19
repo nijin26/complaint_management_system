@@ -6,7 +6,7 @@ const useDataEncryption = () => {
       JSON.stringify(data),
       process.env.NEXT_PUBLIC_SECRET_KEY
     ).toString();
-    return encryptedData;
+    return JSON.stringify(encryptedData);
   };
 
   return encryptData;

@@ -107,7 +107,7 @@ const ListOfComplaints = () => {
     setIsOpen(true);
     setLoading(true);
     const data = await contract.call("getComplaintByID", [
-      currentComplaintData.compalintID,
+      currentComplaintData.complaintID,
     ]);
     toast.info("Fetched encrypted data from Blockchain network");
 
@@ -119,7 +119,7 @@ const ListOfComplaints = () => {
       ...prev,
       ...decryptedData,
       status: data.status,
-      remarks: data.remarks
+      remarks: data.remarks,
       detailsIPFSCID: data.detailsIPFSCID,
     }));
     toast.success(

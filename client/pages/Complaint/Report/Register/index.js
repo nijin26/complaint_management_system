@@ -1,7 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@/Components/Button";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
+import { useStorage } from "@thirdweb-dev/react";
+import useDataDecryption from "@/Hooks/useDataDecryption";
+import useDataEncryption from "@/Hooks/useDataEncryption";
+import useImageDecryption from "@/Hooks/useImageDecryption";
 
 const RegisterNCR = () => {
+  const router = useRouter();
+  const storage = useStorage();
+  const encryptData = useDataEncryption();
+  const decryptData = useDataDecryption();
+  const decryptImage = useImageDecryption();
   const [selectedTab, setSelectedTab] = useState(1);
   const profileInfo = {
     basicDetails: {
@@ -55,6 +66,7 @@ const RegisterNCR = () => {
     reportNumber: "",
     date: "",
     policeStation: "",
+    stationID: "",
     district: "",
     reportDateTime: "",
     complainantName: "",
@@ -68,6 +80,36 @@ const RegisterNCR = () => {
     complainantWalletAddress: "",
     stationWalletAddress: "",
   });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let complaintData = {
+        complaintID: "",
+      };
+      try {
+        if (router.query.complaintData !== "")
+          complaintData = JSON.parse(router.query.complaintData);
+      } catch (err) {
+        toast.warn("Select or File a complaint beforing registering Report");
+        router.push("/Complaint/ListOfComplaints");
+      }
+
+      if (complaintData.complaintID !== "") {
+        const fetchedData = await storage.downloadJSON(
+          complaintData.detailsIPFSCID
+        );
+        const decryptedData = await decryptData(fetchedData);
+        const decryptedImage = await decryptImage(decryptedData.image);
+        setSelectedComplaint((prev) => ({
+          ...prev,
+          ...complaintData,
+          ...decryptedData,
+          image: decryptedImage,
+        }));
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
