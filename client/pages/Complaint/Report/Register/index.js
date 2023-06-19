@@ -51,17 +51,22 @@ const RegisterNCR = () => {
   });
 
   const [formData, setFormData] = useState({
-    ncrNumber: "",
+    reportType: "NCR",
+    reportNumber: "",
     date: "",
     policeStation: "",
     district: "",
     reportDateTime: "",
     complainantName: "",
     complainantAddress: "",
-    offenceReported: "",
-    placeOfOccurrence: "",
-    occurrenceDateTime: "",
+    complaintSubject: "",
+    complaintDescription: "",
+    placeOfIncident: "",
+    incidentDateTime: "",
     witnessAddress: "",
+    complaintID: "",
+    complainantWalletAddress: "",
+    stationWalletAddress: "",
   });
 
   const handleChange = (e) => {
@@ -242,26 +247,32 @@ const RegisterNCR = () => {
       </div>
 
       <div className="border rounded-lg p-8 w-1/2 m-4">
-        <h1 className="font-bold text-2xl text-center">Register NCR</h1>
+        <h1 className="font-bold text-2xl mb-6 text-center">
+          Register {formData.reportType}
+        </h1>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex flex-col [&>label]:font-bold [&>label]:my-2">
-            <label htmlFor="ncrNumber">NCR Number:</label>
-            <input
-              type="text"
-              id="ncrNumber"
-              name="ncrNumber"
-              value={formData.ncrNumber}
+          <div className="flex flex-col items-start">
+            <label htmlFor="reportType" className="font-bold mb-2">
+              Select Report Type:
+            </label>
+            <select
               onChange={handleChange}
-              className="border border-gray-300 px-2 py-1"
-            />
+              value={formData.reportType}
+              id="reportType"
+              name="reportType"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="NCR">NCR</option>
+              <option value="FIR">FIR</option>
+            </select>
           </div>
           <div className="flex flex-col [&>label]:font-bold [&>label]:my-2">
-            <label htmlFor="date">Date:</label>
+            <label htmlFor="reportNumber">{formData.reportType} Number:</label>
             <input
-              type="datetime-local"
-              id="date"
-              name="date"
-              value={formData.date}
+              type="text"
+              id="reportNumber"
+              name="reportNumber"
+              value={formData.reportNumber}
               onChange={handleChange}
               className="border border-gray-300 px-2 py-1"
             />
@@ -327,41 +338,53 @@ const RegisterNCR = () => {
             />
           </div>
           <div className="flex flex-col [&>label]:font-bold [&>label]:my-2">
-            <label htmlFor="offenceReported">Offence reported:</label>
+            <label htmlFor="complaintSubject">Complaint Subject:</label>
             <input
               type="text"
-              id="offenceReported"
-              name="offenceReported"
-              value={formData.offenceReported}
+              id="complaintSubject"
+              name="complaintSubject"
+              value={formData.complaintSubject}
               onChange={handleChange}
               className="border border-gray-300 px-2 py-1"
             />
           </div>
           <div className="flex flex-col [&>label]:font-bold [&>label]:my-2">
-            <label htmlFor="placeOfOccurrence">Place of occurrence:</label>
-            <input
+            <label htmlFor="complaintDescription">
+              Complaint's Detailed Description:
+            </label>
+            <textarea
               type="text"
-              id="placeOfOccurrence"
-              name="placeOfOccurrence"
-              value={formData.placeOfOccurrence}
+              id="complaintDescription"
+              name="complaintDescription"
+              value={formData.complaintDescription}
               onChange={handleChange}
               className="border border-gray-300 px-2 py-1"
             />
           </div>
 
           <div className="flex flex-col [&>label]:font-bold [&>label]:my-2">
-            <label htmlFor="occurrenceDateTime">
-              Date and Time of occurrence:
-            </label>
+            <label htmlFor="placeOfIncident">Date and Time of Incident:</label>
             <input
-              type="text"
-              id="occurrenceDateTime"
-              name="occurrenceDateTime"
-              value={formData.occurrenceDateTime}
+              type="datetime-local"
+              id="placeOfIncident"
+              name="placeOfIncident"
+              value={formData.placeOfIncident}
               onChange={handleChange}
               className="border border-gray-300 px-2 py-1"
             />
           </div>
+          <div className="flex flex-col [&>label]:font-bold [&>label]:my-2">
+            <label htmlFor="incidentDateTime">Place of Incident:</label>
+            <input
+              type="text"
+              id="incidentDateTime"
+              name="incidentDateTime"
+              value={formData.incidentDateTime}
+              onChange={handleChange}
+              className="border border-gray-300 px-2 py-1"
+            />
+          </div>
+
           <div className="flex flex-col [&>label]:font-bold [&>label]:my-2">
             <label htmlFor="witnessAddress">Address of witness:</label>
             <input
@@ -373,7 +396,9 @@ const RegisterNCR = () => {
               className="border border-gray-300 px-2 py-1"
             />
           </div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit" className="w-full">
+            Submit
+          </Button>
         </form>
       </div>
     </div>

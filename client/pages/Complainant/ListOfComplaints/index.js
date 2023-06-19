@@ -119,7 +119,7 @@ const ListOfComplaints = () => {
       ...prev,
       ...decryptedData,
       status: data.status,
-      remarks: data.remarks,
+      remarks: data.remarks
       detailsIPFSCID: data.detailsIPFSCID,
     }));
     toast.success(
