@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Button from "@/Components/Button";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
-import { useAddress, useStorage } from "@thirdweb-dev/react";
+import { useAddress, useContract, useStorage } from "@thirdweb-dev/react";
 import useDataDecryption from "@/Hooks/useDataDecryption";
 import useDataEncryption from "@/Hooks/useDataEncryption";
 import useImageDecryption from "@/Hooks/useImageDecryption";
@@ -22,6 +22,10 @@ const RegisterNCR = () => {
   const encryptData = useDataEncryption();
   const decryptData = useDataDecryption();
   const decryptImage = useImageDecryption();
+
+  const { contract } = useContract(
+    "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
+  );
 
   const [loading, setLoading] = useState(false);
   const [selectedTab, setSelectedTab] = useState(1);
@@ -141,6 +145,7 @@ const RegisterNCR = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const reportData = formData;
     reportData.reportID = uid();
     reportData.reportDateTime = new Date().getTime();
@@ -151,6 +156,7 @@ const RegisterNCR = () => {
       selectedComplaint.complainantWalletAddress;
     const encryptedData = encryptData(reportData);
     const uploadedDataCID = await storage.upload(encryptedData);
+    toast.success("Report data is successfully encrypted and uploaded to IPFS");
     const data = {
       reportType: reportData.reportType,
       reportID: reportData.reportID,
@@ -162,10 +168,16 @@ const RegisterNCR = () => {
       reportDateTime: reportData.reportDateTime,
       reportDetailsIPFSCID: uploadedDataCID,
     };
+    try {
+      const uploadedToContract = await contract.call("registerReport", [data]);
+      toast.success("Report is successfully uploaded to Blockchain Network");
+    } catch (err) {
+      console.log(err);
+    }
 
     try {
       await setDoc(doc(db, "reports", data.reportID), data);
-      toast.success(`${data.reportType} registered successfully.`);
+      toast.success(`${data.reportType} registration is successfully.`);
       setLoading(false);
     } catch (error) {
       toast.error("Report Registration Error. Try Again");
