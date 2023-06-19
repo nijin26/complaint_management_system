@@ -8,6 +8,7 @@ import useDataEncryption from "@/Hooks/useDataEncryption";
 import useImageDecryption from "@/Hooks/useImageDecryption";
 import ShortUniqueId from "short-unique-id";
 
+import { complaintType } from "public/utils";
 import { db } from "@/config/firebaseConfig";
 import { setDoc, doc } from "firebase/firestore";
 
@@ -82,6 +83,7 @@ const RegisterNCR = () => {
     complainantName: "",
     complainantAddress: "",
     complaintSubject: "",
+    complaintType: "",
     complaintDescription: "",
     placeOfIncident: "",
     incidentDateTime: "",
@@ -110,12 +112,22 @@ const RegisterNCR = () => {
         );
         const decryptedData = await decryptData(fetchedData);
         const decryptedImage = await decryptImage(decryptedData.image);
+        console.log(decryptedData);
         setSelectedComplaint((prev) => ({
           ...prev,
           ...complaintData,
           ...decryptedData,
           complainantWalletAddress: complaintData.userAddress,
           image: decryptedImage,
+        }));
+        setFormData((prev) => ({
+          ...prev,
+          policeStation: decryptedData.policeStation.stationName,
+          district: decryptedData.stationSector,
+          complainantName: decryptedData.userName,
+          complaintSubject: decryptedData.complaintSubject,
+          complaintDescription: decryptedData.complaintDescription,
+          placeOfIncident: decryptedData.placeOfIncident,
         }));
       }
     };
@@ -131,18 +143,19 @@ const RegisterNCR = () => {
     e.preventDefault();
     const reportData = formData;
     reportData.reportID = uid();
+    reportData.reportDateTime = new Date().getTime();
     reportData.complaintID = selectedComplaint.complaintID;
     reportData.stationID = selectedComplaint.stationID;
     reportData.stationWalletAddress = address;
     reportData.complainantWalletAddress =
       selectedComplaint.complainantWalletAddress;
-    console.log(reportData, "report data");
     const encryptedData = encryptData(reportData);
     const uploadedDataCID = await storage.upload(encryptedData);
     const data = {
       reportType: reportData.reportType,
       reportID: reportData.reportID,
       complaintID: reportData.complaintID,
+      complaintType: reportData.complaintType,
       stationID: reportData.stationID,
       stationWalletAddress: reportData.stationWalletAddress,
       complainantWalletAddress: reportData.complainantWalletAddress,
@@ -190,7 +203,10 @@ const RegisterNCR = () => {
                   {selectedComplaint.complaintID}
                 </p>
 
-                <p className="text-blue-500 cursor-pointer">
+                <p
+                  className="text-blue-500 cursor-pointer"
+                  onClick={() => setSelectedTab(2)}
+                >
                   <span className="font-bold">Complainant's Name:</span>{" "}
                   {selectedComplaint.userName}
                 </p>
@@ -244,6 +260,11 @@ const RegisterNCR = () => {
                 <p>
                   <span className="font-bold">Remarks:</span>{" "}
                   {selectedComplaint.remarks}
+                </p>
+
+                <p>
+                  <span className="font-bold">Status:</span>{" "}
+                  {selectedComplaint.status}
                 </p>
               </div>
             </div>
@@ -388,20 +409,6 @@ const RegisterNCR = () => {
           </div>
 
           <div className="flex flex-col [&>label]:font-bold [&>label]:my-2">
-            <label htmlFor="reportDateTime">
-              Enter Date and Time of Report:
-            </label>
-            <input
-              required
-              type="datetime-local"
-              id="reportDateTime"
-              name="reportDateTime"
-              value={formData.reportDateTime}
-              onChange={handleChange}
-              className="border border-gray-300 px-2 py-1"
-            />
-          </div>
-          <div className="flex flex-col [&>label]:font-bold [&>label]:my-2">
             <label htmlFor="complainantName">Enter name of complainant:</label>
             <input
               required
@@ -424,6 +431,26 @@ const RegisterNCR = () => {
               onChange={handleChange}
               className="border border-gray-300 px-2 py-1"
             />
+          </div>
+
+          <div className="flex flex-col [&>label]:font-bold [&>label]:my-2">
+            <label htmlFor="complainantAddress">Complaint Type:</label>
+            <select
+              required
+              disabled={loading}
+              id="complaintType"
+              name="complaintType"
+              className="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border appearance-none focus:shadow-outline-blue focus:border-blue-300"
+              value={formData.complaintType}
+              onChange={handleChange}
+            >
+              <option value="" disabled>
+                Select complaint type
+              </option>
+              {complaintType.map((type) => (
+                <option key={type}>{type}</option>
+              ))}
+            </select>
           </div>
           <div className="flex flex-col [&>label]:font-bold [&>label]:my-2">
             <label htmlFor="complaintSubject">Complaint Subject:</label>
@@ -457,9 +484,9 @@ const RegisterNCR = () => {
             <input
               required
               type="datetime-local"
-              id="placeOfIncident"
-              name="placeOfIncident"
-              value={formData.placeOfIncident}
+              id="incidentDateTime"
+              name="incidentDateTime"
+              value={formData.incidentDateTime}
               onChange={handleChange}
               className="border border-gray-300 px-2 py-1"
             />
@@ -469,9 +496,9 @@ const RegisterNCR = () => {
             <input
               required
               type="text"
-              id="incidentDateTime"
-              name="incidentDateTime"
-              value={formData.incidentDateTime}
+              id="placeOfIncident"
+              name="placeOfIncident"
+              value={formData.placeOfIncident}
               onChange={handleChange}
               className="border border-gray-300 px-2 py-1"
             />
