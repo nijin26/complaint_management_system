@@ -66,9 +66,6 @@ contract Complaint is PermissionsEnumerable {
     //     address approvedBy;
     // }
 
-    // struct BasicDetails {
-    //     string name;
-    //     string email;
     //     uint mobile;
     //     uint age;
     //     string gender;
