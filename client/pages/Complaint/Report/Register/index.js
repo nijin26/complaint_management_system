@@ -2,17 +2,27 @@ import React, { useEffect, useState } from "react";
 import Button from "@/Components/Button";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
-import { useStorage } from "@thirdweb-dev/react";
+import { useAddress, useStorage } from "@thirdweb-dev/react";
 import useDataDecryption from "@/Hooks/useDataDecryption";
 import useDataEncryption from "@/Hooks/useDataEncryption";
 import useImageDecryption from "@/Hooks/useImageDecryption";
+import ShortUniqueId from "short-unique-id";
+
+import { db } from "@/config/firebaseConfig";
+import { setDoc, doc } from "firebase/firestore";
+
+import Spinner from "@/Components/Spinner";
 
 const RegisterNCR = () => {
+  const uid = new ShortUniqueId({ length: 6 });
+  const address = useAddress();
   const router = useRouter();
   const storage = useStorage();
   const encryptData = useDataEncryption();
   const decryptData = useDataDecryption();
   const decryptImage = useImageDecryption();
+
+  const [loading, setLoading] = useState(false);
   const [selectedTab, setSelectedTab] = useState(1);
   const profileInfo = {
     basicDetails: {
@@ -64,7 +74,7 @@ const RegisterNCR = () => {
   const [formData, setFormData] = useState({
     reportType: "NCR",
     reportNumber: "",
-    date: "",
+    reportDateTime: "",
     policeStation: "",
     stationID: "",
     district: "",
@@ -104,6 +114,7 @@ const RegisterNCR = () => {
           ...prev,
           ...complaintData,
           ...decryptedData,
+          complainantWalletAddress: complaintData.userAddress,
           image: decryptedImage,
         }));
       }
@@ -116,10 +127,38 @@ const RegisterNCR = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log(formData);
+    const reportData = formData;
+    reportData.reportID = uid();
+    reportData.complaintID = selectedComplaint.complaintID;
+    reportData.stationID = selectedComplaint.stationID;
+    reportData.stationWalletAddress = address;
+    reportData.complainantWalletAddress =
+      selectedComplaint.complainantWalletAddress;
+    console.log(reportData, "report data");
+    const encryptedData = encryptData(reportData);
+    const uploadedDataCID = await storage.upload(encryptedData);
+    const data = {
+      reportType: reportData.reportType,
+      reportID: reportData.reportID,
+      complaintID: reportData.complaintID,
+      stationID: reportData.stationID,
+      stationWalletAddress: reportData.stationWalletAddress,
+      complainantWalletAddress: reportData.complainantWalletAddress,
+      reportDateTime: reportData.reportDateTime,
+      reportDetailsIPFSCID: uploadedDataCID,
+    };
+
+    try {
+      await setDoc(doc(db, "reports", data.reportID), data);
+      toast.success(`${data.reportType} registered successfully.`);
+      setLoading(false);
+    } catch (error) {
+      toast.error("Report Registration Error. Try Again");
+      console.error("Error adding report:", error);
+      setLoading(false);
+    }
   };
 
   return (
@@ -298,6 +337,7 @@ const RegisterNCR = () => {
               Select Report Type:
             </label>
             <select
+              required
               onChange={handleChange}
               value={formData.reportType}
               id="reportType"
@@ -313,6 +353,7 @@ const RegisterNCR = () => {
             <input
               type="text"
               id="reportNumber"
+              required
               name="reportNumber"
               value={formData.reportNumber}
               onChange={handleChange}
@@ -323,6 +364,7 @@ const RegisterNCR = () => {
           <div className="flex flex-col [&>label]:font-bold [&>label]:my-2">
             <label htmlFor="policeStation">Police Station:</label>
             <input
+              required
               type="text"
               id="policeStation"
               name="policeStation"
@@ -335,6 +377,7 @@ const RegisterNCR = () => {
           <div className="flex flex-col [&>label]:font-bold [&>label]:my-2">
             <label htmlFor="district">District:</label>
             <input
+              required
               type="text"
               id="district"
               name="district"
@@ -349,6 +392,7 @@ const RegisterNCR = () => {
               Enter Date and Time of Report:
             </label>
             <input
+              required
               type="datetime-local"
               id="reportDateTime"
               name="reportDateTime"
@@ -360,6 +404,7 @@ const RegisterNCR = () => {
           <div className="flex flex-col [&>label]:font-bold [&>label]:my-2">
             <label htmlFor="complainantName">Enter name of complainant:</label>
             <input
+              required
               type="text"
               id="complainantName"
               name="complainantName"
@@ -371,6 +416,7 @@ const RegisterNCR = () => {
           <div className="flex flex-col [&>label]:font-bold [&>label]:my-2">
             <label htmlFor="complainantAddress">Address of complainant:</label>
             <input
+              required
               type="text"
               id="complainantAddress"
               name="complainantAddress"
@@ -382,6 +428,7 @@ const RegisterNCR = () => {
           <div className="flex flex-col [&>label]:font-bold [&>label]:my-2">
             <label htmlFor="complaintSubject">Complaint Subject:</label>
             <input
+              required
               type="text"
               id="complaintSubject"
               name="complaintSubject"
@@ -395,6 +442,7 @@ const RegisterNCR = () => {
               Complaint's Detailed Description:
             </label>
             <textarea
+              required
               type="text"
               id="complaintDescription"
               name="complaintDescription"
@@ -407,6 +455,7 @@ const RegisterNCR = () => {
           <div className="flex flex-col [&>label]:font-bold [&>label]:my-2">
             <label htmlFor="placeOfIncident">Date and Time of Incident:</label>
             <input
+              required
               type="datetime-local"
               id="placeOfIncident"
               name="placeOfIncident"
@@ -418,6 +467,7 @@ const RegisterNCR = () => {
           <div className="flex flex-col [&>label]:font-bold [&>label]:my-2">
             <label htmlFor="incidentDateTime">Place of Incident:</label>
             <input
+              required
               type="text"
               id="incidentDateTime"
               name="incidentDateTime"
@@ -430,6 +480,7 @@ const RegisterNCR = () => {
           <div className="flex flex-col [&>label]:font-bold [&>label]:my-2">
             <label htmlFor="witnessAddress">Address of witness:</label>
             <input
+              required
               type="text"
               id="witnessAddress"
               name="witnessAddress"
@@ -438,9 +489,13 @@ const RegisterNCR = () => {
               className="border border-gray-300 px-2 py-1"
             />
           </div>
-          <Button type="submit" className="w-full">
-            Submit
-          </Button>
+          {loading ? (
+            <Spinner />
+          ) : (
+            <Button type="submit" className="w-full">
+              Submit
+            </Button>
+          )}
         </form>
       </div>
     </div>
