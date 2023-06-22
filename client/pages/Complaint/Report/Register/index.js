@@ -10,9 +10,10 @@ import ShortUniqueId from "short-unique-id";
 
 import { complaintType } from "public/utils";
 import { db } from "@/config/firebaseConfig";
-import { setDoc, doc } from "firebase/firestore";
+import { setDoc, doc, updateDoc } from "firebase/firestore";
 
 import Spinner from "@/Components/Spinner";
+import { contractAddress } from "@/config/contract";
 
 const RegisterNCR = () => {
   const uid = new ShortUniqueId({ length: 6 });
@@ -23,10 +24,7 @@ const RegisterNCR = () => {
   const decryptData = useDataDecryption();
   const decryptImage = useImageDecryption();
 
-  const { contract } = useContract(
-    "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
-  );
-
+  const { contract } = useContract(contractAddress);
   const [loading, setLoading] = useState(false);
   const [selectedTab, setSelectedTab] = useState(1);
   const profileInfo = {
@@ -168,21 +166,28 @@ const RegisterNCR = () => {
       reportDateTime: reportData.reportDateTime,
       reportDetailsIPFSCID: uploadedDataCID,
     };
+
     try {
       const uploadedToContract = await contract.call("registerReport", [data]);
       toast.success("Report is successfully uploaded to Blockchain Network");
-    } catch (err) {
-      console.log(err);
-    }
 
-    try {
-      await setDoc(doc(db, "reports", data.reportID), data);
-      toast.success(`${data.reportType} registration is successfully.`);
-      setLoading(false);
-    } catch (error) {
-      toast.error("Report Registration Error. Try Again");
-      console.error("Error adding report:", error);
-      setLoading(false);
+      try {
+        await setDoc(doc(db, "reports", data.reportID), data);
+        await updateDoc(doc(db, "complaints", data.complaintID), {
+          reportRegistered: true,
+          reportID: data.reportID,
+          status: `${data.reportType} Filed`,
+        });
+        toast.success(`${data.reportType} registration is successfully.`);
+        setLoading(false);
+      } catch (error) {
+        toast.error("Report Registration Error. Try Again");
+        console.error("Error adding report:", error);
+        setLoading(false);
+      }
+    } catch (err) {
+      toast.error("Error uploading to Blockchain network. Try Again.");
+      console.log(err);
     }
   };
 

@@ -232,92 +232,90 @@ const ListOfComplaints = () => {
         <h1 className="text-2xl font-bold text-center my-5">
           List Of Pending Complaints
         </h1>
-        <table className="w-full bg-white border border-gray-300 rounded-lg shadow-lg">
-          <thead>
-            <tr className="bg-stone text-stone-700 border-b border-gray-700 ">
-              <th className="py-2 px-4"> # </th>
-              <th className="py-2 px-4"> Registered at </th>
-              <th className="py-2 px-4"> Status </th>
-              <th className="py-2 px-4"> More Details </th>
-            </tr>
-          </thead>
-          <tbody>
-            {complaints.map((complaint, index) => {
-              if (complaint.status !== "Approved")
-                return (
-                  <tr key={complaint.id} className="border-b border-gray-300">
-                    <td className="py-2 px-4 text-center">{index + 1}</td>
-                    <td className="py-2 px-4 text-center">
-                      {new Date(complaint.complaintCreatedAt).toLocaleString()}
-                    </td>
-                    <td className="py-2 px-4 text-center">
-                      {complaint.status}
-                    </td>
-                    <td className="py-2 px-4 text-center">
-                      <Button onClick={() => viewHandler(complaint)}>
-                        View
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              else
-                return (
-                  <h2 className="text-center text-red-500 font-bold">
-                    {" "}
-                    Empty{" "}
-                  </h2>
-                );
-            })}
-          </tbody>
-        </table>
+        {complaints.length !== 0 ? (
+          <table className="w-full bg-white border border-gray-300 rounded-lg shadow-lg">
+            <thead>
+              <tr className="bg-stone text-stone-700 border-b border-gray-700 ">
+                <th className="py-2 px-4"> # </th>
+                <th className="py-2 px-4"> Registered at </th>
+                <th className="py-2 px-4"> Status </th>
+                <th className="py-2 px-4"> More Details </th>
+              </tr>
+            </thead>
+            <tbody>
+              {complaints.map((complaint, index) => {
+                if (complaint.status === "Pending For Approval")
+                  return (
+                    <tr key={complaint.id} className="border-b border-gray-300">
+                      <td className="py-2 px-4 text-center">{index + 1}</td>
+                      <td className="py-2 px-4 text-center">
+                        {new Date(
+                          complaint.complaintCreatedAt
+                        ).toLocaleString()}
+                      </td>
+                      <td className="py-2 px-4 text-center">
+                        {complaint.status}
+                      </td>
+                      <td className="py-2 px-4 text-center">
+                        <Button onClick={() => viewHandler(complaint)}>
+                          View
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+              })}
+            </tbody>
+          </table>
+        ) : (
+          <h2 className="text-center text-red-500 font-bold">Empty</h2>
+        )}
       </div>
       <div className="container mx-auto my-10 ">
         <h1 className="text-2xl font-bold text-center my-5">
           Approved Complaints List
         </h1>
-        <table className="w-full bg-white border border-gray-300 rounded-lg shadow-lg">
-          <thead>
-            <tr className="bg-stone text-stone-700 border-b border-gray-700 ">
-              <th className="py-2 px-4"> # </th>
-              <th className="py-2 px-4"> Registered at </th>
-              <th className="py-2 px-4"> Register FIR/NCR </th>
-              <th className="py-2 px-4"> View </th>
-            </tr>
-          </thead>
-          <tbody>
-            {complaints.map((complaint, index) => {
-              if (complaint.status === "Approved")
-                return (
-                  <tr key={complaint.id} className="border-b border-gray-300">
-                    <td className="py-2 px-4 text-center">{index + 1}</td>
-                    <td className="py-2 px-4 text-center">
-                      {new Date(complaint.complaintCreatedAt).toLocaleString()}
-                    </td>
-                    <td className="py-2 px-4 text-center">
-                      <Button
-                        outlined={true}
-                        onClick={() => handleReport(complaint)}
-                      >
-                        Register
-                      </Button>
-                    </td>
-                    <td className="py-2 px-4 text-center">
-                      <Button onClick={() => viewApproved(complaint)}>
-                        View
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              else
-                return (
-                  <h2 className="text-center text-red-500 font-bold">
-                    {" "}
-                    Empty{" "}
-                  </h2>
-                );
-            })}
-          </tbody>
-        </table>
+        {complaints.length !== 0 ? (
+          <table className="w-full bg-white border border-gray-300 rounded-lg shadow-lg">
+            <thead>
+              <tr className="bg-stone text-stone-700 border-b border-gray-700 ">
+                <th className="py-2 px-4"> # </th>
+                <th className="py-2 px-4"> Registered at </th>
+                <th className="py-2 px-4"> Register FIR/NCR </th>
+                <th className="py-2 px-4"> View </th>
+              </tr>
+            </thead>
+            <tbody>
+              {complaints.map((complaint, index) => {
+                if (complaint.status !== "Pending For Approval")
+                  return (
+                    <tr key={complaint.id} className="border-b border-gray-300">
+                      <td className="py-2 px-4 text-center">{index + 1}</td>
+                      <td className="py-2 px-4 text-center">
+                        {new Date(
+                          complaint.complaintCreatedAt
+                        ).toLocaleString()}
+                      </td>
+                      <td className="py-2 px-4 text-center">
+                        <Button
+                          outlined={true}
+                          onClick={() => handleReport(complaint)}
+                        >
+                          Register
+                        </Button>
+                      </td>
+                      <td className="py-2 px-4 text-center">
+                        <Button onClick={() => viewApproved(complaint)}>
+                          View
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+              })}
+            </tbody>
+          </table>
+        ) : (
+          <h2 className="text-center text-red-500 font-bold">Empty</h2>
+        )}
       </div>
 
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>

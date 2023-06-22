@@ -22,6 +22,7 @@ import useImageDecryption from "@/Hooks/useImageDecryption";
 import Button from "@/Components/Button";
 import Spinner from "@/Components/Spinner";
 import Modal from "@/Components/Modal";
+import { contractAddress } from "@/config/contract";
 // import { Dialog, DialogContent } from "../../../Components/UI/dialog";
 
 const ListOfComplaints = () => {
@@ -53,9 +54,7 @@ const ListOfComplaints = () => {
     remarks: "",
   });
 
-  const { contract } = useContract(
-    "0x5FbDB2315678afecb367f032d93F642f64180aa3"
-  );
+  const { contract } = useContract(contractAddress);
 
   // Fetch list of data on mount
   useEffect(() => {
@@ -146,10 +145,7 @@ const ListOfComplaints = () => {
             </thead>
             <tbody>
               {complaints.map((complaint, index) => {
-                if (
-                  complaint.status !== "Approved" &&
-                  complaint.status !== "Ignored"
-                )
+                if (complaint.status === "Pending For Approval")
                   return (
                     <tr key={complaint.id} className="border-b border-gray-300">
                       <td className="py-2 px-4 text-center">{index + 1}</td>
@@ -191,10 +187,7 @@ const ListOfComplaints = () => {
             </thead>
             <tbody>
               {complaints.map((complaint, index) => {
-                if (
-                  complaint.status === "Approved" ||
-                  complaint.status === "Ignored"
-                )
+                if (complaint.status !== "Pending For Approval")
                   return (
                     <tr key={complaint.id} className="border-b border-gray-300">
                       <td className="py-2 px-4 text-center">{index + 1}</td>
