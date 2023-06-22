@@ -10,6 +10,7 @@ contract ComplaintContract is PermissionsEnumerable {
     bytes32 public constant STATION = keccak256("STATION");
     bytes32 public constant SUPERIOR = keccak256("SUPERIOR");
 
+    constructor(){
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
@@ -48,13 +49,33 @@ contract ComplaintContract is PermissionsEnumerable {
         string chargeSheetIPFSCID;
     }
 
+
+    modifier onlyStationOrSuperior() {
+     require(hasRole(STATION, msg.sender) || hasRole(SUPERIOR, msg.sender), "You are not authorized");
+     _; // Continue with the function execution
+    }
+
     Complaint[] public complaints;
     Report[] public reports;
     ChargeSheet[] public chargeSheets;
 
+    mapping(string => address) public complainantToComplaint;
+    mapping(string => address) public stationToComplaint;
+    mapping(address => address) public superiorToStation;
+    mapping(address => address) public superiorToSuperior;
+    mapping(string => string) public reportIDToComplaintID;
+    mapping(string => string) public chargeSheetIDToReportID;
+
+    
+event AddComplaint(address indexed sender, uint256 timestamp, string complaintID);
+event UpdateComplaint(address indexed sender, uint256 timestamp, string complaintID, string status);
+event RegisterReport(address indexed sender, uint256 timestamp, string reportID, string complaintID);
+event RegisterChargesheet(address indexed sender, uint256 timestamp, string chargeSheetID, string reportID);
+
     function addComplaint(Complaint memory newComplaint) public {
         complaints.push(newComplaint);
-        // grantRole(USER,_userAddress);
+
+    emit AddComplaint(msg.sender, block.timestamp, newComplaint.complaintID);
     }
     
  function updateComplaint(string memory id, string memory status, string memory remarks) public {
@@ -65,36 +86,62 @@ contract ComplaintContract is PermissionsEnumerable {
                 break;
             }
         }
-    }
 
-    function getComplaints() public view returns (Complaint[] memory) {
-        return complaints;
+    emit UpdateComplaint(msg.sender, block.timestamp, id, status);
     }
 
     function getComplaintByID(
         string memory _complaintID
     ) public view returns (Complaint memory) {
         for (uint256 i = 0; i < complaints.length; i++) {
-            if (
-                keccak256(bytes(complaints[i].complaintID)) ==
-                keccak256(bytes(_complaintID))
-            ) {
+            if (compareStrings(complaints[i].complaintID,_complaintID)) {
                 return complaints[i];
             }
         }
+        revert("Complaint not found");
     }
 
+    function filterComplaints(string memory id, address walletAddress) public view returns (Complaint[] memory) {
+        uint256 count = 0;
 
-    function registerReport(Report memory newReport) public {
+        for (uint256 i = 0; i < complaints.length; i++) {
+            Complaint memory complaint = complaints[i];
+            if ((compareStrings(complaint.complaintID, id) && complaint.complainantWalletAddress == walletAddress) ||
+                (compareStrings(complaint.complaintID, id) && compareStrings(complaint.stationID, id) && complaint.stationWalletAddress == walletAddress)) {
+                count++;
+            }
+        }
+
+        Complaint[] memory filteredComplaints = new Complaint[](count);
+        uint256 index = 0;
+
+        for (uint256 i = 0; i < complaints.length; i++) {
+            Complaint memory complaint = complaints[i];
+            if ((compareStrings(complaint.complaintID, id) && complaint.complainantWalletAddress == walletAddress) ||
+                (compareStrings(complaint.complaintID, id) && compareStrings(complaint.stationID, id) && complaint.stationWalletAddress == walletAddress)) {
+                filteredComplaints[index] = complaint;
+                index++;
+            }
+        }
+
+        return filteredComplaints;
+    }
+
+    function registerReport(Report memory newReport) public onlyStationOrSuperior{
         reports.push(newReport);
+
+    emit RegisterReport(msg.sender, block.timestamp, newReport.reportID, newReport.complaintID);
     }
 
-    function getReport(
+    function getReports() public onlyStationOrSuperior view returns (Report[] memory) {
+      return reports;
+    }
+
+  // Get report by ReportID or ComplaintID
+    function getReportById(
         string memory id,
         bool isReportID
     ) public view returns (Report memory) {
-        bytes32 idHash = keccak256(bytes(id));
-
         for (uint256 i = 0; i < reports.length; i++) {
             if (isReportID) {
                 if (compareStrings(reports[i].reportID,id)){
@@ -109,11 +156,18 @@ contract ComplaintContract is PermissionsEnumerable {
         revert("Report not found");
     }
 
-    function registerChargeSheet(ChargeSheet memory data) public {
-        chargeSheets.push(data);
+    function registerChargeSheet(ChargeSheet memory _newChargeSheet) public onlyStationOrSuperior {
+      chargeSheets.push(_newChargeSheet);
+
+    emit RegisterChargesheet(msg.sender, block.timestamp, _newChargeSheet.chargeSheetID, _newChargeSheet.reportID);
     }
 
-    function getChargeSheet(
+    function getChargeSheets() public onlyStationOrSuperior view returns (ChargeSheet[] memory){
+      return chargeSheets;
+    }
+
+    // Get chargesheet by ChargesheetID or ComplaintID or ReportID
+    function getChargeSheetById(
         string memory id
     ) public view returns (ChargeSheet memory) {
         for (uint256 i = 0; i < chargeSheets.length; i++) {
