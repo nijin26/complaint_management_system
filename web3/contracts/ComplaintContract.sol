@@ -10,11 +10,11 @@ contract ComplaintContract is PermissionsEnumerable {
     bytes32 public constant STATION = keccak256("STATION");
     bytes32 public constant SUPERIOR = keccak256("SUPERIOR");
 
-    constructor(){
+    constructor() {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setupRole(SUPERIOR, msg.sender);
-        _setRoleAdmin(SUPERIOR,SUPERIOR);
-        _setRoleAdmin(STATION,SUPERIOR);
+        _setRoleAdmin(SUPERIOR, SUPERIOR);
+        _setRoleAdmin(STATION, SUPERIOR);
     }
 
     struct Complaint {
@@ -52,10 +52,12 @@ contract ComplaintContract is PermissionsEnumerable {
         string chargeSheetIPFSCID;
     }
 
-
     modifier onlyStationOrSuperior() {
-     require(hasRole(STATION, msg.sender) || hasRole(SUPERIOR, msg.sender), "You are not authorized");
-     _; // Continue with the function execution
+        require(
+            hasRole(STATION, msg.sender) || hasRole(SUPERIOR, msg.sender),
+            "You are not authorized"
+        );
+        _; // Continue with the function execution
     }
 
     Complaint[] public complaints;
@@ -69,33 +71,82 @@ contract ComplaintContract is PermissionsEnumerable {
     mapping(string => string) public reportIDToComplaintID;
     mapping(string => string) public chargeSheetIDToReportID;
 
-    
-event AddComplaint(address indexed sender, uint256 timestamp, string complaintID);
-event UpdateComplaint(address indexed sender, uint256 timestamp, string complaintID, string status);
-event RegisterReport(address indexed sender, uint256 timestamp, string reportID, string complaintID);
-event RegisterChargesheet(address indexed sender, uint256 timestamp, string chargeSheetID, string reportID);
+    event ApproveStation(
+        address indexed _stationWalletAddress,
+        uint256 timestamp,
+        address indexed sender
+    );
+    event ApproveSuperior(
+        address indexed _newSuperiorWalletAddress,
+        uint256 timestamp,
+        address indexed sender
+    );
+    event AddComplaint(
+        address indexed sender,
+        uint256 timestamp,
+        string complaintID
+    );
+    event UpdateComplaint(
+        address indexed sender,
+        uint256 timestamp,
+        string complaintID,
+        string status
+    );
+    event RegisterReport(
+        address indexed sender,
+        uint256 timestamp,
+        string reportID,
+        string complaintID
+    );
+    event RegisterChargesheet(
+        address indexed sender,
+        uint256 timestamp,
+        string chargeSheetID,
+        string reportID
+    );
 
-function approveStation(address _stationWalletAddress) public onlyRole(SUPERIOR) {
-  superiorToStation[_stationWalletAddress] = msg.sender;
-  grantRole(STATION,_stationWalletAddress);
-}
+    function approveStation(
+        address _stationWalletAddress
+    ) public onlyRole(SUPERIOR) {
+        superiorToStation[_stationWalletAddress] = msg.sender;
+        grantRole(STATION, _stationWalletAddress);
 
+        emit ApproveStation(_stationWalletAddress, block.timestamp, msg.sender);
+    }
 
-function approveSuperior(address _newSuperiorWalletAddress) public onlyRole(SUPERIOR) {
-  superiorToSuperior[_newSuperiorWalletAddress] = msg.sender;
-  grantRole(SUPERIOR,_newSuperiorWalletAddress); 
-}
+    function approveSuperior(
+        address _newSuperiorWalletAddress
+    ) public onlyRole(SUPERIOR) {
+        superiorToSuperior[_newSuperiorWalletAddress] = msg.sender;
+        grantRole(SUPERIOR, _newSuperiorWalletAddress);
+
+        emit ApproveSuperior(
+            _newSuperiorWalletAddress,
+            block.timestamp,
+            msg.sender
+        );
+    }
 
     function addComplaint(Complaint memory newComplaint) public {
         complaints.push(newComplaint);
-        complainantToComplaint[newComplaint.complaintID] = newComplaint.complainantWalletAddress;
-        stationToComplaint[newComplaint.stationID] = newComplaint.stationWalletAddress;
-        _setupRole(USER,newComplaint.complainantWalletAddress);
+        complainantToComplaint[newComplaint.complaintID] = newComplaint
+            .complainantWalletAddress;
+        stationToComplaint[newComplaint.stationID] = newComplaint
+            .stationWalletAddress;
+        _setupRole(USER, newComplaint.complainantWalletAddress);
 
-        emit AddComplaint(msg.sender, block.timestamp, newComplaint.complaintID);
+        emit AddComplaint(
+            msg.sender,
+            block.timestamp,
+            newComplaint.complaintID
+        );
     }
-    
- function updateComplaint(string memory id, string memory status, string memory remarks) public {
+
+    function updateComplaint(
+        string memory id,
+        string memory status,
+        string memory remarks
+    ) public {
         for (uint256 i = 0; i < complaints.length; i++) {
             if (compareStrings(complaints[i].complaintID, id)) {
                 complaints[i].status = status;
@@ -104,27 +155,35 @@ function approveSuperior(address _newSuperiorWalletAddress) public onlyRole(SUPE
             }
         }
 
-    emit UpdateComplaint(msg.sender, block.timestamp, id, status);
+        emit UpdateComplaint(msg.sender, block.timestamp, id, status);
     }
 
     function getComplaintByID(
         string memory _complaintID
     ) public view returns (Complaint memory) {
         for (uint256 i = 0; i < complaints.length; i++) {
-            if (compareStrings(complaints[i].complaintID,_complaintID)) {
+            if (compareStrings(complaints[i].complaintID, _complaintID)) {
                 return complaints[i];
             }
         }
         revert("Complaint not found");
     }
 
-    function filterComplaints(string memory id, address walletAddress) public view returns (Complaint[] memory) {
+    function filterComplaints(
+        string memory id,
+        address walletAddress
+    ) public view returns (Complaint[] memory) {
         uint256 count = 0;
 
         for (uint256 i = 0; i < complaints.length; i++) {
             Complaint memory complaint = complaints[i];
-            if ((compareStrings(complaint.complaintID, id) && complaint.complainantWalletAddress == walletAddress) ||
-                (compareStrings(complaint.complaintID, id) && compareStrings(complaint.stationID, id) && complaint.stationWalletAddress == walletAddress)) {
+            if (
+                (compareStrings(complaint.complaintID, id) &&
+                    complaint.complainantWalletAddress == walletAddress) ||
+                (compareStrings(complaint.complaintID, id) &&
+                    compareStrings(complaint.stationID, id) &&
+                    complaint.stationWalletAddress == walletAddress)
+            ) {
                 count++;
             }
         }
@@ -134,8 +193,13 @@ function approveSuperior(address _newSuperiorWalletAddress) public onlyRole(SUPE
 
         for (uint256 i = 0; i < complaints.length; i++) {
             Complaint memory complaint = complaints[i];
-            if ((compareStrings(complaint.complaintID, id) && complaint.complainantWalletAddress == walletAddress) ||
-                (compareStrings(complaint.complaintID, id) && compareStrings(complaint.stationID, id) && complaint.stationWalletAddress == walletAddress)) {
+            if (
+                (compareStrings(complaint.complaintID, id) &&
+                    complaint.complainantWalletAddress == walletAddress) ||
+                (compareStrings(complaint.complaintID, id) &&
+                    compareStrings(complaint.stationID, id) &&
+                    complaint.stationWalletAddress == walletAddress)
+            ) {
                 filteredComplaints[index] = complaint;
                 index++;
             }
@@ -144,28 +208,40 @@ function approveSuperior(address _newSuperiorWalletAddress) public onlyRole(SUPE
         return filteredComplaints;
     }
 
-    function registerReport(Report memory _newReport) public onlyStationOrSuperior{
+    function registerReport(
+        Report memory _newReport
+    ) public onlyStationOrSuperior {
         reports.push(_newReport);
         reportIDToComplaintID[_newReport.complaintID] = _newReport.reportID;
-    emit RegisterReport(msg.sender, block.timestamp, _newReport.reportID, _newReport.complaintID);
+        emit RegisterReport(
+            msg.sender,
+            block.timestamp,
+            _newReport.reportID,
+            _newReport.complaintID
+        );
     }
 
-    function getReports() public onlyStationOrSuperior view returns (Report[] memory) {
-      return reports;
+    function getReports()
+        public
+        view
+        onlyStationOrSuperior
+        returns (Report[] memory)
+    {
+        return reports;
     }
 
-  // Get report by ReportID or ComplaintID
+    // Get report by ReportID or ComplaintID
     function getReportById(
         string memory id,
         bool isReportID
     ) public view returns (Report memory) {
         for (uint256 i = 0; i < reports.length; i++) {
             if (isReportID) {
-                if (compareStrings(reports[i].reportID,id)){
+                if (compareStrings(reports[i].reportID, id)) {
                     return reports[i];
                 }
             } else {
-                if (compareStrings(reports[i].complaintID,id)){
+                if (compareStrings(reports[i].complaintID, id)) {
                     return reports[i];
                 }
             }
@@ -173,14 +249,27 @@ function approveSuperior(address _newSuperiorWalletAddress) public onlyRole(SUPE
         revert("Report not found");
     }
 
-    function registerChargeSheet(ChargeSheet memory _newChargeSheet) public onlyStationOrSuperior {
-      chargeSheets.push(_newChargeSheet);
-chargeSheetIDToReportID[_newChargeSheet.reportID] = _newChargeSheet.chargeSheetID;
-    emit RegisterChargesheet(msg.sender, block.timestamp, _newChargeSheet.chargeSheetID, _newChargeSheet.reportID);
+    function registerChargeSheet(
+        ChargeSheet memory _newChargeSheet
+    ) public onlyStationOrSuperior {
+        chargeSheets.push(_newChargeSheet);
+        chargeSheetIDToReportID[_newChargeSheet.reportID] = _newChargeSheet
+            .chargeSheetID;
+        emit RegisterChargesheet(
+            msg.sender,
+            block.timestamp,
+            _newChargeSheet.chargeSheetID,
+            _newChargeSheet.reportID
+        );
     }
 
-    function getChargeSheets() public onlyStationOrSuperior view returns (ChargeSheet[] memory){
-      return chargeSheets;
+    function getChargeSheets()
+        public
+        view
+        onlyStationOrSuperior
+        returns (ChargeSheet[] memory)
+    {
+        return chargeSheets;
     }
 
     // Get chargesheet by ChargesheetID or ComplaintID or ReportID

@@ -14,6 +14,8 @@ contract JudiciaryContract is PermissionsEnumerable{
     constructor(address complaintContractAddress) {
         complaintContract = ComplaintContract(complaintContractAddress);
         _setupRole(DEFAULT_ADMIN_ROLE,msg.sender); 
+        _setupRole(JUDICIARY,msg.sender);
+        _setRoleAdmin(JUDICIARY,JUDICIARY);
     }
 
 function getComplaintByID(string memory id) public view returns (ComplaintContract.Complaint memory) {
