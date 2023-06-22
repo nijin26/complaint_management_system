@@ -1,4 +1,3 @@
-
 // SPDX-License-Identifier: GPL-3.0
 
 pragma solidity ^0.8.9;
@@ -10,6 +9,7 @@ contract ComplaintContract is PermissionsEnumerable {
     bytes32 public constant USER = keccak256("USER");
     bytes32 public constant STATION = keccak256("STATION");
     bytes32 public constant SUPERIOR = keccak256("SUPERIOR");
+
     // bytes32 public constant JUDICIARY = keccak256("JUDICIARY");
 
     constructor() {
@@ -19,28 +19,28 @@ contract ComplaintContract is PermissionsEnumerable {
     struct Complaint {
         string complaintID;
         string stationID;
-        address userAddress;
-        address stationAddress;
+        address complainantWalletAddress;
+        address stationWalletAddress;
         string complaintCreatedAt;
-        string complaintApprovedAt;
+        string complaintValidatedAt;
         string detailsIPFSCID;
         string remarks;
         string status;
     }
 
     struct Report {
-    string reportType;
-    string reportID;
-    string complaintID;
-    string complaintType;
-    string stationID;
-    address stationWalletAddress;
-    address complainantWalletAddress;
-    uint256 reportDateTime;
-    string reportDetailsIPFSCID;
-}
+        string reportType;
+        string reportID;
+        string complaintID;
+        string complaintType;
+        string stationID;
+        address stationWalletAddress;
+        address complainantWalletAddress;
+        uint256 reportDateTime;
+        string reportDetailsIPFSCID;
+    }
 
-struct ChargeSheet {
+    struct ChargeSheet {
         string chargeSheetDateTime;
         string chargeSheetID;
         string complaintID;
@@ -55,76 +55,81 @@ struct ChargeSheet {
     Report[] public reports;
     ChargeSheet[] public chargeSheets;
 
-    function addComplaint(
-        string memory _complaintID,
-        string memory _stationID,
-        address _userAddress,
-        address _stationAddress,
-        string memory _complaintCreatedAt,
-        string memory _complaintApprovedAt,
-        string memory _detailsIPFSCID,
-        string memory _remarks,
-        string memory _status
-    ) public {
-        Complaint memory newComplaint = Complaint(
-            _complaintID,
-            _stationID,
-            _userAddress,
-            _stationAddress,
-            _complaintCreatedAt,
-            _complaintApprovedAt,
-            _detailsIPFSCID,
-            _remarks,
-            _status
-        );
+    function addComplaint(Complaint memory newComplaint) public {
         complaints.push(newComplaint);
         // grantRole(USER,_userAddress);
     }
-
-    function getComplaintByID(string memory _complaintID) public view returns (Complaint memory) {
+    
+ function updateComplaint(string memory id, string memory status, string memory remarks) public {
         for (uint256 i = 0; i < complaints.length; i++) {
-            if (keccak256(bytes(complaints[i].complaintID)) == keccak256(bytes(_complaintID))) {
+            if (compareStrings(complaints[i].complaintID, id)) {
+                complaints[i].status = status;
+                complaints[i].remarks = remarks;
+                break;
+            }
+        }
+    }
+
+    function getComplaintByID(
+        string memory _complaintID
+    ) public view returns (Complaint memory) {
+        for (uint256 i = 0; i < complaints.length; i++) {
+            if (
+                keccak256(bytes(complaints[i].complaintID)) ==
+                keccak256(bytes(_complaintID))
+            ) {
                 return complaints[i];
             }
         }
     }
 
-function registerReport(Report memory newReport) public {
+    function registerReport(Report memory newReport) public {
         reports.push(newReport);
     }
 
-function getReport(string memory id, bool isReportID) public view returns (Report memory) {
-    bytes32 idHash = keccak256(bytes(id));
-    
-    for (uint256 i = 0; i < reports.length; i++) {
-        if (isReportID) {
-            if (keccak256(bytes(reports[i].reportID)) == idHash) {
-                return reports[i];
-            }
-        } else {
-            if (keccak256(bytes(reports[i].complaintID)) == idHash) {
-                return reports[i];
+    function getReport(
+        string memory id,
+        bool isReportID
+    ) public view returns (Report memory) {
+        bytes32 idHash = keccak256(bytes(id));
+
+        for (uint256 i = 0; i < reports.length; i++) {
+            if (isReportID) {
+                if (compareStrings(reports[i].reportID,id) {
+                    return reports[i];
+                }
+            } else {
+                if (compareStrings(reports[i].complaintID,id) {
+                    return reports[i];
+                }
             }
         }
+        revert("Report not found");
     }
-    revert("Report not found");
-}
-function registerChargeSheet(ChargeSheet memory data) public {
+
+    function registerChargeSheet(ChargeSheet memory data) public {
         chargeSheets.push(data);
     }
-    
-    function getChargeSheet(string memory id) public view returns (ChargeSheet memory) {
+
+    function getChargeSheet(
+        string memory id
+    ) public view returns (ChargeSheet memory) {
         for (uint256 i = 0; i < chargeSheets.length; i++) {
-            if (compareStrings(chargeSheets[i].chargeSheetID, id) ||
+            if (
+                compareStrings(chargeSheets[i].chargeSheetID, id) ||
                 compareStrings(chargeSheets[i].complaintID, id) ||
-                compareStrings(chargeSheets[i].reportID, id)) {
+                compareStrings(chargeSheets[i].reportID, id)
+            ) {
                 return chargeSheets[i];
             }
         }
         revert("Charge sheet not found");
     }
-    
-    function compareStrings(string memory a, string memory b) internal pure returns (bool) {
+
+    function compareStrings(
+        string memory a,
+        string memory b
+    ) internal pure returns (bool) {
         return (keccak256(bytes(a)) == keccak256(bytes(b)));
     }
 }

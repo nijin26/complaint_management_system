@@ -176,18 +176,21 @@ const ListOfComplaints = () => {
     const currentTime = new Date().getTime().toString();
     const complaintCreated = selectedComplaint.complaintCreatedAt.toString();
     try {
-      const data = await contract.call("addComplaint", [
-        selectedComplaint.complaintID,
-        selectedComplaint.policeStation.stationID,
-        ethers.utils.getAddress(selectedComplaint.userAddress),
-        ethers.utils.getAddress(address),
-        complaintCreated,
-        currentTime,
-        selectedComplaint.detailsIPFSCID,
-        remarks,
-        status,
-      ]);
-      console.info("contract call successs", data);
+      const data = {
+        complaintID: selectedComplaint.complaintID,
+        stationID: selectedComplaint.policeStation.stationID,
+        complainantWalletAddress: ethers.utils.getAddress(
+          selectedComplaint.userAddress
+        ),
+        stationWalletAddress: ethers.utils.getAddress(address),
+        complaintCreatedAt: complaintCreated,
+        complaintValidatedAt: currentTime,
+        detailsIPFSCID: selectedComplaint.detailsIPFSCID,
+        remarks: remarks,
+        status: status,
+      };
+      const complaintAdded = await contract.call("addComplaint", [data]);
+      console.info("contract call successs", data, complaintAdded);
     } catch (err) {
       console.log("Insdie catch block");
       console.error("contract call failure", err);
