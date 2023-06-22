@@ -12,6 +12,9 @@ contract ComplaintContract is PermissionsEnumerable {
 
     constructor(){
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setupRole(SUPERIOR, msg.sender);
+        _setRoleAdmin(SUPERIOR,SUPERIOR);
+        _setRoleAdmin(STATION,SUPERIOR);
     }
 
     struct Complaint {
@@ -72,10 +75,24 @@ event UpdateComplaint(address indexed sender, uint256 timestamp, string complain
 event RegisterReport(address indexed sender, uint256 timestamp, string reportID, string complaintID);
 event RegisterChargesheet(address indexed sender, uint256 timestamp, string chargeSheetID, string reportID);
 
+function approveStation(address _stationWalletAddress) public onlyRole(SUPERIOR) {
+  superiorToStation[_stationWalletAddress] = msg.sender;
+  grantRole(STATION,_stationWalletAddress);
+}
+
+
+function approveSuperior(address _newSuperiorWalletAddress) public onlyRole(SUPERIOR) {
+  superiorToSuperior[_newSuperiorWalletAddress] = msg.sender;
+  grantRole(SUPERIOR,_newSuperiorWalletAddress); 
+}
+
     function addComplaint(Complaint memory newComplaint) public {
         complaints.push(newComplaint);
+        complainantToComplaint[newComplaint.complaintID] = newComplaint.complainantWalletAddress;
+        stationToComplaint[newComplaint.stationID] = newComplaint.stationWalletAddress;
+        _setupRole(USER,newComplaint.complainantWalletAddress);
 
-    emit AddComplaint(msg.sender, block.timestamp, newComplaint.complaintID);
+        emit AddComplaint(msg.sender, block.timestamp, newComplaint.complaintID);
     }
     
  function updateComplaint(string memory id, string memory status, string memory remarks) public {
@@ -127,9 +144,9 @@ event RegisterChargesheet(address indexed sender, uint256 timestamp, string char
         return filteredComplaints;
     }
 
-    function registerReport(Report memory newReport) public onlyStationOrSuperior{
-        reports.push(newReport);
-
+    function registerReport(Report memory _newReport) public onlyStationOrSuperior{
+        reports.push(_newReport);
+        reportIDToComplaintID[_newReport.complaintID] = _newReport.reportID;
     emit RegisterReport(msg.sender, block.timestamp, newReport.reportID, newReport.complaintID);
     }
 
@@ -158,7 +175,7 @@ event RegisterChargesheet(address indexed sender, uint256 timestamp, string char
 
     function registerChargeSheet(ChargeSheet memory _newChargeSheet) public onlyStationOrSuperior {
       chargeSheets.push(_newChargeSheet);
-
+chargeSheetIDToReportID[_newChargeSheet.reportID] = _newChargeSheet.chargeSheetID;
     emit RegisterChargesheet(msg.sender, block.timestamp, _newChargeSheet.chargeSheetID, _newChargeSheet.reportID);
     }
 
