@@ -147,7 +147,7 @@ function approveSuperior(address _newSuperiorWalletAddress) public onlyRole(SUPE
     function registerReport(Report memory _newReport) public onlyStationOrSuperior{
         reports.push(_newReport);
         reportIDToComplaintID[_newReport.complaintID] = _newReport.reportID;
-    emit RegisterReport(msg.sender, block.timestamp, newReport.reportID, newReport.complaintID);
+    emit RegisterReport(msg.sender, block.timestamp, _newReport.reportID, _newReport.complaintID);
     }
 
     function getReports() public onlyStationOrSuperior view returns (Report[] memory) {
