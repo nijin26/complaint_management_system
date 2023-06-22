@@ -1,9 +1,11 @@
 import { useState } from "react";
-import Button from "@/Components/Button";
-import ShortUniqueId from "short-unique-id";
-import { toast } from "react-toastify";
-import Badge from "@/Components/Badge";
+import { ethers } from "ethers";
 import { useAddress } from "@thirdweb-dev/react";
+import { toast } from "react-toastify";
+import ShortUniqueId from "short-unique-id";
+
+import Button from "@/Components/Button";
+import Badge from "@/Components/Badge";
 
 const ChargesheetForm = () => {
   const uid = new ShortUniqueId({ length: 6 });
@@ -123,7 +125,7 @@ const ChargesheetForm = () => {
     const data = {
       ...formData,
       chargeSheetID: uid(),
-      chargeSheetDateTime: new Date().getTime(),
+      chargeSheetDateTime: new Date().getTime().toString(),
       accused: listOfAccused,
       witness: listOfWitness,
     };
@@ -133,8 +135,10 @@ const ChargesheetForm = () => {
       complaintID: formData.complaintID,
       reportID: formData.reportID,
       stationID: formData.stationID,
-      stationWalletAddress: address,
-      complainantWalletAddress: formData.complainantWalletAddress,
+      stationWalletAddress: ethers.utils.getAddress(address),
+      complainantWalletAddress: ethers.utils.getAddress(
+        formData.complainantWalletAddress
+      ),
       chargeSheetIPFSCID: "",
     };
     console.log(formData);

@@ -10,9 +10,6 @@ contract ComplaintContract is PermissionsEnumerable {
     bytes32 public constant STATION = keccak256("STATION");
     bytes32 public constant SUPERIOR = keccak256("SUPERIOR");
 
-    // bytes32 public constant JUDICIARY = keccak256("JUDICIARY");
-
-    constructor() {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
@@ -70,6 +67,10 @@ contract ComplaintContract is PermissionsEnumerable {
         }
     }
 
+    function getComplaints() public view returns (Complaint[] memory) {
+        return complaints;
+    }
+
     function getComplaintByID(
         string memory _complaintID
     ) public view returns (Complaint memory) {
@@ -83,6 +84,7 @@ contract ComplaintContract is PermissionsEnumerable {
         }
     }
 
+
     function registerReport(Report memory newReport) public {
         reports.push(newReport);
     }
@@ -95,11 +97,11 @@ contract ComplaintContract is PermissionsEnumerable {
 
         for (uint256 i = 0; i < reports.length; i++) {
             if (isReportID) {
-                if (compareStrings(reports[i].reportID,id) {
+                if (compareStrings(reports[i].reportID,id)){
                     return reports[i];
                 }
             } else {
-                if (compareStrings(reports[i].complaintID,id) {
+                if (compareStrings(reports[i].complaintID,id)){
                     return reports[i];
                 }
             }
