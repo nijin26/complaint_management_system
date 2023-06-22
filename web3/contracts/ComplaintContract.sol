@@ -40,8 +40,20 @@ contract ComplaintContract is PermissionsEnumerable {
     string reportDetailsIPFSCID;
 }
 
+struct ChargeSheet {
+        string chargeSheetDateTime;
+        string chargeSheetID;
+        string complaintID;
+        string reportID;
+        string stationID;
+        address stationWalletAddress;
+        address complainantWalletAddress;
+        string chargeSheetIPFSCID;
+    }
+
     Complaint[] public complaints;
     Report[] public reports;
+    ChargeSheet[] public chargeSheets;
 
     function addComplaint(
         string memory _complaintID,
@@ -76,6 +88,7 @@ contract ComplaintContract is PermissionsEnumerable {
             }
         }
     }
+
 function registerReport(Report memory newReport) public {
         reports.push(newReport);
     }
@@ -96,4 +109,22 @@ function getReport(string memory id, bool isReportID) public view returns (Repor
     }
     revert("Report not found");
 }
+function registerChargeSheet(ChargeSheet memory data) public {
+        chargeSheets.push(data);
+    }
+    
+    function getChargeSheet(string memory id) public view returns (ChargeSheet memory) {
+        for (uint256 i = 0; i < chargeSheets.length; i++) {
+            if (compareStrings(chargeSheets[i].chargeSheetID, id) ||
+                compareStrings(chargeSheets[i].complaintID, id) ||
+                compareStrings(chargeSheets[i].reportID, id)) {
+                return chargeSheets[i];
+            }
+        }
+        revert("Charge sheet not found");
+    }
+    
+    function compareStrings(string memory a, string memory b) internal pure returns (bool) {
+        return (keccak256(bytes(a)) == keccak256(bytes(b)));
+    }
 }

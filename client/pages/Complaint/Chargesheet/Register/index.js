@@ -3,12 +3,17 @@ import Button from "@/Components/Button";
 import ShortUniqueId from "short-unique-id";
 import { toast } from "react-toastify";
 import Badge from "@/Components/Badge";
+import { useAddress } from "@thirdweb-dev/react";
 
 const ChargesheetForm = () => {
-  const uid = new ShortUniqueId({ length: 2 });
+  const uid = new ShortUniqueId({ length: 6 });
+  const address = useAddress();
   const [formData, setFormData] = useState({
     complaintID: "",
-    filingDateTime: "",
+    reportID: "",
+    stationID: "",
+    complainantWalletAddress: "",
+    chargeSheetDateTime: "",
     complainant: {
       name: "",
       address: "",
@@ -23,8 +28,8 @@ const ChargesheetForm = () => {
     offense: {
       type: "",
       description: "",
-      occurrenceDateTime: "",
-      placeOfOccurrence: "",
+      incidentDateTime: "",
+      placeOfIncident: "",
     },
     witness: {
       name: "",
@@ -75,7 +80,7 @@ const ChargesheetForm = () => {
     accused.id = uid();
     setListOfAccused((prev) => [...prev, accused]);
     setFormData((prev) => ({
-      ...formData,
+      ...prev,
       accused: {
         name: "",
         address: "",
@@ -96,17 +101,48 @@ const ChargesheetForm = () => {
       return toast.warn("Enter all the details of the witness.");
     witness.id = uid();
     setListOfWitness((prev) => [...prev, witness]);
+
+    setFormData((prev) => ({
+      ...prev,
+      witness: {
+        name: "",
+        address: "",
+        contact: "",
+      },
+    }));
+  };
+
+  const removeWitness = (id) => {
+    const updatedListOfWitness = listOfWitness.filter((d) => d.id !== id);
+    setListOfWitness(updatedListOfWitness);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // Perform form submission logic here
+    const data = {
+      ...formData,
+      chargeSheetID: uid(),
+      chargeSheetDateTime: new Date().getTime(),
+      accused: listOfAccused,
+      witness: listOfWitness,
+    };
+    const indexData = {
+      chargeSheetDateTime: data.chargeSheetDateTime,
+      chargeSheetID: data.chargeSheetID,
+      complaintID: formData.complaintID,
+      reportID: formData.reportID,
+      stationID: formData.stationID,
+      stationWalletAddress: address,
+      complainantWalletAddress: formData.complainantWalletAddress,
+      chargeSheetIPFSCID: "",
+    };
     console.log(formData);
   };
 
   return (
     <div className="flex justify-center items-center">
-      <div className="bg-white rounded-lg shadow my-7 p-8 overflow-auto h-[90vh] xs:w-[90%] w-[50%]">
+      <div className="bg-white rounded-lg border-gray-100 border-2 shadow my-7 p-8 overflow-auto h-[90vh] xs:w-[90%] w-[50%]">
         <h2 className="text-2xl font-bold mb-6 text-center">
           File Chargesheet
         </h2>
@@ -128,26 +164,11 @@ const ChargesheetForm = () => {
             />
           </div>
 
-          {/* Filing Date and Time */}
-          <div className="mb-4">
-            <label className="font-bold mb-2 block" htmlFor="filingDateTime">
-              Date and Time of Filing <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="datetime-local"
-              id="filingDateTime"
-              name="filingDateTime"
-              className="border border-gray-300 rounded p-2 w-full"
-              required
-              value={formData.filingDateTime}
-              onChange={handleChange}
-            />
-          </div>
-
           {/* Complainant Details */}
           <div className="mb-4">
-            <label className="font-bold mb-2 block">Complainant Details</label>
-
+            <label className="text-center text-stone-500 font-bold mb-2 block">
+              Complainant Details
+            </label>
             {/* Complainant Name */}
             <div className="mb-2">
               <label className="font-bold block" htmlFor="complainantName">
@@ -291,7 +312,9 @@ const ChargesheetForm = () => {
 
           {/* Offense Details */}
           <div className="mb-4">
-            <label className="font-bold mb-2 block">Offense Details</label>
+            <label className="text-center text-stone-500 font-bold mb-2 block">
+              Offence Details
+            </label>
 
             {/* Offense Type */}
             <div className="mb-2">
@@ -324,58 +347,113 @@ const ChargesheetForm = () => {
               />
             </div>
 
-            {/* Offense Occurrence Date and Time */}
+            {/* Offense Incident Date and Time */}
             <div className="mb-2">
-              <label className="font-bold block" htmlFor="occurrenceDateTime">
-                Date and Time of Occurrence{" "}
+              <label className="font-bold block" htmlFor="incidentDateTime">
+                Date and Time of Incident
                 <span className="text-red-500">*</span>
               </label>
               <input
                 type="datetime-local"
-                id="occurrenceDateTime"
-                name="offense.occurrenceDateTime"
+                id="incidentDateTime"
+                name="offense.incidentDateTime"
                 className="border border-gray-300 rounded p-2 w-full"
                 required
-                value={formData.offense.occurrenceDateTime}
+                value={formData.offense.incidentDateTime}
                 onChange={handleChange}
               />
             </div>
 
             {/* Place of Occurrence */}
             <div className="mb-2">
-              <label className="font-bold block" htmlFor="placeOfOccurrence">
+              <label className="font-bold block" htmlFor="placeOfIncident">
                 Place of Occurrence <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
-                id="placeOfOccurrence"
-                name="offense.placeOfOccurrence"
+                id="placeOfIncident"
+                name="offense.placeOfIncident"
                 className="border border-gray-300 rounded p-2 w-full"
                 required
-                value={formData.offense.placeOfOccurrence}
+                value={formData.offense.placeOfIncident}
                 onChange={handleChange}
               />
             </div>
 
             {/* Witnesses */}
+            <label className="text-center text-stone-500 font-bold mb-2 block">
+              Witness Details
+            </label>
             <div className="mb-2">
-              <label className="font-bold block" htmlFor="witnesses">
-                Witnesses
+              <label className="font-bold block" htmlFor="witnessName">
+                Name
               </label>
               <input
                 type="text"
-                id="witnesses"
-                name="offense.witnesses"
+                id="witnessName"
+                name="witness.name"
                 className="border border-gray-300 rounded p-2 w-full"
-                value={formData.offense.witnesses}
+                value={formData.witness.name}
                 onChange={handleChange}
               />
             </div>
+
+            <div className="mb-2">
+              <label className="font-bold block" htmlFor="witnessAddress">
+                Address
+              </label>
+              <input
+                type="text"
+                id="witnessAddress"
+                name="witness.address"
+                className="border border-gray-300 rounded p-2 w-full"
+                value={formData.witness.address}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="mb-2">
+              <label className="font-bold block" htmlFor="witnessContact">
+                Contact
+              </label>
+              <input
+                type="text"
+                id="witnessContact"
+                name="witness.contact"
+                className="border border-gray-300 rounded p-2 w-full"
+                value={formData.witness.contact}
+                onChange={handleChange}
+              />
+            </div>
+            <Button
+              type="button"
+              outlined
+              onClick={addWitness}
+              className="w-full"
+            >
+              Add Witness to the List
+            </Button>
+            {listOfWitness.length !== 0 && (
+              <div>
+                <h2 className="my-2 text-center font-bold text-stone-700">
+                  List Of Witnesses
+                </h2>
+
+                {listOfWitness.map((witness) => (
+                  <Badge
+                    id={witness.id}
+                    name={witness.name}
+                    onDelete={(id) => removeWitness(id)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Supporting Documents */}
           <div className="mb-4">
-            <label className="font-bold mb-2 block">Supporting Documents</label>
+            <label className="text-center text-stone-500 font-bold mb-2 block">
+              Upload Supporting Documents (if any)
+            </label>
             <input
               type="file"
               multiple
@@ -387,7 +465,7 @@ const ChargesheetForm = () => {
 
           {/* Investigating Officer Details */}
           <div className="mb-4">
-            <label className="font-bold mb-2 block">
+            <label className="text-center text-stone-500 font-bold mb-2 block">
               Investigating Officer Details
             </label>
 
