@@ -1,8 +1,6 @@
 export const complaintType = [
   "Consumer complaints",
-
   "Police complaints",
-
   "Landlord-tenant complaints",
   "Employment complaints",
   "Traffic complaints",
@@ -37,6 +35,25 @@ export const districts = [
   "Thrissur",
   "Wayanad",
 ];
+
+export const districtCourts = [
+  { id: 1, name: "Thiruvananthapuram District Court" },
+  { id: 2, name: "Kollam District Court" },
+  { id: 3, name: "Pathanamthitta District Court" },
+  { id: 4, name: "Alappuzha District Court" },
+  { id: 5, name: "Kottayam District Court" },
+  { id: 6, name: "Idukki District Court" },
+  { id: 7, name: "Ernakulam District Court" },
+  { id: 8, name: "Thrissur District Court" },
+  { id: 9, name: "Palakkad District Court" },
+  { id: 10, name: "Malappuram District Court" },
+  { id: 11, name: "Kozhikode District Court" },
+  { id: 12, name: "Wayanad District Court" },
+  { id: 13, name: "Kannur District Court" },
+  { id: 14, name: "Kasaragod District Court" },
+];
+
+console.log(districtCourts);
 
 export const getPoliceStation = (sector) => {
   const sectorDetails = policeStations.find((s) => s.sector === sector);

@@ -169,7 +169,7 @@ contract ComplaintContract is PermissionsEnumerable {
         revert("Complaint not found");
     }
 
-    function filterComplaints(
+    function getAllComplaints(
         string memory id,
         address walletAddress
     ) public view returns (Complaint[] memory) {
@@ -178,11 +178,9 @@ contract ComplaintContract is PermissionsEnumerable {
         for (uint256 i = 0; i < complaints.length; i++) {
             Complaint memory complaint = complaints[i];
             if (
-                (compareStrings(complaint.complaintID, id) &&
-                    complaint.complainantWalletAddress == walletAddress) ||
-                (compareStrings(complaint.complaintID, id) &&
-                    compareStrings(complaint.stationID, id) &&
-                    complaint.stationWalletAddress == walletAddress)
+                (complaint.complainantWalletAddress == walletAddress) ||
+                (complaint.stationWalletAddress == walletAddress &&
+                    compareStrings(complaint.stationID, id))
             ) {
                 count++;
             }
@@ -194,11 +192,9 @@ contract ComplaintContract is PermissionsEnumerable {
         for (uint256 i = 0; i < complaints.length; i++) {
             Complaint memory complaint = complaints[i];
             if (
-                (compareStrings(complaint.complaintID, id) &&
-                    complaint.complainantWalletAddress == walletAddress) ||
-                (compareStrings(complaint.complaintID, id) &&
-                    compareStrings(complaint.stationID, id) &&
-                    complaint.stationWalletAddress == walletAddress)
+                (complaint.complainantWalletAddress == walletAddress) ||
+                (complaint.stationWalletAddress == walletAddress &&
+                    compareStrings(complaint.stationID, id))
             ) {
                 filteredComplaints[index] = complaint;
                 index++;
