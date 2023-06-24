@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   ConnectWallet,
@@ -10,10 +10,13 @@ import {
 import { toast } from "react-toastify";
 import Button from "./Button";
 import Modal from "./Modal";
+import { useRouter } from "next/router";
 
 const Navbar = () => {
   const [phoneNumber, setPhoneNumber] = useState("+919645116496");
   const [isOpen, setIsOpen] = useState(false);
+
+  const router = useRouter();
   const connect = useConnect();
   const disconnect = useDisconnect();
   const status = useConnectionStatus();
@@ -28,6 +31,7 @@ const Navbar = () => {
       setIsOpen(false);
       await connect(magicLinkConfig, { phoneNumber });
       toast.success("Connection Succesfull");
+      router.push("/Complainant/Edit");
     } catch (err) {
       toast.error("Connection Error. Try Again");
       console.log(err, "magic auth error");
@@ -36,6 +40,7 @@ const Navbar = () => {
 
   const handleDisconnect = () => {
     disconnect();
+    router.push("/");
     toast.success("Disconnected");
   };
 
@@ -62,7 +67,16 @@ const Navbar = () => {
             </div>
             <div>
               {status === "connected" ? (
-                <Button onClick={handleDisconnect}>Disconnect</Button>
+                <div>
+                  <Button
+                    className="mx-2"
+                    outlined={true}
+                    onClick={() => router.push("/Complainant/Edit")}
+                  >
+                    Profile
+                  </Button>
+                  <Button onClick={handleDisconnect}>Disconnect</Button>
+                </div>
               ) : (
                 <div className="flex xs:flex-col xs:justify-center  xs:items-center xs:my-3">
                   <Button

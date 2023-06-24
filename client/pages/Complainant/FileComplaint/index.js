@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import useRouter from "next/router";
+import { useRouter } from "next/router";
 import { setDoc, doc } from "firebase/firestore";
 import { useContract, useStorage, useAddress } from "@thirdweb-dev/react";
 import { toast } from "react-toastify";
@@ -20,7 +20,7 @@ import {
 } from "../../../public/utils";
 
 const ComplaintForm = () => {
-  // const router = useRouter();
+  const router = useRouter();
   const address = useAddress();
   const storage = useStorage();
   const encryptData = useDataEncryption();
@@ -29,7 +29,7 @@ const ComplaintForm = () => {
 
   const [complaint, setComplaint] = useState({
     complaintID: "",
-    userAddress: "",
+    complainantWalletAddress: "",
     userName: "",
     complaintType: "",
     placeOfIncident: "",
@@ -78,12 +78,13 @@ const ComplaintForm = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
+    if (!address) return toast.warn("You must be connected to the wallet");
     setLoading(true);
     const complaintData = complaint;
     complaintData.complaintID = uid();
-    complaintData.userAddress = address;
+    complaintData.complainantWalletAddress = address;
     complaintData.userName = localStorage.getItem("userName");
-    complaintData.complaintCreatedAt = new Date().getTime();
+    complaintData.complaintCreatedAt = new Date().getTime().toString();
     const encryptedData = encryptData(complaintData);
     toast.success("Complaint data is succesfully encrypted. Please wait.");
     const complaintUploadedCID = await storage.upload(encryptedData);
@@ -91,7 +92,7 @@ const ComplaintForm = () => {
     const data = {
       complaintID: complaintData.complaintID,
       stationID: complaint.policeStation.stationID,
-      userAddress: address,
+      complainantWalletAddress: address,
       detailsIPFSCID: complaintUploadedCID,
       complaintCreatedAt: complaintData.complaintCreatedAt,
       status: "Pending For Approval",
@@ -101,6 +102,7 @@ const ComplaintForm = () => {
       await setDoc(doc(db, "complaints", complaintData.complaintID), data);
       toast.success("Complaint registered successfully.");
       setLoading(false);
+      router.push("/Complainant/ListOfComplaints");
     } catch (error) {
       toast.error("Complaint Registration Error. Try Again");
       console.error("Error adding complaint:", error);
