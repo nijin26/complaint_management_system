@@ -42,6 +42,7 @@ const ProfileForm = () => {
   });
 
   useEffect(() => {
+    console.log(address, "address of user wallet");
     const fetchUserDoc = async () => {
       if ((address ? true : false) && router.query?.data !== "Edit") {
         setLoading(true);

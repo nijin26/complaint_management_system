@@ -1,4 +1,10 @@
-import { ThirdwebProvider } from "@thirdweb-dev/react";
+import {
+  ThirdwebProvider,
+  metamaskWallet,
+  coinbaseWallet,
+  walletConnect,
+  magicLink,
+} from "@thirdweb-dev/react";
 import { ToastContainer, Zoom } from "react-toastify";
 import Layout from "../Components/Layout";
 import "../public/globals.css";
@@ -12,7 +18,15 @@ const activeChain = "localhost";
 
 function MyApp({ Component, pageProps }) {
   return (
-    <ThirdwebProvider activeChain={activeChain}>
+    <ThirdwebProvider
+      supportedWallets={[
+        metamaskWallet(),
+        coinbaseWallet(),
+        walletConnect(),
+        magicLink({ apiKey: process.env.NEXT_PUBLIC_MAGIC_AUTH }),
+      ]}
+      activeChain={activeChain}
+    >
       <ToastContainer
         position="top-center"
         autoClose={4000}

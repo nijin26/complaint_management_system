@@ -39,6 +39,8 @@ const StationProfileForm = () => {
         const docSnap = await getDoc(doc(db, "stations", address));
         if (docSnap.exists()) {
           localStorage.setItem("stationID", docSnap.data().stationID);
+          const data = docSnap.data();
+          setStation((prev) => ({ ...prev, ...data }));
           router.push("/Station/Profile");
         }
         setLoading(false);

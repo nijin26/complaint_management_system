@@ -6,6 +6,7 @@ import {
   magicLink,
   useDisconnect,
   useConnectionStatus,
+  useMagic,
 } from "@thirdweb-dev/react";
 import { toast } from "react-toastify";
 import Button from "./Button";
@@ -17,19 +18,18 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const router = useRouter();
-  const connect = useConnect();
+  const connectWithMagic = useMagic();
   const disconnect = useDisconnect();
   const status = useConnectionStatus();
-
-  const magicLinkConfig = magicLink({
-    apiKey: process.env.NEXT_PUBLIC_MAGIC_AUTH,
-  });
 
   const submitLoginMobile = async (e) => {
     e.preventDefault();
     try {
       setIsOpen(false);
-      await connect(magicLinkConfig, { phoneNumber });
+      await connectWithMagic({
+        apiKey: process.env.NEXT_PUBLIC_MAGIC_AUTH,
+        phoneNumber: phoneNumber,
+      });
       toast.success("Connection Succesfull");
       router.push("/Complainant/Edit");
     } catch (err) {
@@ -46,6 +46,19 @@ const Navbar = () => {
     localStorage.setItem("stationID", "");
     localStorage.setItem("superiorID", "");
     localStorage.setItem("dmID", "");
+  };
+
+  const handleProfileRoute = () => {
+    const userName = localStorage.getItem("userName");
+    const stationID = localStorage.getItem("stationID");
+    const superiorID = localStorage.getItem("superiorID");
+    const dmID = localStorage.getItem("dmId");
+
+    if (stationID && stationID !== "") return router.push("/Station/Profile");
+    if (superiorID && superiorID !== "")
+      return router.push("/Superior/Profile");
+    if (dmID && dmID !== "") return router.push("/DistrictMagistrate/Profile");
+    return router.push("/Complainant/Edit");
   };
 
   return (
@@ -75,7 +88,7 @@ const Navbar = () => {
                   <Button
                     className="mx-2"
                     outlined={true}
-                    onClick={() => router.push("/Complainant/Edit")}
+                    onClick={handleProfileRoute}
                   >
                     Profile
                   </Button>
