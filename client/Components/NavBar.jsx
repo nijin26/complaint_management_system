@@ -42,6 +42,10 @@ const Navbar = () => {
     disconnect();
     router.push("/");
     toast.success("Disconnected");
+    localStorage.setItem("userName", "");
+    localStorage.setItem("stationID", "");
+    localStorage.setItem("superiorID", "");
+    localStorage.setItem("dmID", "");
   };
 
   return (
