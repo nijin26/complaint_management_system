@@ -23,9 +23,11 @@ import Button from "@/Components/Button";
 import Spinner from "@/Components/Spinner";
 import Modal from "@/Components/Modal";
 import { contractAddress } from "@/config/contract";
+import { useRouter } from "next/router";
 // import { Dialog, DialogContent } from "../../../Components/UI/dialog";
 
 const ListOfComplaints = () => {
+  const router = useRouter();
   const storage = useStorage();
   const address = useAddress();
   const decryptData = useDataDecryption();

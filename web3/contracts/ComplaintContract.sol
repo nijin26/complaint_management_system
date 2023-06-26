@@ -5,10 +5,10 @@ import "hardhat/console.sol";
 import "@thirdweb-dev/contracts/extension/PermissionsEnumerable.sol";
 
 contract ComplaintContract is PermissionsEnumerable {
-    bytes32 public constant OWNER = keccak256("OWNER");
     bytes32 public constant USER = keccak256("USER");
     bytes32 public constant STATION = keccak256("STATION");
     bytes32 public constant SUPERIOR = keccak256("SUPERIOR");
+    bytes32 public constant DISTRICTMAGISTRATE = keccak256("DISTRICTMAGISTRATE");
 
     constructor() {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -55,6 +55,14 @@ contract ComplaintContract is PermissionsEnumerable {
     modifier onlyStationOrSuperior() {
         require(
             hasRole(STATION, msg.sender) || hasRole(SUPERIOR, msg.sender),
+            "You are not authorized"
+        );
+        _; // Continue with the function execution
+    }
+
+    modifier onlyHigherOfficials() {
+        require(
+            hasRole(STATION, msg.sender) || hasRole(SUPERIOR, msg.sender) || hasRole(DISTRICTMAGISTRATE,msg.sender),
             "You are not authorized"
         );
         _; // Continue with the function execution
@@ -127,6 +135,10 @@ contract ComplaintContract is PermissionsEnumerable {
         );
     }
 
+    function addDistrictMagistrate(address _newDM) public onlyRole(DEFAULT_ADMIN_ROLE) {
+      grantRole(DISTRICTMAGISTRATE,_newDM);
+    }
+
     function addComplaint(Complaint memory newComplaint) public {
         complaints.push(newComplaint);
         complainantToComplaint[newComplaint.complaintID] = newComplaint
@@ -146,7 +158,7 @@ contract ComplaintContract is PermissionsEnumerable {
         string memory id,
         string memory status,
         string memory remarks
-    ) public {
+    ) public onlyStationOrSuperior {
         for (uint256 i = 0; i < complaints.length; i++) {
             if (compareStrings(complaints[i].complaintID, id)) {
                 complaints[i].status = status;
@@ -262,7 +274,7 @@ contract ComplaintContract is PermissionsEnumerable {
     function getChargeSheets()
         public
         view
-        onlyStationOrSuperior
+onlyHigherOfficials
         returns (ChargeSheet[] memory)
     {
         return chargeSheets;
