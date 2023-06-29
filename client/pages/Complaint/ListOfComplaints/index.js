@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify"; // Notification or Toast
 import { useContract, useAddress, useStorage } from "@thirdweb-dev/react";
+import { contractAddress } from "@/config/contract";
 
 //Firebase Firestore
 import {
@@ -119,53 +120,63 @@ const ListOfComplaints = () => {
     if (remarks === "" || remarks.length <= 3)
       return toast.warn("Add any remarks beforing approving");
 
-    // Add approved data to blockchain network
-    updateContract("Approved");
+    try {
+      // Add approved data to blockchain network
+      updateContract("Approved");
 
-    //Update status and remarks when approved in Firebase
-    const currentComplaintRef = doc(
-      db,
-      "complaints",
-      selectedComplaint.complaintID
-    );
-    await updateDoc(currentComplaintRef, {
-      status: "Approved",
-      remarks: remarks,
-    });
-    setSelectedComplaint((prev) => ({
-      ...prev,
-      status: "Approved",
-      remarks: remarks,
-    }));
-    toast.success("Selected complaint is approved");
+      //Update status and remarks when approved in Firebase
+      const currentComplaintRef = doc(
+        db,
+        "complaints",
+        selectedComplaint.complaintID
+      );
+      await updateDoc(currentComplaintRef, {
+        status: "Approved",
+        remarks: remarks,
+      });
+      setSelectedComplaint((prev) => ({
+        ...prev,
+        status: "Approved",
+        remarks: remarks,
+      }));
+      toast.success("Selected complaint is approved");
 
-    setIsOpen(false);
+      setIsOpen(false);
+    } catch (err) {
+      toast.error("Error in ignoring complaint. Try Again");
+      console.log("Error in ignoring complaint. Try Again", err);
+    }
   };
 
   const handleIgnore = async () => {
     if (remarks === "" || remarks.length <= 3)
       return toast.warn("Add any remarks or reason for ignoring.");
     //Update or add data to blockchain network
-    updateContract("Ignored");
+    try {
+      updateContract("Ignored");
 
-    // Update status & remarks to Firebase when ignored
-    const currentComplaintRef = doc(
-      db,
-      "complaints",
-      selectedComplaint.complaintID
-    );
-    await updateDoc(currentComplaintRef, {
-      status: "Ignored",
-      remarks: remarks,
-    });
+      // Update status & remarks to Firebase when ignored
+      // const currentComplaintRef = doc(
+      //   db,
+      //   "complaints",
+      //   selectedComplaint.complaintID
+      // );
+      // await updateDoc(currentComplaintRef, {
+      //   status: "Ignored",
+      //   remarks: remarks,
+      // });
 
-    setSelectedComplaint((prev) => ({
-      ...prev,
-      status: "Ignored",
-      remarks: remarks,
-    }));
-    toast.success("Selected complaint is ignored.");
-    setIsOpen(false);
+      setSelectedComplaint((prev) => ({
+        ...prev,
+        status: "Ignored",
+        remarks: remarks,
+      }));
+      toast.success("Selected complaint is ignored.");
+      setIsOpen(false);
+    } catch (err) {
+      toast.error("Error in ignoring complaint. Try Again");
+      console.log("Error in ignoring complaint. Try Again", err);
+    }
   };
 
   const updateContract = async (status) => {
@@ -187,6 +198,7 @@ const ListOfComplaints = () => {
         remarks: remarks,
         status: status,
       };
+      console.log(data);
       const complaintAdded = await contract.call("addComplaint", [data]);
       console.info("contract call successs", data, complaintAdded);
     } catch (err) {
@@ -199,7 +211,7 @@ const ListOfComplaints = () => {
     setIsOpen(true);
     setLoading(true);
     const data = await contract.call("getComplaintByID", [
-      currentComplaintData.compalintID,
+      currentComplaintData.complaintID,
     ]);
     toast.info("Fetched encrypted data from Blockchain network");
 

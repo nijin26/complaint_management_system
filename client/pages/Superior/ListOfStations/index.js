@@ -13,12 +13,16 @@ import {
 import { db } from "@/config/firebaseConfig";
 import Modal from "@/Components/Modal";
 import Button from "@/Components/Button";
+import { useContract } from "@thirdweb-dev/react";
+import { contractAddress } from "@/config/contract";
 
 const ListOfStations = () => {
   const [stations, setStations] = useState([]);
   const [selectedSector, setSelectedSector] = useState("Pathanamthitta");
   const [selectedStation, setSelectedStation] = useState({});
   const [isOpen, setIsOpen] = useState(false);
+
+  const { contract } = useContract(contractAddress);
 
   useEffect(() => {
     const fetchStations = async () => {
@@ -51,6 +55,10 @@ const ListOfStations = () => {
 
   const handleApprove = async () => {
     try {
+      const data = await contract.call("approveStation", [
+        selectedStation.stationWalletAddress,
+      ]);
+      console.log(data);
       await updateDoc(
         doc(db, "stations", selectedStation.stationWalletAddress),
         {

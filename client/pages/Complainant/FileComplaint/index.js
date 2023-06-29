@@ -84,7 +84,7 @@ const ComplaintForm = () => {
     complaintData.complaintID = uid();
     complaintData.complainantWalletAddress = address;
     complaintData.userName = localStorage.getItem("userName");
-    complaintData.complaintCreatedAt = new Date().getTime().toString();
+    complaintData.complaintCreatedAt = new Date().getTime();
     const encryptedData = encryptData(complaintData);
     toast.success("Complaint data is succesfully encrypted. Please wait.");
     const complaintUploadedCID = await storage.upload(encryptedData);

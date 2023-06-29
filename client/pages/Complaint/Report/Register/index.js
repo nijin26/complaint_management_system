@@ -100,13 +100,13 @@ const RegisterNCR = () => {
       let complaintData = {
         complaintID: "",
       };
-      try {
-        if (router.query.complaintData !== "")
-          complaintData = JSON.parse(router.query.complaintData);
-      } catch (err) {
-        toast.warn("Select or File a complaint beforing registering Report");
-        router.push("/Complaint/ListOfComplaints");
-      }
+      // try {
+      //   if (router.query.complaintData !== "")
+      //     complaintData = JSON.parse(router.query.complaintData);
+      // } catch (err) {
+      //   toast.warn("Select or File a complaint beforing registering Report");
+      //   router.push("/Complaint/ListOfComplaints");
+      // }
 
       if (complaintData.complaintID !== "") {
         const fetchedData = await storage.downloadJSON(
